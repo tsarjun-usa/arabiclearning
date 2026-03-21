@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Arabic Verb Forms — د ر س</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700;900&family=Epilogue:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1117;
+    --ink2: #1c1f2b;
+    --ink3: #272b3a;
+    --teal: #00b4a0;
+    --teal-dim: rgba(0,180,160,0.12);
+    --teal-glow: rgba(0,180,160,0.25);
+    --amber: #f0a500;
+    --amber-dim: rgba(240,165,0,0.12);
+    --red: #e05560;
+    --red-dim: rgba(224,85,96,0.15);
+    --muted: #5a6070;
+    --soft: #9ba3b5;
+    --cream: #e8ecf5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Epilogue', sans-serif;
+    background: var(--ink);
+    color: var(--cream);
+    min-height: 100vh;
+  }
+
+  /* animated grid bg */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,180,160,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,180,160,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,180,160,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 36px 20px 80px; }
+
+  /* Header */
+  .hdr { text-align: center; margin-bottom: 48px; }
+  .root-display {
+    display: inline-block;
+    font-family: 'Fraunces', serif;
+    font-size: 4em;
+    color: var(--teal);
+    letter-spacing: 0.15em;
+    direction: rtl;
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(0,180,160,0.3);
+    margin-bottom: 10px;
+  }
+  .hdr h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1em;
+    font-weight: 400;
+    color: var(--soft);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .hdr p { font-size: 0.82em; color: var(--muted); font-weight: 300; }
+
+  /* Form navigator strip */
+  .form-strip {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 32px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .form-strip::-webkit-scrollbar { display: none; }
+  .form-pip {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--ink3);
+    background: var(--ink2);
+    color: var(--muted);
+    font-size: 0.75em;
+    font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Fraunces', serif;
+  }
+  .form-pip.unlocked { border-color: var(--teal); color: var(--teal); }
+  .form-pip.active { background: var(--teal); color: var(--ink); border-color: var(--teal); }
+  .form-pip.locked { opacity: 0.3; cursor: not-allowed; }
+
+  /* Main card */
+  .card {
+    background: var(--ink2);
+    border: 1px solid var(--ink3);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    opacity: 0.4;
+  }
+
+  /* Teach panel */
+  .form-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--teal-dim);
+    border: 1px solid rgba(0,180,160,0.3);
+    border-radius: 6px;
+    padding: 4px 12px;
+    margin-bottom: 20px;
+  }
+  .form-badge .num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1em;
+    color: var(--teal);
+  }
+  .form-badge .label { font-size: 0.78em; color: var(--soft); letter-spacing: 0.06em; }
+
+  .teach-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+
+  .big-arabic {
+    font-size: 3.2em;
+    direction: rtl;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 8px;
+    font-weight: 300;
+  }
+  .big-translit { font-size: 0.82em; color: var(--muted); font-style: italic; margin-bottom: 6px; }
+  .big-english { font-size: 1.15em; color: var(--teal); font-weight: 500; margin-bottom: 4px; }
+
+  .pattern-box {
+    background: var(--ink3);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .pattern-label { font-size: 0.68em; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .pattern-arabic {
+    font-size: 1.6em;
+    direction: rtl;
+    color: var(--amber);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .pattern-english { font-size: 0.78em; color: var(--soft); line-height: 1.5; }
+
+  .meaning-shift {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(0,180,160,0.06), transparent);
+    border: 1px solid rgba(0,180,160,0.15);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.85em;
+    color: var(--soft);
+    line-height: 1.6;
+  }
+  .meaning-shift strong { color: var(--teal); }
+
+  .example-sentence {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+  }
+  .example-label { font-size: 0.68em; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .example-ar { direction: rtl; font-size: 1.1em; color: var(--cream); margin-bottom: 3px; }
+  .example-en { font-size: 0.82em; color: var(--muted); font-style: italic; }
+
+  .speak-row { display: flex; gap: 10px; margin-top: 16px; grid-column: 1/-1; }
+  .speak-word-btn, .speak-sent-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--ink3);
+    background: transparent;
+    color: var(--soft);
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .speak-word-btn:hover, .speak-sent-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+  .got-it-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--teal);
+    color: var(--ink);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Fraunces', serif;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    margin-top: 20px;
+  }
+  .got-it-btn:hover { background: #00cdb7; transform: translateY(-1px); }
+
+  /* Quiz panel */
+  .quiz-question-label {
+    font-size: 0.72em;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .quiz-prompt {
+    font-size: 0.95em;
+    color: var(--soft);
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  .quiz-prompt .highlight {
+    color: var(--cream);
+    font-weight: 500;
+    direction: rtl;
+    display: inline-block;
+    font-size: 1.2em;
+  }
+
+  .options-list { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    padding: 14px 18px;
+    background: var(--ink3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    color: var(--cream);
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-dim); }
+  .opt:disabled { cursor: default; }
+  .opt .opt-letter {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: var(--ink2);
+    border: 1px solid var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78em;
+    color: var(--muted);
+    flex-shrink: 0;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .opt.correct { background: rgba(0,180,160,0.15); border-color: var(--teal); }
+  .opt.correct .opt-letter { background: var(--teal); border-color: var(--teal); color: var(--ink); }
+  .opt.wrong { background: var(--red-dim); border-color: var(--red); }
+  .opt.wrong .opt-letter { background: var(--red); border-color: var(--red); color: #fff; }
+
+  .feedback {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 0.88em;
+    line-height: 1.6;
+    display: none;
+  }
+  .feedback.correct { background: rgba(0,180,160,0.1); border: 1px solid rgba(0,180,160,0.25); color: #7de8de; }
+  .feedback.wrong { background: var(--red-dim); border: 1px solid rgba(224,85,96,0.3); color: #f0a0a6; }
+
+  .next-btn {
+    display: none;
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    border: 1px solid var(--teal);
+    border-radius: 12px;
+    color: var(--teal);
+    font-family: 'Fraunces', serif;
+    font-size: 0.95em;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .next-btn:hover { background: var(--teal-dim); }
+
+  /* Progress bar */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .prog-bar { flex: 1; height: 3px; background: var(--ink3); border-radius: 2px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.4s; }
+  .prog-text { font-size: 0.75em; color: var(--muted); white-space: nowrap; }
+
+  /* Results */
+  #results { display: none; text-align: center; }
+  .results-num {
+    font-family: 'Fraunces', serif;
+    font-size: 5em;
+    color: var(--teal);
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(0,180,160,0.4);
+    margin-bottom: 4px;
+  }
+  .results-denom { font-size: 1em; color: var(--muted); margin-bottom: 20px; }
+  .results-msg { font-family: 'Fraunces', serif; font-size: 1.4em; color: var(--cream); margin-bottom: 8px; }
+  .results-sub { font-size: 0.85em; color: var(--muted); margin-bottom: 32px; font-weight: 300; }
+
+  .forms-summary { text-align: left; }
+  .summary-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ink3);
+    font-size: 0.85em;
+  }
+  .summary-form { font-family: 'Fraunces', serif; color: var(--teal); width: 60px; }
+  .summary-arabic { direction: rtl; color: var(--cream); min-width: 90px; }
+  .summary-eng { color: var(--soft); flex: 1; }
+  .summary-check { color: var(--teal); font-size: 1.1em; }
+  .summary-x { color: var(--red); font-size: 1.1em; }
+
+  .restart-btn {
+    display: inline-block;
+    margin-top: 28px;
+    padding: 13px 32px;
+    background: var(--teal);
+    color: var(--ink);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Fraunces', serif;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .restart-btn:hover { background: #00cdb7; }
+
+  @media (max-width: 500px) {
+    .teach-layout { grid-template-columns: 1fr; }
+    .big-arabic { font-size: 2.4em; }
+    .root-display { font-size: 2.8em; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="root-display">د ر س</div>
+    <h1>The 10 Verb Forms</h1>
+    <p>Each form bends the root into a new meaning — learn the pattern, not just the word</p>
+  </div>
+
+  <div id="mainArea">
+    <div class="form-strip" id="formStrip"></div>
+    <div class="card" id="mainCard"></div>
+  </div>
+
+  <div class="card" id="results">
+    <div class="results-num" id="rScore">-</div>
+    <div class="results-denom" id="rDenom">out of 10</div>
+    <div class="results-msg" id="rMsg"></div>
+    <div class="results-sub" id="rSub"></div>
+    <div class="forms-summary" id="rSummary"></div>
+    <button class="restart-btn" onclick="restart()">Start Over 🔄</button>
+  </div>
+
+</div>
+
+<script>
+// ─── THE 10 FORMS of د ر س ──────────────────────────────────────────────
+const FORMS = [
+  {
+    num: "I",
+    arabic: "دَرَسَ",
+    translit: "darasa",
+    english: "he studied",
+    pattern: "فَعَلَ",
+    patternEng: "The basic form. The root meaning, plain and simple.",
+    shift: "This is your <strong>base</strong>. Form I is always the root in its simplest action. د ر س means studying — so دَرَسَ = he studied. Every other form is built on top of this.",
+    example_ar: "دَرَسَ الطَّالِبُ الدَّرْسَ",
+    example_en: "The student studied the lesson"
+  },
+  {
+    num: "II",
+    arabic: "دَرَّسَ",
+    translit: "darrasa",
+    english: "he taught",
+    pattern: "فَعَّلَ",
+    patternEng: "Middle letter doubled. Makes the action happen TO someone else.",
+    shift: "Form II <strong>doubles the middle letter</strong> and flips the meaning: instead of doing it yourself, you make someone else do it. دَرَسَ = he studied → دَرَّسَ = he taught (he made others study). Think of it as the <strong>causative</strong> — you cause the action.",
+    example_ar: "دَرَّسَ الأُسْتَاذُ الطُّلَّابَ",
+    example_en: "The professor taught the students"
+  },
+  {
+    num: "III",
+    arabic: "دَارَسَ",
+    translit: "dārasa",
+    english: "he studied with someone",
+    pattern: "فَاعَلَ",
+    patternEng: "Long vowel after first letter. The action happens between two people.",
+    shift: "Form III adds a long vowel (ا) after the first letter and means doing something <strong>with or toward another person</strong>. دَرَسَ = he studied alone → دَارَسَ = he studied together with someone. It's always mutual or directed at another.",
+    example_ar: "دَارَسَ زَيْدٌ أَخَاهُ",
+    example_en: "Zaid studied together with his brother"
+  },
+  {
+    num: "IV",
+    arabic: "أَدْرَسَ",
+    translit: "adrasa",
+    english: "he made someone study / he caused studying",
+    pattern: "أَفْعَلَ",
+    patternEng: "Starts with أَ. Another causative — making something happen.",
+    shift: "Form IV starts with <strong>أَ</strong> and is also causative like Form II, but slightly more forceful or indirect. أَدْرَسَ = he caused learning to happen, he put someone through study. Less common for درس specifically but the pattern is critical — أَكْرَمَ (he honored), أَرْسَلَ (he sent) are Form IV classics.",
+    example_ar: "أَدْرَسَ المُعَلِّمُ التَّلَامِيذَ",
+    example_en: "The teacher caused the pupils to learn"
+  },
+  {
+    num: "V",
+    arabic: "تَدَرَّسَ",
+    translit: "tadarrasa",
+    english: "he studied thoroughly / taught himself",
+    pattern: "تَفَعَّلَ",
+    patternEng: "Form II + تَ prefix. The action reflects back on yourself.",
+    shift: "Form V is <strong>Form II made reflexive</strong>. Add تَ to Form II and the causative action turns inward. دَرَّسَ = he taught others → تَدَرَّسَ = he taught himself, he immersed himself in study. The تَ prefix always signals the action bounces back to the subject.",
+    example_ar: "تَدَرَّسَ العِلْمَ بِنَفْسِهِ",
+    example_en: "He taught himself the knowledge"
+  },
+  {
+    num: "VI",
+    arabic: "تَدَارَسَ",
+    translit: "tadārasa",
+    english: "they studied together",
+    pattern: "تَفَاعَلَ",
+    patternEng: "Form III + تَ prefix. Mutual action between multiple people.",
+    shift: "Form VI is <strong>Form III made reflexive/mutual</strong>. دَارَسَ = he studied with someone → تَدَارَسَ = they all studied together, a group mutual action. The تَ prefix on Form III always means the action is happening between multiple parties reciprocally.",
+    example_ar: "تَدَارَسَ الطُّلَّابُ الكِتَابَ",
+    example_en: "The students studied the book together"
+  },
+  {
+    num: "VII",
+    arabic: "اِنْدَرَسَ",
+    translit: "indarasa",
+    english: "it became obliterated / it faded away",
+    pattern: "اِنْفَعَلَ",
+    patternEng: "Starts with اِنْ. The action happens to the subject passively.",
+    shift: "Form VII starts with <strong>اِنْ</strong> and means the action happened <strong>to</strong> something — it's a passive result. اِنْدَرَسَ literally means the traces of something got worn away, erased by time. Think of it as: the subject received the action rather than performed it.",
+    example_ar: "اِنْدَرَسَتِ الآثَارُ القَدِيمَةُ",
+    example_en: "The ancient ruins became obliterated"
+  },
+  {
+    num: "VIII",
+    arabic: "اِدَّارَسَ",
+    translit: "iddārasa",
+    english: "he studied intensively",
+    pattern: "اِفْتَعَلَ",
+    patternEng: "Starts with اِ, extra letter inserted after first root letter.",
+    shift: "Form VIII inserts a ت (or similar) after the first root letter with اِ prefix. It often means doing something <strong>for yourself, intensively or deliberately</strong>. اِدَّارَسَ = he really applied himself to studying, studied with full effort and intent.",
+    example_ar: "اِدَّارَسَ القُرْآنَ لَيْلَةً كَامِلَةً",
+    example_en: "He studied the Quran intensively for a whole night"
+  },
+  {
+    num: "IX",
+    arabic: "(نَادِر)",
+    translit: "(nādir)",
+    english: "rare for this root",
+    pattern: "اِفْعَلَّ",
+    patternEng: "Used almost exclusively for colors and physical defects.",
+    shift: "Form IX is very specialized — it only applies to <strong>colors and physical states</strong>. اِحْمَرَّ = he/it turned red, اِصْفَرَّ = it turned yellow. The root د ر س doesn't have a Form IX because studying isn't a color or physical defect. You'll rarely need this but it's good to know it exists.",
+    example_ar: "اِحْمَرَّ وَجْهُهُ",
+    example_en: "His face turned red (example from another root)"
+  },
+  {
+    num: "X",
+    arabic: "اِسْتَدْرَسَ",
+    translit: "istadrasa",
+    english: "he asked to be taught / he sought knowledge",
+    pattern: "اِسْتَفْعَلَ",
+    patternEng: "Starts with اِسْتَ. Means to seek or request the action.",
+    shift: "Form X starts with <strong>اِسْتَ</strong> and means to <strong>seek, request, or consider</strong> the root action. اِسْتَدْرَسَ = he sought to be taught, he asked for instruction. اِسْتَفْهَمَ = he sought to understand. اِسْتَغْفَرَ = he sought forgiveness. The اِسْتَ prefix always signals seeking.",
+    example_ar: "اِسْتَدْرَسَ العِلْمَ مِنَ الشُّيُوخِ",
+    example_en: "He sought knowledge from the scholars"
+  }
+];
+
+// Quiz questions — one per form, testing the meaning-shift concept
+const QUESTIONS = [
+  { formIdx: 0, type: "meaning", q: "What does دَرَسَ mean?", correct: "He studied", wrong: ["He taught", "He was taught", "He asked to study"] },
+  { formIdx: 1, type: "shift", q: "Form II doubles the middle letter. دَرَسَ means 'he studied'. What does دَرَّسَ mean?", correct: "He taught (he caused others to study)", wrong: ["He studied alone", "He studied together", "He forgot what he studied"] },
+  { formIdx: 2, type: "pattern", q: "Form III adds ا after the first letter and means doing something with another person. Which best describes دَارَسَ?", correct: "He studied together with someone", wrong: ["He studied by himself", "He made someone study", "He stopped studying"] },
+  { formIdx: 3, type: "shift", q: "Form IV starts with أَ and is causative. أَدْرَسَ is closest in meaning to which phrase?", correct: "He caused someone to learn / he put them through study", wrong: ["He studied more than usual", "He forgot everything he learned", "He asked a teacher a question"] },
+  { formIdx: 4, type: "concept", q: "Form V = Form II + تَ prefix, making it reflexive. If دَرَّسَ means 'he taught others', what does تَدَرَّسَ mean?", correct: "He taught himself / immersed himself in study", wrong: ["He taught a large group", "He was taught by a master", "He refused to study"] },
+  { formIdx: 5, type: "concept", q: "Form VI = Form III + تَ prefix, making it mutual. تَدَارَسَ is best translated as:", correct: "They all studied together as a group", wrong: ["He studied with one partner", "He made a group study", "He reviewed his notes alone"] },
+  { formIdx: 6, type: "meaning", q: "Form VII starts with اِنْ — the action happens TO the subject. اِنْدَرَسَ means:", correct: "It got erased / faded away over time", wrong: ["He studied intensely", "He started studying", "He taught a class"] },
+  { formIdx: 7, type: "shift", q: "Form VIII (اِفْتَعَلَ) means doing something for yourself, deliberately. اِدَّارَسَ means:", correct: "He studied intensively and with full effort", wrong: ["He asked someone else to study", "He studied casually", "He forgot what he learned"] },
+  { formIdx: 8, type: "concept", q: "Form IX is only used for one specific category. Which category?", correct: "Colors and physical states (turning red, turning yellow etc.)", wrong: ["Actions done at night", "Things related to studying", "Emotions and feelings"] },
+  { formIdx: 9, type: "meaning", q: "Form X starts with اِسْتَ and means to seek or request. اِسْتَدْرَسَ means:", correct: "He sought to be taught / asked for instruction", wrong: ["He studied the longest", "He taught the most students", "He memorized everything"] },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────
+let phase = "teach"; // "teach" | "quiz"
+let currentForm = 0;
+let unlockedForms = [0];
+let quizIdx = 0;
+let quizScore = 0;
+let quizResults = [];
+
+// ─── AUDIO ───────────────────────────────────────────────────────────────
+function speak(text) {
+  const url = "https://translate.google.com/translate_tts?ie=UTF-8&q=" + encodeURIComponent(text) + "&tl=ar&client=tw-ob";
+  new Audio(url).play().catch(function(){});
+}
+
+// ─── FORM STRIP ──────────────────────────────────────────────────────────
+function buildStrip() {
+  const strip = document.getElementById("formStrip");
+  strip.innerHTML = "";
+  FORMS.forEach(function(f, i) {
+    const pip = document.createElement("div");
+    pip.className = "form-pip";
+    pip.textContent = f.num;
+    pip.id = "pip" + i;
+    if (i === currentForm) pip.classList.add("active");
+    else if (unlockedForms.includes(i)) pip.classList.add("unlocked");
+    else pip.classList.add("locked");
+    pip.onclick = function() {
+      if (unlockedForms.includes(i)) {
+        currentForm = i;
+        showTeach();
+      }
+    };
+    strip.appendChild(pip);
+  });
+}
+
+// ─── TEACH PHASE ─────────────────────────────────────────────────────────
+function showTeach() {
+  phase = "teach";
+  buildStrip();
+  const f = FORMS[currentForm];
+  const isLast = currentForm === FORMS.length - 1;
+
+  document.getElementById("mainArea").style.display = "block";
+  document.getElementById("results").style.display = "none";
+
+  document.getElementById("mainCard").innerHTML =
+    '<div class="form-badge">' +
+      '<span class="num">Form ' + f.num + '</span>' +
+      '<span class="label">of 10</span>' +
+    '</div>' +
+    '<div class="teach-layout">' +
+      '<div>' +
+        '<div class="big-arabic">' + f.arabic + '</div>' +
+        '<div class="big-translit">' + f.translit + '</div>' +
+        '<div class="big-english">' + f.english + '</div>' +
+      '</div>' +
+      '<div class="pattern-box">' +
+        '<div class="pattern-label">The Mold (وزن)</div>' +
+        '<div class="pattern-arabic">' + f.pattern + '</div>' +
+        '<div class="pattern-english">' + f.patternEng + '</div>' +
+      '</div>' +
+      '<div class="meaning-shift">' + f.shift + '</div>' +
+      '<div class="example-sentence">' +
+        '<div class="example-label">Example</div>' +
+        '<div class="example-ar">' + f.example_ar + '</div>' +
+        '<div class="example-en">' + f.example_en + '</div>' +
+      '</div>' +
+      '<div class="speak-row">' +
+        '<button class="speak-word-btn" onclick="speak(\'' + f.arabic + '\')">🔊 Hear the word</button>' +
+        '<button class="speak-sent-btn" onclick="speak(\'' + f.example_ar + '\')">🔊 Hear the sentence</button>' +
+      '</div>' +
+    '</div>' +
+    '<button class="got-it-btn" onclick="gotIt()">' +
+      (isLast ? 'Start Quiz →' : 'Got it — Next Form →') +
+    '</button>';
+
+  setTimeout(function(){ speak(f.arabic); }, 400);
+}
+
+function gotIt() {
+  const next = currentForm + 1;
+  if (next < FORMS.length) {
+    currentForm = next;
+    if (!unlockedForms.includes(currentForm)) unlockedForms.push(currentForm);
+    showTeach();
+  } else {
+    startQuiz();
+  }
+}
+
+// ─── QUIZ PHASE ───────────────────────────────────────────────────────────
+function startQuiz() {
+  phase = "quiz";
+  quizIdx = 0; quizScore = 0; quizResults = [];
+  document.getElementById("formStrip").style.display = "none";
+  showQuizQ();
+}
+
+function showQuizQ() {
+  const q = QUESTIONS[quizIdx];
+  const f = FORMS[q.formIdx];
+  const total = QUESTIONS.length;
+
+  const opts = [q.correct].concat(q.wrong).sort(function(){ return Math.random() - 0.5; });
+  const letters = ["A","B","C","D"];
+
+  document.getElementById("mainCard").innerHTML =
+    '<div class="progress-row">' +
+      '<div class="prog-bar"><div class="prog-fill" style="width:' + (quizIdx/total*100) + '%"></div></div>' +
+      '<span class="prog-text">' + (quizIdx+1) + ' / ' + total + '</span>' +
+    '</div>' +
+    '<div class="quiz-question-label">Form ' + f.num + ' — ' + f.pattern + '</div>' +
+    '<div class="quiz-prompt">' + q.q.replace(f.arabic, '<span class="highlight">' + f.arabic + '</span>') + '</div>' +
+    '<div class="options-list" id="optsList"></div>' +
+    '<div class="feedback" id="quizFeedback"></div>' +
+    '<button class="next-btn" id="quizNext" onclick="nextQuiz()">' +
+      (quizIdx === total - 1 ? 'See Results →' : 'Next Question →') +
+    '</button>';
+
+  const list = document.getElementById("optsList");
+  opts.forEach(function(opt, i) {
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span>' + opt;
+    btn.onclick = function() { handleAnswer(opt, q, f, btn); };
+    list.appendChild(btn);
+  });
+
+  setTimeout(function(){ speak(f.arabic); }, 300);
+}
+
+function handleAnswer(chosen, q, f, btn) {
+  document.querySelectorAll(".opt").forEach(function(b){ b.disabled = true; });
+  const correct = chosen === q.correct;
+  if (correct) {
+    btn.classList.add("correct");
+    quizScore++;
+  } else {
+    btn.classList.add("wrong");
+    document.querySelectorAll(".opt").forEach(function(b){
+      if (b.textContent.trim().includes(q.correct)) b.classList.add("correct");
+    });
+  }
+  quizResults.push({ f: f, correct: correct });
+
+  const fb = document.getElementById("quizFeedback");
+  fb.className = "feedback " + (correct ? "correct" : "wrong");
+  fb.innerHTML = correct
+    ? "✓ Correct! Form " + f.num + " (" + f.pattern + ") → " + f.english
+    : "✗ The answer: " + q.correct;
+  fb.style.display = "block";
+  document.getElementById("quizNext").style.display = "block";
+}
+
+function nextQuiz() {
+  quizIdx++;
+  if (quizIdx >= QUESTIONS.length) showResults();
+  else showQuizQ();
+}
+
+// ─── RESULTS ─────────────────────────────────────────────────────────────
+function showResults() {
+  document.getElementById("mainArea").style.display = "none";
+  const r = document.getElementById("results");
+  r.style.display = "block";
+
+  const pct = quizScore / QUESTIONS.length;
+  document.getElementById("rScore").textContent = quizScore;
+  document.getElementById("rDenom").textContent = "out of " + QUESTIONS.length;
+
+  let msg, sub;
+  if (pct >= 0.9) { msg = "Mastered ✦"; sub = "You understand how the 10 forms work. Now try it with a new root."; }
+  else if (pct >= 0.7) { msg = "Strong grasp."; sub = "You've got the core patterns. A second pass will solidify it."; }
+  else if (pct >= 0.5) { msg = "Getting there."; sub = "The concept is forming — go back and re-read the shift explanations."; }
+  else { msg = "Keep at it."; sub = "These forms take time. Go through each card again slowly."; }
+
+  document.getElementById("rMsg").textContent = msg;
+  document.getElementById("rSub").textContent = sub;
+
+  const summary = document.getElementById("rSummary");
+  summary.innerHTML = "<div style='font-size:0.72em; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px;'>Form by Form</div>";
+  quizResults.forEach(function(r) {
+    const row = document.createElement("div");
+    row.className = "summary-row";
+    row.innerHTML =
+      '<span class="summary-form">Form ' + r.f.num + '</span>' +
+      '<span class="summary-arabic">' + r.f.arabic + '</span>' +
+      '<span class="summary-eng">' + r.f.english + '</span>' +
+      '<span class="' + (r.correct ? 'summary-check' : 'summary-x') + '">' + (r.correct ? '✓' : '✗') + '</span>';
+    summary.appendChild(row);
+  });
+}
+
+function restart() {
+  currentForm = 0;
+  unlockedForms = [0];
+  quizIdx = 0; quizScore = 0; quizResults = [];
+  document.getElementById("formStrip").style.display = "flex";
+  showTeach();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+showTeach();
+</script>
+</body>
+</html>

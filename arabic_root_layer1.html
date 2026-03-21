@@ -1,0 +1,2799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Arabic Root Explorer 🎮</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; text-align: center; background: #f9f7f2; color: #222; margin: 0; padding: 16px; }
+  h1 { color: #6b3a00; margin-bottom: 4px; }
+  .subtitle { color: #999; font-size: 0.9em; margin-bottom: 16px; }
+  #rootScreen { display: block; }
+  #rootGrid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 780px; margin: 0 auto 16px; }
+  .root-btn { font-size: 1.05em; min-width: 88px; padding: 8px 10px; cursor: pointer; border-radius: 8px; border: 1px solid #ccc; background: #fff; direction: rtl; line-height: 1.5; }
+  .root-btn:hover { background: #ffe8c0; border-color: #e07b00; }
+  .root-btn small { display: block; font-size: 0.52em; color: #999; direction: ltr; }
+  #searchBox { padding: 8px 14px; font-size: 1em; border-radius: 20px; border: 1px solid #ccc; width: 280px; margin-bottom: 12px; }
+  #derivativeScreen { display: none; max-width: 500px; margin: 0 auto; }
+  .deriv-row { display: flex; align-items: center; gap: 10px; margin: 6px auto; background: #fff; border-radius: 8px; padding: 8px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .arabic-word { font-size: 1.4em; font-weight: bold; direction: rtl; min-width: 90px; text-align: right; }
+  .english-meaning { color: #444; font-style: italic; flex: 1; text-align: left; font-size: 0.95em; }
+  .speak-sm { padding: 3px 8px; font-size: 1em; cursor: pointer; border-radius: 6px; border: 1px solid #ddd; background: #fafafa; }
+  .speak-sm:hover { background: #ffe8c0; }
+  #quizSection { max-width: 420px; margin: 0 auto; }
+  .quiz-word { font-size: 2.8em; font-weight: bold; direction: rtl; margin: 10px 0 6px; color: #3a1a00; }
+  .option-btn { display: block; width: 100%; max-width: 340px; margin: 7px auto; font-size: 1em; padding: 10px 14px; cursor: pointer; border-radius: 8px; border: 1px solid #ccc; background: #fff; text-align: center; }
+  .option-btn:hover:not(:disabled) { background: #ffe8c0; }
+  .option-btn:disabled { cursor: default; }
+  .feedback { font-size: 1.05em; margin: 10px 8px; padding: 10px 14px; border-radius: 8px; min-height: 30px; }
+  .feedback.correct { background: #d4edda; color: #155724; }
+  .feedback.wrong   { background: #f8d7da; color: #721c24; }
+  .back-btn, .replay-btn, .next-btn { padding: 8px 18px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 1em; cursor: pointer; }
+  .back-btn:hover, .replay-btn:hover, .next-btn:hover { background: #ffe8c0; }
+  .back-btn { margin-top: 14px; }
+  .next-btn { margin-top: 12px; }
+  .score-bar { font-size: 0.9em; color: #888; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<h1>Arabic Root Explorer 🎮</h1>
+<div class="subtitle">100 roots · fully offline · audio auto-plays each question</div>
+
+<div id="rootScreen">
+  <input id="searchBox" type="text" placeholder="🔍 Search roots or topics…" oninput="filterRoots(this.value)">
+  <div id="rootGrid"></div>
+</div>
+
+<div id="derivativeScreen">
+  <h2 id="selectedRoot"></h2>
+  <div id="derivativesList"></div>
+  <div id="quizSection"></div>
+  <button class="back-btn" onclick="goBack()">⬅ Back to all roots</button>
+</div>
+
+<script>
+const rootsData = [
+{
+"root": "ك ت ب",
+"topic": "writing",
+"derivatives": [
+{
+"word": "كَتَبَ",
+"meaning": "he wrote"
+},
+{
+"word": "يَكْتُبُ",
+"meaning": "he writes / is writing"
+},
+{
+"word": "كِتَابٌ",
+"meaning": "book"
+},
+{
+"word": "مَكْتَبٌ",
+"meaning": "office / desk"
+},
+{
+"word": "كَاتِبٌ",
+"meaning": "writer / author"
+}
+]
+},
+{
+"root": "د ر س",
+"topic": "studying",
+"derivatives": [
+{
+"word": "دَرَسَ",
+"meaning": "he studied"
+},
+{
+"word": "يَدْرُسُ",
+"meaning": "he studies"
+},
+{
+"word": "دَرْسٌ",
+"meaning": "lesson / class"
+},
+{
+"word": "مَدْرَسَةٌ",
+"meaning": "school"
+},
+{
+"word": "مُدَرِّسٌ",
+"meaning": "teacher"
+}
+]
+},
+{
+"root": "ع ل م",
+"topic": "knowledge",
+"derivatives": [
+{
+"word": "عَلِمَ",
+"meaning": "he knew / learned"
+},
+{
+"word": "يَعْلَمُ",
+"meaning": "he knows"
+},
+{
+"word": "عِلْمٌ",
+"meaning": "knowledge / science"
+},
+{
+"word": "عَالِمٌ",
+"meaning": "scholar / scientist"
+},
+{
+"word": "مَعْلُومٌ",
+"meaning": "well-known / known fact"
+}
+]
+},
+{
+"root": "ق و ل",
+"topic": "speaking",
+"derivatives": [
+{
+"word": "قَالَ",
+"meaning": "he said"
+},
+{
+"word": "يَقُولُ",
+"meaning": "he says"
+},
+{
+"word": "قَوْلٌ",
+"meaning": "saying / statement"
+},
+{
+"word": "مَقَالٌ",
+"meaning": "article / essay"
+},
+{
+"word": "قَائِلٌ",
+"meaning": "the one who speaks / speaker"
+}
+]
+},
+{
+"root": "ح ب ب",
+"topic": "love",
+"derivatives": [
+{
+"word": "أَحَبَّ",
+"meaning": "he loved"
+},
+{
+"word": "يُحِبُّ",
+"meaning": "he loves"
+},
+{
+"word": "حُبٌّ",
+"meaning": "love / affection"
+},
+{
+"word": "حَبِيبٌ",
+"meaning": "beloved / dear one"
+},
+{
+"word": "مَحْبُوبٌ",
+"meaning": "loved / popular"
+}
+]
+},
+{
+"root": "ف ع ل",
+"topic": "doing",
+"derivatives": [
+{
+"word": "فَعَلَ",
+"meaning": "he did / he acted"
+},
+{
+"word": "يَفْعَلُ",
+"meaning": "he does / is doing"
+},
+{
+"word": "فِعْلٌ",
+"meaning": "action / verb"
+},
+{
+"word": "فَاعِلٌ",
+"meaning": "doer / active agent"
+},
+{
+"word": "مَفْعُولٌ",
+"meaning": "done / object of action"
+}
+]
+},
+{
+"root": "ذ ه ب",
+"topic": "going",
+"derivatives": [
+{
+"word": "ذَهَبَ",
+"meaning": "he went"
+},
+{
+"word": "يَذْهَبُ",
+"meaning": "he goes"
+},
+{
+"word": "ذَهَابٌ",
+"meaning": "going / departure"
+},
+{
+"word": "مَذْهَبٌ",
+"meaning": "school of thought / doctrine"
+},
+{
+"word": "ذَهَبٌ",
+"meaning": "gold"
+}
+]
+},
+{
+"root": "ج ا ء",
+"topic": "coming",
+"derivatives": [
+{
+"word": "جَاءَ",
+"meaning": "he came"
+},
+{
+"word": "يَجِيءُ",
+"meaning": "he comes"
+},
+{
+"word": "مَجِيءٌ",
+"meaning": "arrival / coming"
+},
+{
+"word": "جَائِيٌ",
+"meaning": "one who comes / incoming"
+},
+{
+"word": "جِيءَ",
+"meaning": "it was brought / was summoned"
+}
+]
+},
+{
+"root": "س م ع",
+"topic": "hearing",
+"derivatives": [
+{
+"word": "سَمِعَ",
+"meaning": "he heard"
+},
+{
+"word": "يَسْمَعُ",
+"meaning": "he hears / listens"
+},
+{
+"word": "سَمَاعٌ",
+"meaning": "listening / hearing"
+},
+{
+"word": "سَامِعٌ",
+"meaning": "listener / hearer"
+},
+{
+"word": "مَسْمُوعٌ",
+"meaning": "heard / audible"
+}
+]
+},
+{
+"root": "ن ظ ر",
+"topic": "looking",
+"derivatives": [
+{
+"word": "نَظَرَ",
+"meaning": "he looked / gazed"
+},
+{
+"word": "يَنْظُرُ",
+"meaning": "he looks / watches"
+},
+{
+"word": "نَظْرَةٌ",
+"meaning": "a glance / a look"
+},
+{
+"word": "مَنْظَرٌ",
+"meaning": "view / scenery"
+},
+{
+"word": "نَظَّارَةٌ",
+"meaning": "eyeglasses / spectacles"
+}
+]
+},
+{
+"root": "أ ك ل",
+"topic": "eating",
+"derivatives": [
+{
+"word": "أَكَلَ",
+"meaning": "he ate"
+},
+{
+"word": "يَأْكُلُ",
+"meaning": "he eats"
+},
+{
+"word": "أَكْلٌ",
+"meaning": "eating / food"
+},
+{
+"word": "أَكَّالٌ",
+"meaning": "glutton / big eater"
+},
+{
+"word": "مَأْكَلٌ",
+"meaning": "food / something edible"
+}
+]
+},
+{
+"root": "ش ر ب",
+"topic": "drinking",
+"derivatives": [
+{
+"word": "شَرِبَ",
+"meaning": "he drank"
+},
+{
+"word": "يَشْرَبُ",
+"meaning": "he drinks"
+},
+{
+"word": "شَرَابٌ",
+"meaning": "drink / beverage"
+},
+{
+"word": "مَشْرُوبٌ",
+"meaning": "a drink / drinkable beverage"
+},
+{
+"word": "شَارِبٌ",
+"meaning": "drinker / moustache"
+}
+]
+},
+{
+"root": "ع م ل",
+"topic": "working",
+"derivatives": [
+{
+"word": "عَمِلَ",
+"meaning": "he worked"
+},
+{
+"word": "يَعْمَلُ",
+"meaning": "he works"
+},
+{
+"word": "عَمَلٌ",
+"meaning": "work / job / deed"
+},
+{
+"word": "عَامِلٌ",
+"meaning": "worker / laborer"
+},
+{
+"word": "مَعْمَلٌ",
+"meaning": "laboratory / factory"
+}
+]
+},
+{
+"root": "ر أ ي",
+"topic": "seeing/opinion",
+"derivatives": [
+{
+"word": "رَأَى",
+"meaning": "he saw"
+},
+{
+"word": "يَرَى",
+"meaning": "he sees"
+},
+{
+"word": "رَأْيٌ",
+"meaning": "opinion / view"
+},
+{
+"word": "رُؤْيَةٌ",
+"meaning": "vision / sight"
+},
+{
+"word": "مَرْئِيٌّ",
+"meaning": "visible / seen"
+}
+]
+},
+{
+"root": "و ص ل",
+"topic": "arriving",
+"derivatives": [
+{
+"word": "وَصَلَ",
+"meaning": "he arrived / he reached"
+},
+{
+"word": "يَصِلُ",
+"meaning": "he arrives / he reaches"
+},
+{
+"word": "وُصُولٌ",
+"meaning": "arrival / reaching"
+},
+{
+"word": "وَاصِلٌ",
+"meaning": "one who arrives / connector"
+},
+{
+"word": "مَوْصِلٌ",
+"meaning": "connector / junction"
+}
+]
+},
+{
+"root": "ب د أ",
+"topic": "beginning",
+"derivatives": [
+{
+"word": "بَدَأَ",
+"meaning": "he began / started"
+},
+{
+"word": "يَبْدَأُ",
+"meaning": "he begins / starts"
+},
+{
+"word": "بِدَايَةٌ",
+"meaning": "beginning / start"
+},
+{
+"word": "مَبْدَأٌ",
+"meaning": "principle / starting point"
+},
+{
+"word": "بَادِئٌ",
+"meaning": "one who begins / initiator"
+}
+]
+},
+{
+"root": "خ ل ص",
+"topic": "finishing",
+"derivatives": [
+{
+"word": "خَلَصَ",
+"meaning": "he finished / was freed"
+},
+{
+"word": "يَخْلُصُ",
+"meaning": "he finishes / is freed"
+},
+{
+"word": "خَلَاصٌ",
+"meaning": "salvation / freedom / conclusion"
+},
+{
+"word": "خَالِصٌ",
+"meaning": "pure / sincere / unadulterated"
+},
+{
+"word": "مُخَلِّصٌ",
+"meaning": "savior / liberator"
+}
+]
+},
+{
+"root": "س أ ل",
+"topic": "asking",
+"derivatives": [
+{
+"word": "سَأَلَ",
+"meaning": "he asked"
+},
+{
+"word": "يَسْأَلُ",
+"meaning": "he asks"
+},
+{
+"word": "سُؤَالٌ",
+"meaning": "question / inquiry"
+},
+{
+"word": "مَسْأَلَةٌ",
+"meaning": "issue / question / problem"
+},
+{
+"word": "سَائِلٌ",
+"meaning": "questioner / asker"
+}
+]
+},
+{
+"root": "ر د د",
+"topic": "replying",
+"derivatives": [
+{
+"word": "رَدَّ",
+"meaning": "he replied / he returned"
+},
+{
+"word": "يَرُدُّ",
+"meaning": "he replies / he returns"
+},
+{
+"word": "رَدٌّ",
+"meaning": "reply / response / rejection"
+},
+{
+"word": "رَدِيدٌ",
+"meaning": "echo / repeated sound"
+},
+{
+"word": "مَرْدُودٌ",
+"meaning": "returned / rejected / refuted"
+}
+]
+},
+{
+"root": "ش غ ل",
+"topic": "occupying",
+"derivatives": [
+{
+"word": "شَغَلَ",
+"meaning": "he occupied / kept busy"
+},
+{
+"word": "يَشْغَلُ",
+"meaning": "he occupies / keeps busy"
+},
+{
+"word": "شُغْلٌ",
+"meaning": "work / occupation / job"
+},
+{
+"word": "مَشْغُولٌ",
+"meaning": "busy / occupied"
+},
+{
+"word": "مَشْغَلٌ",
+"meaning": "workshop / workplace"
+}
+]
+},
+{
+"root": "ح ص ل",
+"topic": "obtaining",
+"derivatives": [
+{
+"word": "حَصَلَ",
+"meaning": "he obtained / it happened"
+},
+{
+"word": "يَحْصَلُ",
+"meaning": "he obtains / it happens"
+},
+{
+"word": "حُصُولٌ",
+"meaning": "obtaining / occurrence"
+},
+{
+"word": "حَاصِلٌ",
+"meaning": "result / outcome"
+},
+{
+"word": "مَحْصُولٌ",
+"meaning": "crop / yield / product"
+}
+]
+},
+{
+"root": "ب ح ث",
+"topic": "searching",
+"derivatives": [
+{
+"word": "بَحَثَ",
+"meaning": "he searched / researched"
+},
+{
+"word": "يَبْحَثُ",
+"meaning": "he searches / researches"
+},
+{
+"word": "بَحْثٌ",
+"meaning": "research / search / study"
+},
+{
+"word": "بَاحِثٌ",
+"meaning": "researcher / investigator"
+},
+{
+"word": "مَبْحَثٌ",
+"meaning": "subject of research / topic"
+}
+]
+},
+{
+"root": "و ج د",
+"topic": "finding",
+"derivatives": [
+{
+"word": "وَجَدَ",
+"meaning": "he found"
+},
+{
+"word": "يَجِدُ",
+"meaning": "he finds"
+},
+{
+"word": "وُجُودٌ",
+"meaning": "existence / presence"
+},
+{
+"word": "مَوْجُودٌ",
+"meaning": "existing / available / present"
+},
+{
+"word": "وَجْدٌ",
+"meaning": "intense feeling / ecstasy"
+}
+]
+},
+{
+"root": "ظ ه ر",
+"topic": "appearing",
+"derivatives": [
+{
+"word": "ظَهَرَ",
+"meaning": "he appeared / emerged"
+},
+{
+"word": "يَظْهَرُ",
+"meaning": "he appears / seems"
+},
+{
+"word": "ظُهُورٌ",
+"meaning": "appearance / emergence"
+},
+{
+"word": "ظَاهِرٌ",
+"meaning": "apparent / obvious / outer"
+},
+{
+"word": "ظَهْرٌ",
+"meaning": "back / rear / noon"
+}
+]
+},
+{
+"root": "د خ ل",
+"topic": "entering",
+"derivatives": [
+{
+"word": "دَخَلَ",
+"meaning": "he entered"
+},
+{
+"word": "يَدْخُلُ",
+"meaning": "he enters"
+},
+{
+"word": "دُخُولٌ",
+"meaning": "entry / entrance"
+},
+{
+"word": "دَاخِلٌ",
+"meaning": "inside / interior"
+},
+{
+"word": "مَدْخَلٌ",
+"meaning": "entrance / doorway / introduction"
+}
+]
+},
+{
+"root": "خ ر ج",
+"topic": "exiting",
+"derivatives": [
+{
+"word": "خَرَجَ",
+"meaning": "he exited / went out"
+},
+{
+"word": "يَخْرُجُ",
+"meaning": "he exits / goes out"
+},
+{
+"word": "خُرُوجٌ",
+"meaning": "exit / departure"
+},
+{
+"word": "خَارِجٌ",
+"meaning": "outside / external"
+},
+{
+"word": "مَخْرَجٌ",
+"meaning": "exit / way out / solution"
+}
+]
+},
+{
+"root": "ر ج ع",
+"topic": "returning",
+"derivatives": [
+{
+"word": "رَجَعَ",
+"meaning": "he returned"
+},
+{
+"word": "يَرْجِعُ",
+"meaning": "he returns"
+},
+{
+"word": "رُجُوعٌ",
+"meaning": "return / going back"
+},
+{
+"word": "رَاجِعٌ",
+"meaning": "returning / going back to"
+},
+{
+"word": "مَرْجِعٌ",
+"meaning": "reference / source / authority"
+}
+]
+},
+{
+"root": "ح م ل",
+"topic": "carrying",
+"derivatives": [
+{
+"word": "حَمَلَ",
+"meaning": "he carried / bore"
+},
+{
+"word": "يَحْمِلُ",
+"meaning": "he carries / bears"
+},
+{
+"word": "حِمْلٌ",
+"meaning": "load / burden / cargo"
+},
+{
+"word": "حَامِلٌ",
+"meaning": "carrier / pregnant / bearer"
+},
+{
+"word": "مَحْمَلٌ",
+"meaning": "litter / carrying frame / interpretation"
+}
+]
+},
+{
+"root": "س ك ن",
+"topic": "residing",
+"derivatives": [
+{
+"word": "سَكَنَ",
+"meaning": "he resided / settled / calmed"
+},
+{
+"word": "يَسْكُنُ",
+"meaning": "he lives / resides"
+},
+{
+"word": "سُكَّانٌ",
+"meaning": "residents / inhabitants / population"
+},
+{
+"word": "مَسْكَنٌ",
+"meaning": "home / residence / dwelling"
+},
+{
+"word": "سَاكِنٌ",
+"meaning": "resident / still / motionless"
+}
+]
+},
+{
+"root": "ف ت ح",
+"topic": "opening",
+"derivatives": [
+{
+"word": "فَتَحَ",
+"meaning": "he opened"
+},
+{
+"word": "يَفْتَحُ",
+"meaning": "he opens"
+},
+{
+"word": "فَتْحٌ",
+"meaning": "opening / conquest / victory"
+},
+{
+"word": "فَاتِحٌ",
+"meaning": "opener / conqueror"
+},
+{
+"word": "مِفْتَاحٌ",
+"meaning": "key"
+}
+]
+},
+{
+"root": "غ ل ق",
+"topic": "closing",
+"derivatives": [
+{
+"word": "غَلَقَ",
+"meaning": "he closed / locked"
+},
+{
+"word": "يُغْلِقُ",
+"meaning": "he closes / locks"
+},
+{
+"word": "غَلْقٌ",
+"meaning": "closing / locking"
+},
+{
+"word": "مُغْلَقٌ",
+"meaning": "closed / locked / sealed"
+},
+{
+"word": "إِغْلَاقٌ",
+"meaning": "closure / shutdown / locking"
+}
+]
+},
+{
+"root": "ح ف ظ",
+"topic": "memorizing",
+"derivatives": [
+{
+"word": "حَفِظَ",
+"meaning": "he memorized / preserved"
+},
+{
+"word": "يَحْفَظُ",
+"meaning": "he memorizes / preserves"
+},
+{
+"word": "حِفْظٌ",
+"meaning": "memorization / preservation"
+},
+{
+"word": "حَافِظٌ",
+"meaning": "memorizer / guardian / preserver"
+},
+{
+"word": "مَحْفُوظٌ",
+"meaning": "memorized / preserved / protected"
+}
+]
+},
+{
+"root": "ك ب ر",
+"topic": "growing",
+"derivatives": [
+{
+"word": "كَبِرَ",
+"meaning": "he grew up / became big"
+},
+{
+"word": "يَكْبَرُ",
+"meaning": "he grows / gets bigger"
+},
+{
+"word": "كَبِيرٌ",
+"meaning": "big / large / old / senior"
+},
+{
+"word": "أَكْبَرُ",
+"meaning": "bigger / greatest"
+},
+{
+"word": "تَكْبِيرٌ",
+"meaning": "magnification / saying Allahu Akbar"
+}
+]
+},
+{
+"root": "ص غ ر",
+"topic": "smallness",
+"derivatives": [
+{
+"word": "صَغُرَ",
+"meaning": "he became small / was young"
+},
+{
+"word": "يَصْغُرُ",
+"meaning": "he is small / gets smaller"
+},
+{
+"word": "صَغِيرٌ",
+"meaning": "small / young / little"
+},
+{
+"word": "أَصْغَرُ",
+"meaning": "smaller / youngest"
+},
+{
+"word": "تَصْغِيرٌ",
+"meaning": "diminution / miniaturization"
+}
+]
+},
+{
+"root": "ط و ر",
+"topic": "developing",
+"derivatives": [
+{
+"word": "طَوَّرَ",
+"meaning": "he developed / improved"
+},
+{
+"word": "يُطَوِّرُ",
+"meaning": "he develops / improves"
+},
+{
+"word": "طَوْرٌ",
+"meaning": "phase / stage / era"
+},
+{
+"word": "تَطْوِيرٌ",
+"meaning": "development / improvement"
+},
+{
+"word": "مُتَطَوِّرٌ",
+"meaning": "advanced / developed / evolved"
+}
+]
+},
+{
+"root": "ق د ر",
+"topic": "ability",
+"derivatives": [
+{
+"word": "قَدَرَ",
+"meaning": "he was able / he decreed"
+},
+{
+"word": "يَقْدِرُ",
+"meaning": "he is able / can"
+},
+{
+"word": "قُدْرَةٌ",
+"meaning": "ability / power / capability"
+},
+{
+"word": "قَدِيرٌ",
+"meaning": "capable / powerful / all-able"
+},
+{
+"word": "مُقَدَّرٌ",
+"meaning": "estimated / destined / valued"
+}
+]
+},
+{
+"root": "ن ج ح",
+"topic": "succeeding",
+"derivatives": [
+{
+"word": "نَجَحَ",
+"meaning": "he succeeded / passed"
+},
+{
+"word": "يَنْجَحُ",
+"meaning": "he succeeds"
+},
+{
+"word": "نَجَاحٌ",
+"meaning": "success / achievement"
+},
+{
+"word": "نَاجِحٌ",
+"meaning": "successful / passing"
+},
+{
+"word": "مَنْجَحٌ",
+"meaning": "means of success / path to achievement"
+}
+]
+},
+{
+"root": "ف ش ل",
+"topic": "failing",
+"derivatives": [
+{
+"word": "فَشِلَ",
+"meaning": "he failed"
+},
+{
+"word": "يَفْشَلُ",
+"meaning": "he fails"
+},
+{
+"word": "فَشَلٌ",
+"meaning": "failure / defeat"
+},
+{
+"word": "فَاشِلٌ",
+"meaning": "failing / unsuccessful / loser"
+},
+{
+"word": "إِفْشَالٌ",
+"meaning": "causing to fail / foiling"
+}
+]
+},
+{
+"root": "ز ي د",
+"topic": "increasing",
+"derivatives": [
+{
+"word": "زَادَ",
+"meaning": "he increased / added"
+},
+{
+"word": "يَزِيدُ",
+"meaning": "he increases / adds"
+},
+{
+"word": "زِيَادَةٌ",
+"meaning": "increase / addition / more"
+},
+{
+"word": "مَزِيدٌ",
+"meaning": "more / additional / extra"
+},
+{
+"word": "زَائِدٌ",
+"meaning": "extra / surplus / increasing"
+}
+]
+},
+{
+"root": "ن ق ص",
+"topic": "decreasing",
+"derivatives": [
+{
+"word": "نَقَصَ",
+"meaning": "he decreased / was lacking"
+},
+{
+"word": "يَنْقُصُ",
+"meaning": "he decreases / is lacking"
+},
+{
+"word": "نَقْصٌ",
+"meaning": "deficiency / shortage / decrease"
+},
+{
+"word": "نَاقِصٌ",
+"meaning": "incomplete / deficient / lacking"
+},
+{
+"word": "مَنْقُوصٌ",
+"meaning": "reduced / deficient / incomplete"
+}
+]
+},
+{
+"root": "ب ق ي",
+"topic": "remaining",
+"derivatives": [
+{
+"word": "بَقِيَ",
+"meaning": "he remained / stayed"
+},
+{
+"word": "يَبْقَى",
+"meaning": "he remains / stays"
+},
+{
+"word": "بَقَاءٌ",
+"meaning": "survival / continuity / permanence"
+},
+{
+"word": "بَاقٍ",
+"meaning": "remaining / surviving / permanent"
+},
+{
+"word": "بَقِيَّةٌ",
+"meaning": "remainder / remnant / rest"
+}
+]
+},
+{
+"root": "ت ر ك",
+"topic": "leaving",
+"derivatives": [
+{
+"word": "تَرَكَ",
+"meaning": "he left / abandoned"
+},
+{
+"word": "يَتْرُكُ",
+"meaning": "he leaves / abandons"
+},
+{
+"word": "تَرْكٌ",
+"meaning": "leaving / abandonment"
+},
+{
+"word": "تَارِكٌ",
+"meaning": "one who leaves / abandoner"
+},
+{
+"word": "مَتْرُوكٌ",
+"meaning": "abandoned / left behind / neglected"
+}
+]
+},
+{
+"root": "ب ن ي",
+"topic": "building",
+"derivatives": [
+{
+"word": "بَنَى",
+"meaning": "he built / constructed"
+},
+{
+"word": "يَبْنِي",
+"meaning": "he builds / constructs"
+},
+{
+"word": "بِنَاءٌ",
+"meaning": "building / construction / structure"
+},
+{
+"word": "بَانٍ",
+"meaning": "builder / constructor"
+},
+{
+"word": "مَبْنِيٌّ",
+"meaning": "built / constructed / based on"
+}
+]
+},
+{
+"root": "غ ي ر",
+"topic": "changing",
+"derivatives": [
+{
+"word": "غَيَّرَ",
+"meaning": "he changed / altered"
+},
+{
+"word": "يُغَيِّرُ",
+"meaning": "he changes / alters"
+},
+{
+"word": "تَغْيِيرٌ",
+"meaning": "change / alteration"
+},
+{
+"word": "غَيْرٌ",
+"meaning": "other than / non- / different"
+},
+{
+"word": "مُتَغَيِّرٌ",
+"meaning": "changed / variable / altered"
+}
+]
+},
+{
+"root": "ع و د",
+"topic": "returning",
+"derivatives": [
+{
+"word": "عَادَ",
+"meaning": "he returned / came back"
+},
+{
+"word": "يَعُودُ",
+"meaning": "he returns / comes back"
+},
+{
+"word": "عَوْدَةٌ",
+"meaning": "return / comeback"
+},
+{
+"word": "عَادَةٌ",
+"meaning": "habit / custom / routine"
+},
+{
+"word": "مُعْتَادٌ",
+"meaning": "accustomed / usual / habitual"
+}
+]
+},
+{
+"root": "ب ي ع",
+"topic": "selling",
+"derivatives": [
+{
+"word": "بَاعَ",
+"meaning": "he sold"
+},
+{
+"word": "يَبِيعُ",
+"meaning": "he sells"
+},
+{
+"word": "بَيْعٌ",
+"meaning": "sale / selling"
+},
+{
+"word": "بَائِعٌ",
+"meaning": "seller / vendor / salesperson"
+},
+{
+"word": "مَبِيعٌ",
+"meaning": "sold item / merchandise"
+}
+]
+},
+{
+"root": "ش ر ي",
+"topic": "buying",
+"derivatives": [
+{
+"word": "اشْتَرَى",
+"meaning": "he bought / purchased"
+},
+{
+"word": "يَشْتَرِي",
+"meaning": "he buys / purchases"
+},
+{
+"word": "شِرَاءٌ",
+"meaning": "purchase / buying"
+},
+{
+"word": "مُشْتَرٍ",
+"meaning": "buyer / purchaser / customer"
+},
+{
+"word": "مُشْتَرَيَاتٌ",
+"meaning": "purchases / bought items / shopping"
+}
+]
+},
+{
+"root": "ع ر ض",
+"topic": "offering",
+"derivatives": [
+{
+"word": "عَرَضَ",
+"meaning": "he offered / presented / displayed"
+},
+{
+"word": "يَعْرِضُ",
+"meaning": "he offers / presents / displays"
+},
+{
+"word": "عَرْضٌ",
+"meaning": "offer / display / presentation / width"
+},
+{
+"word": "عَارِضٌ",
+"meaning": "presenter / temporary / side"
+},
+{
+"word": "مَعْرِضٌ",
+"meaning": "exhibition / display / fair"
+}
+]
+},
+{
+"root": "ق ب ل",
+"topic": "accepting",
+"derivatives": [
+{
+"word": "قَبِلَ",
+"meaning": "he accepted / received"
+},
+{
+"word": "يَقْبَلُ",
+"meaning": "he accepts / receives"
+},
+{
+"word": "قَبُولٌ",
+"meaning": "acceptance / approval"
+},
+{
+"word": "قِبْلَةٌ",
+"meaning": "direction of prayer / qibla"
+},
+{
+"word": "مَقْبُولٌ",
+"meaning": "acceptable / admitted / approved"
+}
+]
+},
+{
+"root": "ر ف ض",
+"topic": "refusing",
+"derivatives": [
+{
+"word": "رَفَضَ",
+"meaning": "he refused / rejected"
+},
+{
+"word": "يَرْفُضُ",
+"meaning": "he refuses / rejects"
+},
+{
+"word": "رَفْضٌ",
+"meaning": "refusal / rejection"
+},
+{
+"word": "رَافِضٌ",
+"meaning": "one who refuses / rejector"
+},
+{
+"word": "مَرْفُوضٌ",
+"meaning": "refused / rejected / unacceptable"
+}
+]
+},
+{
+"root": "ح ق ق",
+"topic": "achieving",
+"derivatives": [
+{
+"word": "حَقَّقَ",
+"meaning": "he achieved / verified / investigated"
+},
+{
+"word": "يُحَقِّقُ",
+"meaning": "he achieves / verifies"
+},
+{
+"word": "تَحْقِيقٌ",
+"meaning": "investigation / achievement / verification"
+},
+{
+"word": "حَقِيقَةٌ",
+"meaning": "truth / reality / fact"
+},
+{
+"word": "حَقٌّ",
+"meaning": "right / truth / due"
+}
+]
+},
+{
+"root": "د ف ع",
+"topic": "pushing/paying",
+"derivatives": [
+{
+"word": "دَفَعَ",
+"meaning": "he pushed / paid"
+},
+{
+"word": "يَدْفَعُ",
+"meaning": "he pushes / pays"
+},
+{
+"word": "دَفْعٌ",
+"meaning": "pushing / payment"
+},
+{
+"word": "دَافِعٌ",
+"meaning": "motive / payer / one who pushes"
+},
+{
+"word": "مَدْفُوعٌ",
+"meaning": "paid / pushed / driven"
+}
+]
+},
+{
+"root": "ج م ع",
+"topic": "gathering",
+"derivatives": [
+{
+"word": "جَمَعَ",
+"meaning": "he gathered / collected"
+},
+{
+"word": "يَجْمَعُ",
+"meaning": "he gathers / collects"
+},
+{
+"word": "جَمْعٌ",
+"meaning": "gathering / collection / plural"
+},
+{
+"word": "جَامِعٌ",
+"meaning": "mosque / university / comprehensive"
+},
+{
+"word": "مَجْمُوعَةٌ",
+"meaning": "group / collection / set"
+}
+]
+},
+{
+"root": "ف ر ق",
+"topic": "separating",
+"derivatives": [
+{
+"word": "فَرَّقَ",
+"meaning": "he separated / divided"
+},
+{
+"word": "يُفَرِّقُ",
+"meaning": "he separates / divides"
+},
+{
+"word": "فَرْقٌ",
+"meaning": "difference / distinction / separation"
+},
+{
+"word": "فَرِيقٌ",
+"meaning": "team / group / faction"
+},
+{
+"word": "مُفَرَّقٌ",
+"meaning": "separated / dispersed / divided"
+}
+]
+},
+{
+"root": "ب د ل",
+"topic": "exchanging",
+"derivatives": [
+{
+"word": "بَدَّلَ",
+"meaning": "he exchanged / replaced / changed"
+},
+{
+"word": "يُبَدِّلُ",
+"meaning": "he exchanges / replaces"
+},
+{
+"word": "بَدَلٌ",
+"meaning": "substitute / replacement / instead"
+},
+{
+"word": "تَبْدِيلٌ",
+"meaning": "replacement / exchange / change"
+},
+{
+"word": "بَدِيلٌ",
+"meaning": "alternative / substitute / replacement"
+}
+]
+},
+{
+"root": "ق ي م",
+"topic": "value",
+"derivatives": [
+{
+"word": "قَامَ",
+"meaning": "he stood up / rose / performed"
+},
+{
+"word": "يَقُومُ",
+"meaning": "he stands / performs / rises"
+},
+{
+"word": "قِيمَةٌ",
+"meaning": "value / worth / price"
+},
+{
+"word": "قَيِّمٌ",
+"meaning": "valuable / guardian / upright"
+},
+{
+"word": "مُقَيِّمٌ",
+"meaning": "evaluator / assessor / appraiser"
+}
+]
+},
+{
+"root": "م ل ك",
+"topic": "owning",
+"derivatives": [
+{
+"word": "مَلَكَ",
+"meaning": "he owned / possessed / ruled"
+},
+{
+"word": "يَمْلِكُ",
+"meaning": "he owns / possesses / rules"
+},
+{
+"word": "مِلْكٌ",
+"meaning": "property / ownership / possession"
+},
+{
+"word": "مَلِكٌ",
+"meaning": "king / monarch / ruler"
+},
+{
+"word": "مَمْلَكَةٌ",
+"meaning": "kingdom / realm / monarchy"
+}
+]
+},
+{
+"root": "س ل م",
+"topic": "peace/safety",
+"derivatives": [
+{
+"word": "سَلِمَ",
+"meaning": "he was safe / unharmed"
+},
+{
+"word": "يَسْلَمُ",
+"meaning": "he is safe / survives"
+},
+{
+"word": "سَلَامٌ",
+"meaning": "peace / safety / greeting"
+},
+{
+"word": "سَالِمٌ",
+"meaning": "safe / unharmed / intact"
+},
+{
+"word": "مُسْلِمٌ",
+"meaning": "Muslim / one who submits to God"
+}
+]
+},
+{
+"root": "ح ر ب",
+"topic": "war",
+"derivatives": [
+{
+"word": "حَارَبَ",
+"meaning": "he fought / waged war"
+},
+{
+"word": "يُحَارِبُ",
+"meaning": "he fights / wages war"
+},
+{
+"word": "حَرْبٌ",
+"meaning": "war / battle / conflict"
+},
+{
+"word": "حَرْبِيٌّ",
+"meaning": "military / warlike / martial"
+},
+{
+"word": "مُحَارِبٌ",
+"meaning": "warrior / fighter / combatant"
+}
+]
+},
+{
+"root": "أ م ن",
+"topic": "security",
+"derivatives": [
+{
+"word": "أَمِنَ",
+"meaning": "he felt safe / trusted"
+},
+{
+"word": "يَأْمَنُ",
+"meaning": "he feels safe / trusts"
+},
+{
+"word": "أَمَانٌ",
+"meaning": "safety / security / trust"
+},
+{
+"word": "أَمِينٌ",
+"meaning": "trustworthy / honest / secretary-general"
+},
+{
+"word": "مُؤْمِنٌ",
+"meaning": "believer / faithful / one who has faith"
+}
+]
+},
+{
+"root": "ع ل ق",
+"topic": "hanging/relating",
+"derivatives": [
+{
+"word": "عَلَّقَ",
+"meaning": "he hung / commented / suspended"
+},
+{
+"word": "يُعَلِّقُ",
+"meaning": "he hangs / comments / suspends"
+},
+{
+"word": "عَلَاقَةٌ",
+"meaning": "relationship / connection / relevance"
+},
+{
+"word": "مُعَلَّقٌ",
+"meaning": "hung / suspended / pending"
+},
+{
+"word": "تَعْلِيقٌ",
+"meaning": "comment / annotation / suspension"
+}
+]
+},
+{
+"root": "و ف ق",
+"topic": "agreeing",
+"derivatives": [
+{
+"word": "وَافَقَ",
+"meaning": "he agreed / approved / coincided"
+},
+{
+"word": "يُوَافِقُ",
+"meaning": "he agrees / approves"
+},
+{
+"word": "مُوَافَقَةٌ",
+"meaning": "approval / agreement / consent"
+},
+{
+"word": "تَوْفِيقٌ",
+"meaning": "success / divine guidance / reconciliation"
+},
+{
+"word": "وِفَاقٌ",
+"meaning": "harmony / agreement / accord"
+}
+]
+},
+{
+"root": "ف و ض",
+"topic": "chaos",
+"derivatives": [
+{
+"word": "فَوَّضَ",
+"meaning": "he delegated / authorized / entrusted"
+},
+{
+"word": "يُفَوِّضُ",
+"meaning": "he delegates / authorizes"
+},
+{
+"word": "فَوْضَى",
+"meaning": "chaos / disorder / anarchy"
+},
+{
+"word": "تَفْوِيضٌ",
+"meaning": "delegation / authorization / empowerment"
+},
+{
+"word": "مُفَوَّضٌ",
+"meaning": "delegate / authorized / commissioner"
+}
+]
+},
+{
+"root": "ق ر ر",
+"topic": "deciding",
+"derivatives": [
+{
+"word": "قَرَّرَ",
+"meaning": "he decided / determined / confirmed"
+},
+{
+"word": "يُقَرِّرُ",
+"meaning": "he decides / determines"
+},
+{
+"word": "قَرَارٌ",
+"meaning": "decision / resolution / stability"
+},
+{
+"word": "تَقْرِيرٌ",
+"meaning": "report / statement / determination"
+},
+{
+"word": "مُقَرَّرٌ",
+"meaning": "decided / required / prescribed / curriculum"
+}
+]
+},
+{
+"root": "د ع م",
+"topic": "supporting",
+"derivatives": [
+{
+"word": "دَعَمَ",
+"meaning": "he supported / backed / propped"
+},
+{
+"word": "يَدْعَمُ",
+"meaning": "he supports / backs"
+},
+{
+"word": "دَعْمٌ",
+"meaning": "support / backing / subsidy"
+},
+{
+"word": "دَاعِمٌ",
+"meaning": "supporter / backer / pillar"
+},
+{
+"word": "مَدْعُومٌ",
+"meaning": "supported / subsidized / backed"
+}
+]
+},
+{
+"root": "ف ر ض",
+"topic": "imposing",
+"derivatives": [
+{
+"word": "فَرَضَ",
+"meaning": "he imposed / obligated"
+},
+{
+"word": "يَفْرِضُ",
+"meaning": "he imposes / obligates"
+},
+{
+"word": "فَرْضٌ",
+"meaning": "obligation / duty / religious duty"
+},
+{
+"word": "فَرِيضَةٌ",
+"meaning": "religious obligation / duty"
+},
+{
+"word": "مَفْرُوضٌ",
+"meaning": "imposed / obligatory / supposed"
+}
+]
+},
+{
+"root": "ع ق ب",
+"topic": "following",
+"derivatives": [
+{
+"word": "عَقَّبَ",
+"meaning": "he followed up / commented afterward"
+},
+{
+"word": "يُعَقِّبُ",
+"meaning": "he follows up / comments"
+},
+{
+"word": "عَقِبٌ",
+"meaning": "heel / aftermath / consequence"
+},
+{
+"word": "عُقُوبَةٌ",
+"meaning": "punishment / penalty / consequence"
+},
+{
+"word": "مُعَقِّبٌ",
+"meaning": "one who follows up / pursuer"
+}
+]
+},
+{
+"root": "ن ظ م",
+"topic": "organizing",
+"derivatives": [
+{
+"word": "نَظَّمَ",
+"meaning": "he organized / arranged / composed"
+},
+{
+"word": "يُنَظِّمُ",
+"meaning": "he organizes / arranges"
+},
+{
+"word": "نِظَامٌ",
+"meaning": "system / order / regime"
+},
+{
+"word": "تَنْظِيمٌ",
+"meaning": "organization / arrangement / regulation"
+},
+{
+"word": "مُنَظَّمٌ",
+"meaning": "organized / arranged / systematic"
+}
+]
+},
+{
+"root": "ح ك م",
+"topic": "ruling",
+"derivatives": [
+{
+"word": "حَكَمَ",
+"meaning": "he ruled / judged / governed"
+},
+{
+"word": "يَحْكُمُ",
+"meaning": "he rules / judges / governs"
+},
+{
+"word": "حُكْمٌ",
+"meaning": "rule / judgment / verdict / wisdom"
+},
+{
+"word": "حَاكِمٌ",
+"meaning": "ruler / judge / governor"
+},
+{
+"word": "مَحْكَمَةٌ",
+"meaning": "court / tribunal"
+}
+]
+},
+{
+"root": "د و ل",
+"topic": "state/nation",
+"derivatives": [
+{
+"word": "دَوَّلَ",
+"meaning": "he internationalized / made into a state"
+},
+{
+"word": "يُدَوِّلُ",
+"meaning": "he internationalizes"
+},
+{
+"word": "دَوْلَةٌ",
+"meaning": "state / country / nation"
+},
+{
+"word": "دَوْلِيٌّ",
+"meaning": "international / global"
+},
+{
+"word": "تَدَاوُلٌ",
+"meaning": "circulation / trading / rotation"
+}
+]
+},
+{
+"root": "ش ر ع",
+"topic": "law/starting",
+"derivatives": [
+{
+"word": "شَرَعَ",
+"meaning": "he started / legislated / enacted"
+},
+{
+"word": "يَشْرَعُ",
+"meaning": "he starts / legislates"
+},
+{
+"word": "شَرِيعَةٌ",
+"meaning": "Islamic law / divine law / sharia"
+},
+{
+"word": "مَشْرُوعٌ",
+"meaning": "project / legitimate / legal"
+},
+{
+"word": "تَشْرِيعٌ",
+"meaning": "legislation / lawmaking"
+}
+]
+},
+{
+"root": "س ي س",
+"topic": "politics",
+"derivatives": [
+{
+"word": "سَاسَ",
+"meaning": "he governed / managed / led"
+},
+{
+"word": "يَسُوسُ",
+"meaning": "he governs / manages / leads"
+},
+{
+"word": "سِيَاسَةٌ",
+"meaning": "politics / policy / management"
+},
+{
+"word": "سِيَاسِيٌّ",
+"meaning": "political / politician"
+},
+{
+"word": "مُسَيَّسٌ",
+"meaning": "politicized / politically managed"
+}
+]
+},
+{
+"root": "ت ع ا و ن",
+"topic": "cooperating",
+"derivatives": [
+{
+"word": "تَعَاوَنَ",
+"meaning": "they cooperated / collaborated"
+},
+{
+"word": "يَتَعَاوَنُ",
+"meaning": "they cooperate / collaborate"
+},
+{
+"word": "تَعَاوُنٌ",
+"meaning": "cooperation / collaboration"
+},
+{
+"word": "مُتَعَاوِنٌ",
+"meaning": "cooperative / collaborating / helpful"
+},
+{
+"word": "تَعَاوُنِيٌّ",
+"meaning": "cooperative / collaborative / joint"
+}
+]
+},
+{
+"root": "ص ر ع",
+"topic": "wrestling/conflict",
+"derivatives": [
+{
+"word": "صَرَعَ",
+"meaning": "he wrestled down / knocked down"
+},
+{
+"word": "يَصْرَعُ",
+"meaning": "he wrestles down / knocks down"
+},
+{
+"word": "صِرَاعٌ",
+"meaning": "conflict / struggle / wrestling"
+},
+{
+"word": "صَرَّاعٌ",
+"meaning": "wrestler / fighter"
+},
+{
+"word": "مَصْرُوعٌ",
+"meaning": "knocked down / overcome / epileptic"
+}
+]
+},
+{
+"root": "ط ل ع",
+"topic": "rising/appearing",
+"derivatives": [
+{
+"word": "طَلَعَ",
+"meaning": "he rose / appeared / came out"
+},
+{
+"word": "يَطْلُعُ",
+"meaning": "he rises / appears / comes out"
+},
+{
+"word": "طُلُوعٌ",
+"meaning": "rising / emergence / sunrise"
+},
+{
+"word": "مُطَّلِعٌ",
+"meaning": "informed / aware / knowledgeable"
+},
+{
+"word": "اطِّلَاعٌ",
+"meaning": "knowledge of / awareness / viewing"
+}
+]
+},
+{
+"root": "ن ز ل",
+"topic": "descending",
+"derivatives": [
+{
+"word": "نَزَلَ",
+"meaning": "he descended / came down / stayed"
+},
+{
+"word": "يَنْزِلُ",
+"meaning": "he descends / comes down"
+},
+{
+"word": "نُزُولٌ",
+"meaning": "descent / coming down / revelation"
+},
+{
+"word": "نَازِلٌ",
+"meaning": "descending / staying / affliction"
+},
+{
+"word": "مَنْزِلٌ",
+"meaning": "home / dwelling / station"
+}
+]
+},
+{
+"root": "و ض ع",
+"topic": "placing",
+"derivatives": [
+{
+"word": "وَضَعَ",
+"meaning": "he placed / put / established"
+},
+{
+"word": "يَضَعُ",
+"meaning": "he places / puts / establishes"
+},
+{
+"word": "وَضْعٌ",
+"meaning": "situation / condition / placement"
+},
+{
+"word": "مَوْضُوعٌ",
+"meaning": "topic / subject / placed / objective"
+},
+{
+"word": "وَاضِعٌ",
+"meaning": "one who places / founder / originator"
+}
+]
+},
+{
+"root": "س م ح",
+"topic": "allowing",
+"derivatives": [
+{
+"word": "سَمَحَ",
+"meaning": "he allowed / permitted"
+},
+{
+"word": "يَسْمَحُ",
+"meaning": "he allows / permits"
+},
+{
+"word": "سَمَاحٌ",
+"meaning": "tolerance / permission / generosity"
+},
+{
+"word": "سَمَاحَةٌ",
+"meaning": "tolerance / leniency / generosity"
+},
+{
+"word": "مَسْمُوحٌ",
+"meaning": "allowed / permitted / tolerated"
+}
+]
+},
+{
+"root": "م ن ع",
+"topic": "preventing",
+"derivatives": [
+{
+"word": "مَنَعَ",
+"meaning": "he prevented / forbade / blocked"
+},
+{
+"word": "يَمْنَعُ",
+"meaning": "he prevents / forbids / blocks"
+},
+{
+"word": "مَنْعٌ",
+"meaning": "prevention / prohibition / ban"
+},
+{
+"word": "مَانِعٌ",
+"meaning": "obstacle / preventing / objection"
+},
+{
+"word": "مَمْنُوعٌ",
+"meaning": "forbidden / prohibited / banned"
+}
+]
+},
+{
+"root": "ق ت ل",
+"topic": "killing",
+"derivatives": [
+{
+"word": "قَتَلَ",
+"meaning": "he killed / slew"
+},
+{
+"word": "يَقْتُلُ",
+"meaning": "he kills"
+},
+{
+"word": "قَتْلٌ",
+"meaning": "killing / murder / slaughter"
+},
+{
+"word": "قَاتِلٌ",
+"meaning": "killer / murderer / deadly"
+},
+{
+"word": "مَقْتُولٌ",
+"meaning": "killed / murdered / slain"
+}
+]
+},
+{
+"root": "ح م ي",
+"topic": "protecting",
+"derivatives": [
+{
+"word": "حَمَى",
+"meaning": "he protected / defended / shielded"
+},
+{
+"word": "يَحْمِي",
+"meaning": "he protects / defends"
+},
+{
+"word": "حِمَايَةٌ",
+"meaning": "protection / defense / patronage"
+},
+{
+"word": "حَامٍ",
+"meaning": "protector / defender / lawyer"
+},
+{
+"word": "مَحْمِيٌّ",
+"meaning": "protected / defended / shielded"
+}
+]
+},
+{
+"root": "ط م ح",
+"topic": "aspiring",
+"derivatives": [
+{
+"word": "طَمَحَ",
+"meaning": "he aspired / aimed high / was ambitious"
+},
+{
+"word": "يَطْمَحُ",
+"meaning": "he aspires / aims high"
+},
+{
+"word": "طُمُوحٌ",
+"meaning": "ambition / aspiration"
+},
+{
+"word": "طَامِحٌ",
+"meaning": "ambitious / aspiring / high-aiming"
+},
+{
+"word": "طَمُوحٌ",
+"meaning": "very ambitious / highly aspiring"
+}
+]
+},
+{
+"root": "ه د ف",
+"topic": "aiming/goal",
+"derivatives": [
+{
+"word": "هَدَفَ",
+"meaning": "he aimed / targeted"
+},
+{
+"word": "يَهْدِفُ",
+"meaning": "he aims / targets"
+},
+{
+"word": "هَدَفٌ",
+"meaning": "goal / target / aim"
+},
+{
+"word": "هَادِفٌ",
+"meaning": "purposeful / goal-oriented / meaningful"
+},
+{
+"word": "مُسْتَهْدَفٌ",
+"meaning": "targeted / aimed at"
+}
+]
+},
+{
+"root": "خ ط ط",
+"topic": "planning",
+"derivatives": [
+{
+"word": "خَطَّطَ",
+"meaning": "he planned / drew lines"
+},
+{
+"word": "يُخَطِّطُ",
+"meaning": "he plans / draws lines"
+},
+{
+"word": "خَطٌّ",
+"meaning": "line / handwriting / route"
+},
+{
+"word": "خُطَّةٌ",
+"meaning": "plan / strategy / scheme"
+},
+{
+"word": "تَخْطِيطٌ",
+"meaning": "planning / scheming / drawing lines"
+}
+]
+},
+{
+"root": "و ع د",
+"topic": "promising",
+"derivatives": [
+{
+"word": "وَعَدَ",
+"meaning": "he promised"
+},
+{
+"word": "يَعِدُ",
+"meaning": "he promises"
+},
+{
+"word": "وَعْدٌ",
+"meaning": "promise / pledge"
+},
+{
+"word": "وَاعِدٌ",
+"meaning": "promising / one who promises"
+},
+{
+"word": "مَوْعِدٌ",
+"meaning": "appointment / scheduled time / date"
+}
+]
+},
+{
+"root": "ب ي ن",
+"topic": "clarifying",
+"derivatives": [
+{
+"word": "بَيَّنَ",
+"meaning": "he clarified / explained"
+},
+{
+"word": "يُبَيِّنُ",
+"meaning": "he clarifies / explains"
+},
+{
+"word": "بَيَانٌ",
+"meaning": "statement / declaration / clarification"
+},
+{
+"word": "بَيِّنٌ",
+"meaning": "clear / evident / obvious"
+},
+{
+"word": "تِبْيَانٌ",
+"meaning": "clear explanation / elucidation"
+}
+]
+},
+{
+"root": "ع ل ن",
+"topic": "announcing",
+"derivatives": [
+{
+"word": "أَعْلَنَ",
+"meaning": "he announced / declared / publicized"
+},
+{
+"word": "يُعْلِنُ",
+"meaning": "he announces / declares"
+},
+{
+"word": "إِعْلَانٌ",
+"meaning": "announcement / advertisement / declaration"
+},
+{
+"word": "عَلَنِيٌّ",
+"meaning": "public / open / official"
+},
+{
+"word": "مُعْلَنٌ",
+"meaning": "announced / declared / publicized"
+}
+]
+},
+{
+"root": "س ب ب",
+"topic": "causing",
+"derivatives": [
+{
+"word": "سَبَّبَ",
+"meaning": "he caused / brought about"
+},
+{
+"word": "يُسَبِّبُ",
+"meaning": "he causes / brings about"
+},
+{
+"word": "سَبَبٌ",
+"meaning": "cause / reason / motive"
+},
+{
+"word": "بِسَبَبِ",
+"meaning": "because of / due to / on account of"
+},
+{
+"word": "مُسَبِّبٌ",
+"meaning": "cause / one who causes / instigator"
+}
+]
+},
+{
+"root": "ح د ث",
+"topic": "happening",
+"derivatives": [
+{
+"word": "حَدَثَ",
+"meaning": "it happened / occurred"
+},
+{
+"word": "يَحْدُثُ",
+"meaning": "it happens / occurs"
+},
+{
+"word": "حَدَثٌ",
+"meaning": "event / incident / occurrence"
+},
+{
+"word": "حَدِيثٌ",
+"meaning": "modern / new / speech / hadith"
+},
+{
+"word": "مُحَدِّثٌ",
+"meaning": "narrator / speaker / hadith scholar"
+}
+]
+},
+{
+"root": "ط ل ب",
+"topic": "requesting",
+"derivatives": [
+{
+"word": "طَلَبَ",
+"meaning": "he requested / sought / demanded"
+},
+{
+"word": "يَطْلُبُ",
+"meaning": "he requests / seeks / demands"
+},
+{
+"word": "طَلَبٌ",
+"meaning": "request / demand / order"
+},
+{
+"word": "طَالِبٌ",
+"meaning": "student / seeker / one who requests"
+},
+{
+"word": "مَطْلُوبٌ",
+"meaning": "requested / required / wanted"
+}
+]
+},
+{
+"root": "ع ط ى",
+"topic": "giving",
+"derivatives": [
+{
+"word": "أَعْطَى",
+"meaning": "he gave"
+},
+{
+"word": "يُعْطِي",
+"meaning": "he gives"
+},
+{
+"word": "عَطَاءٌ",
+"meaning": "giving / gift / generosity"
+},
+{
+"word": "مُعْطٍ",
+"meaning": "giver / one who gives / granting"
+},
+{
+"word": "مُعْطَيَاتٌ",
+"meaning": "data / given facts / givens"
+}
+]
+},
+{
+"root": "أ خ ذ",
+"topic": "taking",
+"derivatives": [
+{
+"word": "أَخَذَ",
+"meaning": "he took"
+},
+{
+"word": "يَأْخُذُ",
+"meaning": "he takes"
+},
+{
+"word": "أَخْذٌ",
+"meaning": "taking / seizing"
+},
+{
+"word": "آخِذٌ",
+"meaning": "one who takes / taker / holder"
+},
+{
+"word": "مَأْخُوذٌ",
+"meaning": "taken / seized / derived from"
+}
+]
+},
+{
+"root": "ع ي ش",
+"topic": "living",
+"derivatives": [
+{
+"word": "عَاشَ",
+"meaning": "he lived"
+},
+{
+"word": "يَعِيشُ",
+"meaning": "he lives"
+},
+{
+"word": "عَيْشٌ",
+"meaning": "life / living / livelihood"
+},
+{
+"word": "مَعِيشَةٌ",
+"meaning": "livelihood / means of living / living conditions"
+},
+{
+"word": "مُعَيِّشٌ",
+"meaning": "life-giving / supporting life"
+}
+]
+},
+{
+"root": "ق و م",
+"topic": "standing/people",
+"derivatives": [
+{
+"word": "قَامَ",
+"meaning": "he stood up / performed / rose"
+},
+{
+"word": "يَقُومُ",
+"meaning": "he stands / performs / rises"
+},
+{
+"word": "قَوْمٌ",
+"meaning": "people / nation / folk"
+},
+{
+"word": "قَوْمِيٌّ",
+"meaning": "national / nationalist"
+},
+{
+"word": "قِيَامَةٌ",
+"meaning": "resurrection / day of judgment"
+}
+]
+},
+{
+"root": "ك ش ف",
+"topic": "discovering",
+"derivatives": [
+{
+"word": "كَشَفَ",
+"meaning": "he discovered / revealed / uncovered"
+},
+{
+"word": "يَكْشِفُ",
+"meaning": "he discovers / reveals / uncovers"
+},
+{
+"word": "كَشْفٌ",
+"meaning": "discovery / revelation / uncovering"
+},
+{
+"word": "كَاشِفٌ",
+"meaning": "revealer / discoverer / detector"
+},
+{
+"word": "مَكْشُوفٌ",
+"meaning": "discovered / revealed / uncovered / exposed"
+}
+]
+},
+{
+"root": "ض ر ب",
+"topic": "hitting",
+"derivatives": [
+{
+"word": "ضَرَبَ",
+"meaning": "he hit / struck / multiplied"
+},
+{
+"word": "يَضْرِبُ",
+"meaning": "he hits / strikes"
+},
+{
+"word": "ضَرْبٌ",
+"meaning": "hitting / striking / type / kind"
+},
+{
+"word": "ضَارِبٌ",
+"meaning": "hitter / striker / one who beats"
+},
+{
+"word": "مَضْرُوبٌ",
+"meaning": "hit / struck / beaten / multiplied"
+}
+]
+},
+{
+"root": "ح ل ل",
+"topic": "analyzing",
+"derivatives": [
+{
+"word": "حَلَّلَ",
+"meaning": "he analyzed / broke down / dissolved"
+},
+{
+"word": "يُحَلِّلُ",
+"meaning": "he analyzes / breaks down"
+},
+{
+"word": "تَحْلِيلٌ",
+"meaning": "analysis / breakdown / dissolution"
+},
+{
+"word": "مُحَلِّلٌ",
+"meaning": "analyst / one who analyzes"
+},
+{
+"word": "مَحْلُولٌ",
+"meaning": "solution / dissolved / solved"
+}
+]
+},
+{
+"root": "ر س ل",
+"topic": "sending",
+"derivatives": [
+{
+"word": "أَرْسَلَ",
+"meaning": "he sent / dispatched"
+},
+{
+"word": "يُرْسِلُ",
+"meaning": "he sends / dispatches"
+},
+{
+"word": "رِسَالَةٌ",
+"meaning": "message / letter / mission / thesis"
+},
+{
+"word": "رَسُولٌ",
+"meaning": "messenger / prophet / envoy"
+},
+{
+"word": "مُرْسَلٌ",
+"meaning": "sent / dispatched / messenger"
+}
+]
+},
+{
+"root": "ذ ك ر",
+"topic": "remembering",
+"derivatives": [
+{
+"word": "ذَكَرَ",
+"meaning": "he remembered / mentioned"
+},
+{
+"word": "يَذْكُرُ",
+"meaning": "he remembers / mentions"
+},
+{
+"word": "ذِكْرٌ",
+"meaning": "remembrance / mention / praise of God"
+},
+{
+"word": "ذَاكِرَةٌ",
+"meaning": "memory / remembrance"
+},
+{
+"word": "تَذْكِيرٌ",
+"meaning": "reminder / reminding / masculine gender"
+}
+]
+},
+{
+"root": "س ع د",
+"topic": "happiness",
+"derivatives": [
+{
+"word": "سَعِدَ",
+"meaning": "he was happy / fortunate"
+},
+{
+"word": "يَسْعَدُ",
+"meaning": "he is happy / becomes happy"
+},
+{
+"word": "سَعَادَةٌ",
+"meaning": "happiness / joy / bliss"
+},
+{
+"word": "سَعِيدٌ",
+"meaning": "happy / joyful / fortunate"
+},
+{
+"word": "مَسْعُودٌ",
+"meaning": "fortunate / happy / blessed"
+}
+]
+}
+];
+
+let currentRoot = null;
+let score = { correct: 0, total: 0 };
+
+function speakArabic(word) {
+  const url = "https://translate.google.com/translate_tts?ie=UTF-8&q=" + encodeURIComponent(word) + "&tl=ar&client=tw-ob";
+  new Audio(url).play().catch(function(){});
+}
+
+function buildRootGrid() {
+  const grid = document.getElementById("rootGrid");
+  rootsData.forEach(function(root) {
+    const btn = document.createElement("button");
+    btn.className = "root-btn";
+    btn.dataset.search = root.root + " " + root.topic;
+    btn.innerHTML = root.root + "<small>" + root.topic + "</small>";
+    btn.onclick = function() { openRoot(root); };
+    grid.appendChild(btn);
+  });
+}
+
+function filterRoots(q) {
+  q = q.toLowerCase();
+  document.querySelectorAll(".root-btn").forEach(function(btn) {
+    btn.style.display = btn.dataset.search.toLowerCase().includes(q) ? "" : "none";
+  });
+}
+
+function openRoot(root) {
+  currentRoot = root;
+  score = { correct: 0, total: 0 };
+  document.getElementById("rootScreen").style.display = "none";
+  document.getElementById("derivativeScreen").style.display = "block";
+  document.getElementById("selectedRoot").textContent = "Root: " + root.root + "  (" + root.topic + ")";
+
+  const list = document.getElementById("derivativesList");
+  list.innerHTML = "<h3>Conjugated Forms &amp; English Meanings</h3>";
+
+  root.derivatives.forEach(function(d) {
+    const row = document.createElement("div");
+    row.className = "deriv-row";
+    const arabicSpan = document.createElement("span");
+    arabicSpan.className = "arabic-word";
+    arabicSpan.textContent = d.word;
+    const arrow = document.createElement("span");
+    arrow.style.color = "#bbb";
+    arrow.textContent = "→";
+    const engSpan = document.createElement("span");
+    engSpan.className = "english-meaning";
+    engSpan.textContent = d.meaning;
+    const speakBtn = document.createElement("button");
+    speakBtn.className = "speak-sm";
+    speakBtn.textContent = "🔊";
+    speakBtn.onclick = (function(w){ return function(){ speakArabic(w); }; })(d.word);
+    row.appendChild(arabicSpan);
+    row.appendChild(arrow);
+    row.appendChild(engSpan);
+    row.appendChild(speakBtn);
+    list.appendChild(row);
+  });
+
+  startQuiz();
+}
+
+function goBack() {
+  document.getElementById("derivativeScreen").style.display = "none";
+  document.getElementById("rootScreen").style.display = "block";
+}
+
+function startQuiz() {
+  const quiz = document.getElementById("quizSection");
+  quiz.innerHTML = "";
+
+  const correct = currentRoot.derivatives[Math.floor(Math.random() * currentRoot.derivatives.length)];
+
+  const hr = document.createElement("hr");
+  const scoreBar = document.createElement("div");
+  scoreBar.className = "score-bar";
+  scoreBar.textContent = "Score: " + score.correct + " / " + score.total;
+  const heading = document.createElement("h3");
+  heading.textContent = "🧠 What does this word mean?";
+  const wordDiv = document.createElement("div");
+  wordDiv.className = "quiz-word";
+  wordDiv.textContent = correct.word;
+  const replayBtn = document.createElement("button");
+  replayBtn.className = "replay-btn";
+  replayBtn.textContent = "🔊 Replay";
+  replayBtn.onclick = (function(w){ return function(){ speakArabic(w); }; })(correct.word);
+
+  quiz.appendChild(hr);
+  quiz.appendChild(scoreBar);
+  quiz.appendChild(heading);
+  quiz.appendChild(wordDiv);
+  quiz.appendChild(replayBtn);
+  quiz.appendChild(document.createElement("br"));
+  quiz.appendChild(document.createElement("br"));
+
+  const feedback = document.createElement("div");
+  feedback.className = "feedback";
+  quiz.appendChild(feedback);
+
+  const optionWrap = document.createElement("div");
+  const shuffled = currentRoot.derivatives.slice().sort(function(){ return Math.random() - 0.5; });
+
+  shuffled.forEach(function(opt) {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.textContent = opt.meaning;
+    btn.onclick = function() {
+      optionWrap.querySelectorAll("button").forEach(function(b){ b.disabled = true; });
+      score.total++;
+      if (opt.meaning === correct.meaning) {
+        score.correct++;
+        btn.style.background = "#90ee90";
+        feedback.className = "feedback correct";
+        feedback.textContent = "";
+        feedback.innerHTML = "✅ Correct!  " + correct.word + " = " + correct.meaning;
+      } else {
+        btn.style.background = "#ffb3b3";
+        feedback.className = "feedback wrong";
+        feedback.innerHTML = "❌ Not quite — " + correct.word + " means: " + correct.meaning;
+        optionWrap.querySelectorAll("button").forEach(function(b){
+          if (b.textContent === correct.meaning) b.style.background = "#90ee90";
+        });
+      }
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "next-btn";
+      nextBtn.textContent = "Next Question ➡";
+      nextBtn.onclick = startQuiz;
+      quiz.appendChild(nextBtn);
+    };
+    optionWrap.appendChild(btn);
+  });
+
+  quiz.appendChild(optionWrap);
+  setTimeout(function(){ speakArabic(correct.word); }, 350);
+}
+
+buildRootGrid();
+</script>
+</body>
+</html>

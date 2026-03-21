@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Arabic Word Patterns — Learn to See the Shape</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #0d1117;
+  --bg2:   #161b22;
+  --bg3:   #21262d;
+  --bg4:   #30363d;
+  --text:  #e6edf3;
+  --muted: #7d8590;
+  --soft:  #58a6ff;
+
+  --p1c: #ff7b72; --p1b: rgba(255,123,114,0.12); --p1d: rgba(255,123,114,0.3);
+  --p2c: #3fb950; --p2b: rgba(63,185,80,0.12);   --p2d: rgba(63,185,80,0.3);
+  --p3c: #79c0ff; --p3b: rgba(121,192,255,0.12); --p3d: rgba(121,192,255,0.3);
+  --p4c: #d2a8ff; --p4b: rgba(210,168,255,0.12); --p4d: rgba(210,168,255,0.3);
+  --p5c: #ffa657; --p5b: rgba(255,166,87,0.12);  --p5d: rgba(255,166,87,0.3);
+  --p6c: #a5d6a7; --p6b: rgba(165,214,167,0.12); --p6d: rgba(165,214,167,0.3);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg2); } ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+
+.page { max-width: 740px; margin: 0 auto; padding: 36px 20px 100px; }
+
+/* ─── NAV ─── */
+.nav { display: flex; gap: 6px; margin-bottom: 36px; background: var(--bg2); border-radius: 10px; padding: 4px; border: 1px solid var(--bg3); width: fit-content; }
+.nav-btn { padding: 8px 18px; border-radius: 7px; border: none; background: transparent; font-family: 'Nunito', sans-serif; font-size: 0.83em; font-weight: 600; color: var(--muted); cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; }
+.nav-btn.active { background: var(--bg3); color: var(--text); }
+
+/* ─── HEADER ─── */
+.hdr { margin-bottom: 40px; }
+.hdr h1 { font-family: 'Lora', serif; font-size: 2.2em; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+.hdr h1 em { font-style: normal; color: var(--muted); font-size: 0.7em; font-family: 'Nunito', sans-serif; font-weight: 300; display: block; margin-top: 4px; }
+.hdr p { font-size: 0.88em; color: var(--muted); line-height: 1.7; max-width: 560px; font-weight: 400; }
+
+/* ─── SHARED CARD ─── */
+.card { background: var(--bg2); border: 1px solid var(--bg3); border-radius: 14px; padding: 24px; margin-bottom: 20px; }
+.card-title { font-family: 'Lora', serif; font-size: 1.05em; font-weight: 600; margin-bottom: 6px; }
+.card-sub { font-size: 0.82em; color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
+
+/* ═══════════════════════════════════════════
+   PHASE 1 — ANATOMY (how to see the shape)
+═══════════════════════════════════════════ */
+#phaseAnatomy { display: block; }
+
+.anatomy-pattern {
+  margin-bottom: 36px;
+  border-left: 3px solid var(--bg3);
+  padding-left: 20px;
+  transition: border-color 0.3s;
+}
+.anatomy-pattern:hover { border-left-color: var(--bg4); }
+
+.ap-head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.ap-badge {
+  font-family: 'Lora', serif;
+  font-size: 1.8em;
+  direction: rtl;
+  padding: 8px 16px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  border: 1px solid;
+}
+.ap-meta { flex: 1; }
+.ap-role { font-size: 0.72em; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
+.ap-desc { font-size: 0.85em; color: var(--muted); line-height: 1.5; }
+
+/* The visual breakdown — highlight key letters */
+.shape-box {
+  background: var(--bg3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.shape-title { font-size: 0.68em; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; }
+.shape-word {
+  font-family: 'Lora', serif;
+  font-size: 3em;
+  direction: rtl;
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+.shape-word .root-letter { color: var(--muted); }
+.shape-word .key-letter  { font-weight: 700; } /* colored per pattern */
+
+.shape-legend { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 10px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75em; color: var(--muted); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* Hook box */
+.hook-box {
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border: 1px solid;
+  font-size: 0.85em;
+  line-height: 1.6;
+}
+.hook-label { font-size: 0.68em; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+
+/* Comparison strip — same root, different patterns */
+.compare-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.compare-card {
+  flex: 1; min-width: 120px;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid var(--bg3);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.compare-card:hover { transform: translateY(-2px); }
+.compare-card .cc-arabic { font-family: 'Lora', serif; font-size: 1.6em; direction: rtl; margin-bottom: 4px; }
+.compare-card .cc-pattern { font-size: 0.65em; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2px; }
+.compare-card .cc-eng { font-size: 0.75em; color: var(--muted); }
+
+/* Spotting exercise */
+.spot-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.spot-word {
+  font-family: 'Lora', serif;
+  font-size: 1.5em;
+  direction: rtl;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--bg3);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.spot-word:hover { border-color: var(--bg4); }
+.spot-word.revealed { border-color: currentColor; }
+.spot-tooltip {
+  font-size: 0.65em;
+  direction: ltr;
+  color: var(--muted);
+  display: block;
+  margin-top: 2px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 500;
+}
+
+/* word grid in study section */
+.words-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 12px; }
+.wt {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.18s;
+  border: 1px solid transparent;
+  position: relative;
+}
+.wt:hover { border-color: var(--bg4); transform: translateY(-1px); }
+.wt .wt-ar { font-family: 'Lora', serif; font-size: 1.6em; direction: rtl; line-height: 1.2; margin-bottom: 4px; }
+.wt .wt-tr { font-size: 0.68em; color: var(--muted); font-style: italic; margin-bottom: 3px; }
+.wt .wt-en { font-size: 0.78em; font-weight: 600; }
+.wt .wt-root { font-size: 0.65em; color: var(--muted); direction: rtl; margin-top: 3px; }
+.wt .wt-spk { position: absolute; top: 6px; right: 6px; font-size: 0.7em; opacity: 0; transition: opacity 0.2s; background: none; border: none; color: var(--muted); cursor: pointer; }
+.wt:hover .wt-spk { opacity: 1; }
+
+.begin-btn {
+  display: block; width: 100%; padding: 15px;
+  background: var(--text); color: var(--bg);
+  border: none; border-radius: 12px;
+  font-family: 'Lora', serif; font-size: 1.1em; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: all 0.2s; margin-top: 8px;
+}
+.begin-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════════
+   PHASE 2 — QUIZ
+═══════════════════════════════════════════ */
+#phaseQuiz { display: none; }
+
+.qprogress { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.qpbar { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.qpfill { height: 100%; background: var(--text); border-radius: 2px; transition: width 0.4s; }
+.qpctr { font-size: 0.75em; color: var(--muted); white-space: nowrap; }
+.qpscore { font-size: 0.78em; background: var(--bg3); border-radius: 14px; padding: 3px 12px; color: var(--text); font-weight: 600; }
+
+.qcard { background: var(--bg2); border: 1px solid var(--bg3); border-radius: 14px; padding: 26px; }
+.qt-label { font-size: 0.65em; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 12px; }
+
+/* Spot the key — show a word, ask what the highlighted letters signal */
+.q-big-word { font-family: 'Lora', serif; font-size: 3.4em; direction: rtl; text-align: center; line-height: 1.2; margin: 12px 0 6px; }
+.q-translit { text-align: center; font-size: 0.8em; color: var(--muted); font-style: italic; margin-bottom: 6px; }
+.q-hint { text-align: center; font-size: 0.82em; color: var(--muted); margin-bottom: 20px; }
+
+.q-opts { display: flex; flex-direction: column; gap: 8px; }
+.qopt {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 16px;
+  background: var(--bg3); border: 1px solid var(--bg4);
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif; font-size: 0.88em;
+  cursor: pointer; transition: all 0.18s; color: var(--text); text-align: left;
+}
+.qopt:hover:not(:disabled) { border-color: var(--text); background: var(--bg4); }
+.qopt:disabled { cursor: default; }
+.qopt .ql { width: 24px; height: 24px; border-radius: 6px; background: var(--bg4); border: 1px solid var(--muted); display: flex; align-items: center; justify-content: center; font-size: 0.72em; font-weight: 700; color: var(--muted); flex-shrink: 0; transition: all 0.18s; }
+.qopt.correct { background: var(--p2b); border-color: var(--p2d); color: var(--p2c); }
+.qopt.correct .ql { background: var(--p2c); border-color: var(--p2c); color: var(--bg); }
+.qopt.wrong { background: var(--p1b); border-color: var(--p1d); color: var(--p1c); }
+.qopt.wrong .ql { background: var(--p1c); border-color: var(--p1c); color: var(--bg); }
+
+/* compare two words */
+.q-compare-pair { display: flex; gap: 16px; justify-content: center; margin: 16px 0; flex-wrap: wrap; }
+.q-cword {
+  font-family: 'Lora', serif; font-size: 2.2em; direction: rtl;
+  padding: 12px 24px; border-radius: 10px; background: var(--bg3);
+  border: 2px solid transparent; text-align: center; min-width: 140px;
+  cursor: pointer; transition: all 0.2s;
+}
+.q-cword .cw-tr { font-size: 0.35em; direction: ltr; color: var(--muted); font-style: italic; display: block; margin-top: 2px; font-family: 'Nunito', sans-serif; }
+.q-cword.selected { border-color: currentColor; }
+.q-cword.correct { border-color: var(--p2c); background: var(--p2b); color: var(--p2c); }
+.q-cword.wrong { border-color: var(--p1c); background: var(--p1b); color: var(--p1c); }
+
+.qfeedback {
+  padding: 13px 16px; border-radius: 10px; font-size: 0.85em; line-height: 1.6;
+  margin-top: 14px; display: none; border: 1px solid;
+}
+.qfeedback.correct { background: var(--p2b); border-color: var(--p2d); color: var(--p2c); }
+.qfeedback.wrong { background: var(--p1b); border-color: var(--p1d); color: var(--p1c); }
+
+.qnext {
+  display: none; width: 100%; padding: 13px;
+  background: var(--bg3); border: 1px solid var(--bg4);
+  color: var(--text); border-radius: 10px;
+  font-family: 'Nunito', sans-serif; font-size: 0.92em; font-weight: 600;
+  cursor: pointer; margin-top: 12px; transition: all 0.2s; letter-spacing: 0.03em;
+}
+.qnext:hover { background: var(--bg4); }
+
+/* ═══════════════════════════════════════════
+   PHASE 3 — RESULTS
+═══════════════════════════════════════════ */
+#phaseResults { display: none; text-align: center; }
+.r-score { font-family: 'Lora', serif; font-size: 5.5em; font-weight: 700; color: var(--text); line-height: 1; }
+.r-denom { font-size: 1em; color: var(--muted); margin-bottom: 16px; }
+.r-msg { font-family: 'Lora', serif; font-size: 1.6em; margin-bottom: 6px; }
+.r-sub { font-size: 0.85em; color: var(--muted); margin-bottom: 32px; font-weight: 400; }
+.r-pat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: left; margin-bottom: 28px; }
+.rpc { background: var(--bg2); border: 1px solid var(--bg3); border-radius: 10px; padding: 12px; }
+.rpc-pat { font-family: 'Lora', serif; font-size: 1.2em; direction: rtl; margin-bottom: 2px; }
+.rpc-role { font-size: 0.65em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 8px; }
+.rpc-bar { height: 3px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.rpc-fill { height: 100%; border-radius: 2px; }
+.r-btns { display: flex; gap: 10px; max-width: 400px; margin: 0 auto; }
+.rbtn {
+  flex: 1; padding: 13px; border-radius: 10px;
+  font-family: 'Nunito', sans-serif; font-size: 0.92em; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em;
+}
+.rbtn-sec { background: var(--bg2); border: 1px solid var(--bg3); color: var(--text); }
+.rbtn-sec:hover { background: var(--bg3); }
+.rbtn-pri { background: var(--text); border: 1px solid var(--text); color: var(--bg); }
+.rbtn-pri:hover { opacity: 0.9; }
+
+@media(max-width:500px) {
+  .hdr h1 { font-size: 1.7em; }
+  .shape-word { font-size: 2.2em; }
+  .q-big-word { font-size: 2.4em; }
+  .words-grid { grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); }
+  .r-pat-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <h1>See the Shape <em>Arabic Word Patterns — أوزان — Layer 3</em></h1>
+  <p>Before you can use patterns you need to <em>see</em> them. This game teaches you exactly which letters to look at, why they signal what they signal, and how to tell patterns apart at a glance.</p>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" id="navLearn" onclick="showPhase('anatomy')">① Learn the Shapes</button>
+  <button class="nav-btn" id="navQuiz"  onclick="showPhase('quiz')">② Quiz</button>
+  <button class="nav-btn" id="navRes"   onclick="showPhase('results')" id="navRes">③ Results</button>
+</div>
+
+<!-- ══════════════════════════════════ ANATOMY ══════════════════════════════════ -->
+<div id="phaseAnatomy"></div>
+
+<!-- ══════════════════════════════════ QUIZ ══════════════════════════════════ -->
+<div id="phaseQuiz">
+  <div class="qprogress">
+    <div class="qpbar"><div class="qpfill" id="qpfill" style="width:0%"></div></div>
+    <span class="qpctr" id="qpctr">1 / 36</span>
+    <span class="qpscore" id="qpscore">0 / 0</span>
+  </div>
+  <div class="qcard" id="qcard"></div>
+  <div class="qfeedback" id="qfeedback"></div>
+  <button class="qnext" id="qnext" onclick="nextQ()">Next →</button>
+</div>
+
+<!-- ══════════════════════════════════ RESULTS ══════════════════════════════════ -->
+<div id="phaseResults">
+  <div class="r-score" id="rScore">-</div>
+  <div class="r-denom" id="rDenom">/ 36</div>
+  <div class="r-msg" id="rMsg"></div>
+  <div class="r-sub" id="rSub"></div>
+  <div class="r-pat-grid" id="rPatGrid"></div>
+  <div class="r-btns">
+    <button class="rbtn rbtn-sec" onclick="showPhase('anatomy')">← Review</button>
+    <button class="rbtn rbtn-pri" onclick="initQuiz()">Play Again 🔄</button>
+  </div>
+</div>
+
+</div><!-- /page -->
+<script>
+// ══════════════════════════════════════════════════
+// PATTERN DATA
+// ══════════════════════════════════════════════════
+const P = [
+  {
+    id:1, cls:"p1", color:"var(--p1c)", bg:"var(--p1b)", bdr:"var(--p1d)",
+    pattern:"فَاعِل", role:"The Doer", eng_role:"person doing the action",
+    hook:"Look for: long ا after the first root letter. That ā vowel is the doer's signature — كَاتِب، دَارِس، حَاكِم.",
+    howto:"Spot the ا between the 1st and 2nd root letter. If you see فَ▪ـاـ▪ِل — that gap with the long ā — it's a doer.",
+    keyLetters: ["ا"], // letters to highlight
+    specimen:"كَاتِب",
+    specimen_colored: [
+      {ch:"كَـ", type:"root"},
+      {ch:"ا",   type:"key"},
+      {ch:"تِـ", type:"root"},
+      {ch:"ب",   type:"root"},
+    ],
+    comparison:[
+      {arabic:"كَاتِب",  translit:"kātib",   pattern:"فَاعِل",   english:"writer"},
+      {arabic:"مَكْتَب", translit:"maktab",  pattern:"مَفْعَل",  english:"office"},
+      {arabic:"مَكْتُوب",translit:"maktūb",  pattern:"مَفْعُول", english:"written"},
+      {arabic:"كِتَاب",  translit:"kitāb",   pattern:"فِعَال",   english:"book"},
+    ],
+    spot_words:[
+      {arabic:"دَارِس",  is_this:true,  translit:"dāris",  english:"studier"},
+      {arabic:"مَدْرَسَة",is_this:false, translit:"madrasa",english:"school"},
+      {arabic:"عَامِل",  is_this:true,  translit:"āmil",   english:"worker"},
+      {arabic:"مَكْتُوب",is_this:false, translit:"maktūb", english:"written"},
+      {arabic:"قَارِئ",  is_this:true,  translit:"qāri'",  english:"reader"},
+      {arabic:"مَلْعَب", is_this:false, translit:"mal'ab", english:"stadium"},
+    ],
+    words:[
+      {ar:"كَاتِب",  tr:"kātib",  en:"writer",        root:"ك ت ب"},
+      {ar:"دَارِس",  tr:"dāris",  en:"studier",       root:"د ر س"},
+      {ar:"عَامِل",  tr:"āmil",   en:"worker",        root:"ع م ل"},
+      {ar:"حَاكِم",  tr:"ḥākim",  en:"ruler",         root:"ح ك م"},
+      {ar:"قَارِئ",  tr:"qāri'", en:"reader",        root:"ق ر أ"},
+      {ar:"سَامِع",  tr:"sāmi'", en:"listener",      root:"س م ع"},
+      {ar:"بَائِع",  tr:"bā'i'", en:"seller",        root:"ب ي ع"},
+      {ar:"طَالِب",  tr:"ṭālib",  en:"student/seeker",root:"ط ل ب"},
+      {ar:"فَاتِح",  tr:"fātiḥ",  en:"opener/conqueror",root:"ف ت ح"},
+      {ar:"نَاجِح",  tr:"nājiḥ",  en:"one who succeeds",root:"ن ج ح"},
+    ]
+  },
+  {
+    id:2, cls:"p2", color:"var(--p2c)", bg:"var(--p2b)", bdr:"var(--p2d)",
+    pattern:"مَفْعَل", role:"The Place", eng_role:"where the action happens",
+    hook:"Look for: مَ at the start + a plain short vowel in the middle (no ُو). The مَ prefix almost always means 'place of' or 'instrument for'.",
+    howto:"Start with مَ? Good. Now check the middle — if there's NO ُو after the middle letter, it's a place. مَدْرَسَة، مَكْتَب، مَطْبَخ.",
+    keyLetters:["م"],
+    specimen:"مَكْتَب",
+    specimen_colored:[
+      {ch:"مَـ", type:"key"},
+      {ch:"كْـ", type:"root"},
+      {ch:"تَـ", type:"root"},
+      {ch:"ب",   type:"root"},
+    ],
+    comparison:[
+      {arabic:"مَكْتَب", translit:"maktab",  pattern:"مَفْعَل",  english:"office/desk"},
+      {arabic:"مَكْتُوب",translit:"maktūb",  pattern:"مَفْعُول", english:"written"},
+      {arabic:"مَكْتَبَة",translit:"maktaba", pattern:"مَفْعَلَة",english:"library"},
+      {arabic:"كَاتِب",  translit:"kātib",   pattern:"فَاعِل",   english:"writer"},
+    ],
+    spot_words:[
+      {arabic:"مَطْبَخ",  is_this:true,  translit:"maṭbakh", english:"kitchen"},
+      {arabic:"مَكْتُوب", is_this:false, translit:"maktūb",  english:"written"},
+      {arabic:"مَسْجِد",  is_this:true,  translit:"masjid",  english:"mosque"},
+      {arabic:"كَاتِب",   is_this:false, translit:"kātib",   english:"writer"},
+      {arabic:"مَلْعَب",  is_this:true,  translit:"mal'ab",  english:"stadium"},
+      {arabic:"مَعْلُوم", is_this:false, translit:"ma'lūm",  english:"well-known"},
+    ],
+    words:[
+      {ar:"مَدْرَسَة",tr:"madrasa", en:"school",       root:"د ر س"},
+      {ar:"مَكْتَب",  tr:"maktab",  en:"office/desk",  root:"ك ت ب"},
+      {ar:"مَسْجِد",  tr:"masjid",  en:"mosque",       root:"س ج د"},
+      {ar:"مَلْعَب",  tr:"mal'ab",  en:"stadium",      root:"ل ع ب"},
+      {ar:"مَطْبَخ",  tr:"maṭbakh", en:"kitchen",      root:"ط ب خ"},
+      {ar:"مَخْرَج",  tr:"makhraj", en:"exit",         root:"خ ر ج"},
+      {ar:"مَدْخَل",  tr:"madkhal", en:"entrance",     root:"د خ ل"},
+      {ar:"مَسْكَن",  tr:"maskan",  en:"home/dwelling",root:"س ك ن"},
+      {ar:"مَنْظَر",  tr:"manẓar",  en:"view/scenery", root:"ن ظ ر"},
+      {ar:"مَطَار",   tr:"maṭār",   en:"airport",      root:"ط ي ر"},
+    ]
+  },
+  {
+    id:3, cls:"p3", color:"var(--p3c)", bg:"var(--p3b)", bdr:"var(--p3d)",
+    pattern:"مَفْعُول", role:"The Passive", eng_role:"something acted upon",
+    hook:"Look for: مَ at the start + ُو (a ū vowel) after the middle root letter. That ُو is the passive marker — مَكْتُوب، مَحْبُوب، مَمْنُوع.",
+    howto:"Starts with مَ — same as place. But now check the middle: do you see ُو after it? YES = passive/acted upon. NO = place. The ُو is everything.",
+    keyLetters:["م","و"],
+    specimen:"مَكْتُوب",
+    specimen_colored:[
+      {ch:"مَـ", type:"key"},
+      {ch:"كْـ", type:"root"},
+      {ch:"تُـ", type:"root"},
+      {ch:"وـ",  type:"key"},
+      {ch:"ب",   type:"root"},
+    ],
+    comparison:[
+      {arabic:"مَكْتُوب", translit:"maktūb",  pattern:"مَفْعُول", english:"written"},
+      {arabic:"مَكْتَب",  translit:"maktab",  pattern:"مَفْعَل",  english:"office"},
+      {arabic:"كَاتِب",   translit:"kātib",   pattern:"فَاعِل",   english:"writer"},
+      {arabic:"كِتَاب",   translit:"kitāb",   pattern:"فِعَال",   english:"book"},
+    ],
+    spot_words:[
+      {arabic:"مَحْبُوب", is_this:true,  translit:"maḥbūb",  english:"beloved"},
+      {arabic:"مَدْرَسَة", is_this:false, translit:"madrasa",  english:"school"},
+      {arabic:"مَمْنُوع", is_this:true,  translit:"mamnū'",  english:"forbidden"},
+      {arabic:"حَاكِم",   is_this:false, translit:"ḥākim",   english:"ruler"},
+      {arabic:"مَشْهُور", is_this:true,  translit:"mashhūr", english:"famous"},
+      {arabic:"مَسْجِد",  is_this:false, translit:"masjid",  english:"mosque"},
+    ],
+    words:[
+      {ar:"مَكْتُوب", tr:"maktūb",  en:"written/a letter",   root:"ك ت ب"},
+      {ar:"مَعْلُوم", tr:"ma'lūm",  en:"known/well-known",   root:"ع ل م"},
+      {ar:"مَحْبُوب", tr:"maḥbūb",  en:"beloved/popular",    root:"ح ب ب"},
+      {ar:"مَفْتُوح", tr:"maftūḥ",  en:"open/opened",        root:"ف ت ح"},
+      {ar:"مَمْنُوع", tr:"mamnū'", en:"forbidden/banned",   root:"م ن ع"},
+      {ar:"مَحْفُوظ", tr:"maḥfūẓ",  en:"memorized/preserved",root:"ح ف ظ"},
+      {ar:"مَرْفُوض", tr:"marfūḍ",  en:"rejected",           root:"ر ف ض"},
+      {ar:"مَقْبُول", tr:"maqbūl",  en:"accepted",           root:"ق ب ل"},
+      {ar:"مَشْهُور", tr:"mashhūr", en:"famous",             root:"ش ه ر"},
+      {ar:"مَجْنُون", tr:"majnūn",  en:"crazy/mad",          root:"ج ن ن"},
+    ]
+  },
+  {
+    id:4, cls:"p4", color:"var(--p4c)", bg:"var(--p4b)", bdr:"var(--p4d)",
+    pattern:"فِعَال", role:"The Object/Concept", eng_role:"a thing, tool, or concept from the action",
+    hook:"Look for: short i (كِسرة) on the first letter + long ا in the middle. This مolds abstract or concrete nouns — things that exist because of the action.",
+    howto:"First letter has a kasra (ِ) and there's a long ā in the middle. كِتَاب، نِظَام، حِسَاب. No مَ prefix — that's what separates it from places and passives.",
+    keyLetters:["ا"],
+    specimen:"كِتَاب",
+    specimen_colored:[
+      {ch:"كِـ", type:"key"},
+      {ch:"تَـ", type:"root"},
+      {ch:"ا",   type:"key"},
+      {ch:"ب",   type:"root"},
+    ],
+    comparison:[
+      {arabic:"كِتَاب",   translit:"kitāb",   pattern:"فِعَال",   english:"book (the thing)"},
+      {arabic:"كَاتِب",   translit:"kātib",   pattern:"فَاعِل",   english:"writer (the doer)"},
+      {arabic:"مَكْتَب",  translit:"maktab",  pattern:"مَفْعَل",  english:"office (the place)"},
+      {arabic:"مَكْتُوب", translit:"maktūb",  pattern:"مَفْعُول", english:"written (the result)"},
+    ],
+    spot_words:[
+      {arabic:"نِظَام",  is_this:true,  translit:"niẓām",   english:"system"},
+      {arabic:"مَكْتَب", is_this:false, translit:"maktab",  english:"office"},
+      {arabic:"حِسَاب",  is_this:true,  translit:"ḥisāb",   english:"account"},
+      {arabic:"مَحْبُوب",is_this:false, translit:"maḥbūb",  english:"beloved"},
+      {arabic:"خِطَاب",  is_this:true,  translit:"khiṭāb",  english:"speech"},
+      {arabic:"دَارِس",  is_this:false, translit:"dāris",   english:"studier"},
+    ],
+    words:[
+      {ar:"كِتَاب",  tr:"kitāb",   en:"book",                  root:"ك ت ب"},
+      {ar:"نِظَام",  tr:"niẓām",   en:"system/order",          root:"ن ظ م"},
+      {ar:"حِسَاب",  tr:"ḥisāb",   en:"account/calculation",   root:"ح س ب"},
+      {ar:"خِطَاب",  tr:"khiṭāb",  en:"speech/address",        root:"خ ط ب"},
+      {ar:"سِلَاح",  tr:"silāḥ",   en:"weapon",                root:"س ل ح"},
+      {ar:"جِهَاد",  tr:"jihād",   en:"struggle/striving",     root:"ج ه د"},
+      {ar:"صِيَام",  tr:"ṣiyām",   en:"fasting",               root:"ص و م"},
+      {ar:"قِيَام",  tr:"qiyām",   en:"standing/uprising",     root:"ق و م"},
+      {ar:"بِنَاء",  tr:"binā'",   en:"building/construction", root:"ب ن ي"},
+      {ar:"قِيَاس",  tr:"qiyās",   en:"measurement/analogy",   root:"ق ي س"},
+    ]
+  },
+  {
+    id:5, cls:"p5", color:"var(--p5c)", bg:"var(--p5b)", bdr:"var(--p5d)",
+    pattern:"فَعَّال", role:"The Intense Doer", eng_role:"professional or habitual doer",
+    hook:"Look for: doubled middle letter (shadda ّ) + long ا after it. That doubling + ā stretch = someone who does this constantly or professionally.",
+    howto:"Middle letter is doubled (has a shadda ّ) then a long ā follows. كَذَّاب، نَجَّار، خَبَّاز. Compare with فَاعِل — both are doers, but فَعَّال does it intensely or as a profession.",
+    keyLetters:["ّ","ا"],
+    specimen:"نَجَّار",
+    specimen_colored:[
+      {ch:"نَـ", type:"root"},
+      {ch:"جَّـ",type:"key"},
+      {ch:"ا",   type:"key"},
+      {ch:"ر",   type:"root"},
+    ],
+    comparison:[
+      {arabic:"نَجَّار",  translit:"najjār",  pattern:"فَعَّال",  english:"carpenter (profession)"},
+      {arabic:"نَاجِر",  translit:"nājir",   pattern:"فَاعِل",   english:"one who does carpentry (right now)"},
+      {arabic:"كَذَّاب",  translit:"kaḏḏāb",  pattern:"فَعَّال",  english:"chronic liar (habit)"},
+      {arabic:"كَاذِب",  translit:"kāḏib",   pattern:"فَاعِل",   english:"one who is lying (right now)"},
+    ],
+    spot_words:[
+      {arabic:"خَبَّاز",  is_this:true,  translit:"khabbāz", english:"baker"},
+      {arabic:"كَاتِب",  is_this:false, translit:"kātib",   english:"writer"},
+      {arabic:"رَسَّام",  is_this:true,  translit:"rassām",  english:"painter/artist"},
+      {arabic:"مَكْتُوب",is_this:false, translit:"maktūb",  english:"written"},
+      {arabic:"حَدَّاد",  is_this:true,  translit:"ḥaddād",  english:"blacksmith"},
+      {arabic:"نِظَام",  is_this:false, translit:"niẓām",   english:"system"},
+    ],
+    words:[
+      {ar:"نَجَّار",  tr:"najjār",   en:"carpenter",          root:"ن ج ر"},
+      {ar:"خَبَّاز",  tr:"khabbāz",  en:"baker",              root:"خ ب ز"},
+      {ar:"حَلَّاق",  tr:"ḥallāq",   en:"barber",             root:"ح ل ق"},
+      {ar:"رَسَّام",  tr:"rassām",   en:"painter/artist",     root:"ر س م"},
+      {ar:"حَدَّاد",  tr:"ḥaddād",   en:"blacksmith",         root:"ح د د"},
+      {ar:"كَذَّاب",  tr:"kaḏḏāb",   en:"chronic liar",       root:"ك ذ ب"},
+      {ar:"سَبَّاح",  tr:"sabbāḥ",   en:"swimmer",            root:"س ب ح"},
+      {ar:"عَطَّار",  tr:"'aṭṭār",   en:"perfumer",           root:"ع ط ر"},
+      {ar:"ضَحَّاك",  tr:"ḍaḥḥāk",   en:"one who laughs lots",root:"ض ح ك"},
+      {ar:"قَرَّاء",  tr:"qarrā'",   en:"avid reader",        root:"ق ر أ"},
+    ]
+  },
+  {
+    id:6, cls:"p6", color:"var(--p6c)", bg:"var(--p6b)", bdr:"var(--p6d)",
+    pattern:"مَفْعَلَة", role:"Abstract Place/Concept", eng_role:"abstract noun or collective place",
+    hook:"Look for: مَ at the start + ends in ة (ta marbuta). The ة ending softens and abstracts. مَدْرَسَة، مَمْلَكَة، مَحْكَمَة.",
+    howto:"Starts with مَ like the place pattern BUT ends with ة. That ة takes it from a physical place to an institution, concept, or abstract idea. مَكْتَب = office (physical desk). مَكْتَبَة = library (institution).",
+    keyLetters:["م","ة"],
+    specimen:"مَمْلَكَة",
+    specimen_colored:[
+      {ch:"مَـ", type:"key"},
+      {ch:"مْـ", type:"root"},
+      {ch:"لَـ", type:"root"},
+      {ch:"كَـ", type:"root"},
+      {ch:"ة",   type:"key"},
+    ],
+    comparison:[
+      {arabic:"مَكْتَبَة", translit:"maktaba",  pattern:"مَفْعَلَة", english:"library (institution)"},
+      {arabic:"مَكْتَب",   translit:"maktab",   pattern:"مَفْعَل",   english:"office/desk (physical)"},
+      {arabic:"مَمْلَكَة", translit:"mamlaka",  pattern:"مَفْعَلَة", english:"kingdom (abstract)"},
+      {arabic:"مَحْكَمَة", translit:"maḥkama",  pattern:"مَفْعَلَة", english:"court (institution)"},
+    ],
+    spot_words:[
+      {arabic:"مَمْلَكَة", is_this:true,  translit:"mamlaka",  english:"kingdom"},
+      {arabic:"مَطْبَخ",   is_this:false, translit:"maṭbakh",  english:"kitchen"},
+      {arabic:"مَسْأَلَة", is_this:true,  translit:"mas'ala",  english:"question/issue"},
+      {arabic:"مَكْتُوب",  is_this:false, translit:"maktūb",   english:"written"},
+      {arabic:"مَحْكَمَة", is_this:true,  translit:"maḥkama",  english:"court"},
+      {arabic:"نَجَّار",   is_this:false, translit:"najjār",   english:"carpenter"},
+    ],
+    words:[
+      {ar:"مَمْلَكَة", tr:"mamlaka",  en:"kingdom",           root:"م ل ك"},
+      {ar:"مَحْكَمَة", tr:"maḥkama",  en:"court/tribunal",    root:"ح ك م"},
+      {ar:"مَكْتَبَة", tr:"maktaba",  en:"library",           root:"ك ت ب"},
+      {ar:"مَسْأَلَة", tr:"mas'ala",  en:"question/issue",    root:"س أ ل"},
+      {ar:"مَعِيشَة",  tr:"ma'īsha",  en:"livelihood/living", root:"ع ي ش"},
+      {ar:"مَصْلَحَة", tr:"maṣlaḥa",  en:"interest/benefit",  root:"ص ل ح"},
+      {ar:"مَرْحَلَة", tr:"marḥala",  en:"stage/phase",       root:"ر ح ل"},
+      {ar:"مَصِيبَة",  tr:"muṣība",   en:"calamity/disaster", root:"ص و ب"},
+      {ar:"مَعْرِفَة", tr:"ma'rifa",  en:"knowledge/cognition",root:"ع ر ف"},
+      {ar:"مَوَدَّة",  tr:"mawadda",  en:"affection/fondness",root:"و د د"},
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════
+// BUILD ANATOMY (STUDY) PAGE
+// ══════════════════════════════════════════════════
+function buildAnatomy() {
+  const el = document.getElementById("phaseAnatomy");
+  el.innerHTML = "";
+
+  // Intro card: the big secret — مَ prefix rule
+  const intro = document.createElement("div");
+  intro.className = "card";
+  intro.innerHTML =
+    '<div class="card-title">The Master Key 🗝️</div>' +
+    '<div class="card-sub">Before learning each pattern, burn this into your memory — it decodes half of all Arabic nouns instantly:</div>' +
+    '<div style="background:var(--bg3);border-radius:10px;padding:16px;margin-bottom:12px;">' +
+      '<div style="font-size:0.72em;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">The مَ Prefix Rule</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">' +
+        '<div style="background:var(--bg2);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--p2d)">' +
+          '<div style="font-family:Lora,serif;font-size:1.5em;color:var(--p2c);direction:rtl;margin-bottom:4px;">مَفْعَل</div>' +
+          '<div style="font-size:0.72em;font-weight:700;color:var(--p2c);text-transform:uppercase;letter-spacing:0.06em;">Place</div>' +
+          '<div style="font-size:0.72em;color:var(--muted);margin-top:3px;">مَ + no ُو</div>' +
+        '</div>' +
+        '<div style="background:var(--bg2);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--p3d)">' +
+          '<div style="font-family:Lora,serif;font-size:1.5em;color:var(--p3c);direction:rtl;margin-bottom:4px;">مَفْعُول</div>' +
+          '<div style="font-size:0.72em;font-weight:700;color:var(--p3c);text-transform:uppercase;letter-spacing:0.06em;">Passive</div>' +
+          '<div style="font-size:0.72em;color:var(--muted);margin-top:3px;">مَ + ُو in middle</div>' +
+        '</div>' +
+        '<div style="background:var(--bg2);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--p6d)">' +
+          '<div style="font-family:Lora,serif;font-size:1.5em;color:var(--p6c);direction:rtl;margin-bottom:4px;">مَفْعَلَة</div>' +
+          '<div style="font-size:0.72em;font-weight:700;color:var(--p6c);text-transform:uppercase;letter-spacing:0.06em;">Abstract</div>' +
+          '<div style="font-size:0.72em;color:var(--muted);margin-top:3px;">مَ + ends ة</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size:0.78em;color:var(--muted);margin-top:10px;line-height:1.6;">These three all start with <span style="color:var(--text);">مَ</span>. The key is what comes AFTER it. The ُو in the middle, and the ة at the end, are what separate them.</div>' +
+    '</div>';
+  el.appendChild(intro);
+
+  P.forEach(function(p) {
+    const sec = document.createElement("div");
+    sec.className = "card";
+
+    // Header
+    sec.innerHTML =
+      '<div class="ap-head">' +
+        '<div class="ap-badge" style="background:' + p.bg + ';color:' + p.color + ';border-color:' + p.bdr + '">' + p.pattern + '</div>' +
+        '<div class="ap-meta">' +
+          '<div class="ap-role" style="color:' + p.color + '">' + p.role + '</div>' +
+          '<div class="ap-desc">' + p.eng_role + '</div>' +
+        '</div>' +
+      '</div>';
+
+    // Shape breakdown box
+    const shapeBox = document.createElement("div");
+    shapeBox.className = "shape-box";
+    shapeBox.style.borderLeft = "3px solid " + p.color;
+
+    let coloredWord = '';
+    p.specimen_colored.forEach(function(c) {
+      coloredWord += '<span class="' + (c.type === 'key' ? 'key-letter' : 'root-letter') + '" style="' + (c.type === 'key' ? 'color:' + p.color : '') + '">' + c.ch + '</span>';
+    });
+
+    shapeBox.innerHTML =
+      '<div class="shape-title">① What to look at — spot these letters</div>' +
+      '<div class="shape-word">' + coloredWord + '</div>' +
+      '<div style="text-align:center;font-size:0.78em;color:var(--muted);font-style:italic;margin-bottom:12px;">' + p.specimen + ' — ' + (p.words[0] ? p.words[0].en : '') + '</div>' +
+      '<div class="shape-legend">' +
+        '<div class="legend-item"><div class="legend-dot" style="background:' + p.color + '"></div><span style="color:' + p.color + '">Key pattern letters</span></div>' +
+        '<div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div><span>Root letters (vary per word)</span></div>' +
+      '</div>';
+    sec.appendChild(shapeBox);
+
+    // Memory hook
+    const hook = document.createElement("div");
+    hook.className = "hook-box";
+    hook.style.background = p.bg;
+    hook.style.borderColor = p.bdr;
+    hook.style.color = p.color;
+    hook.innerHTML =
+      '<div class="hook-label" style="color:' + p.color + '">② Memory Hook</div>' +
+      '<div style="color:var(--text)">' + p.hook + '</div>';
+    sec.appendChild(hook);
+
+    // How to tell apart
+    const howto = document.createElement("div");
+    howto.className = "hook-box";
+    howto.style.background = "var(--bg3)";
+    howto.style.borderColor = "var(--bg4)";
+    howto.innerHTML =
+      '<div class="hook-label" style="color:var(--muted)">③ How to distinguish it</div>' +
+      '<div style="color:var(--muted)">' + p.howto + '</div>';
+    sec.appendChild(howto);
+
+    // Same root comparison
+    const compHead = document.createElement("div");
+    compHead.style.cssText = "font-size:0.68em;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin:16px 0 10px;";
+    compHead.textContent = "④ Same root — different patterns (tap to hear)";
+    sec.appendChild(compHead);
+
+    const strip = document.createElement("div");
+    strip.className = "compare-strip";
+    p.comparison.forEach(function(c) {
+      const cc = document.createElement("div");
+      cc.className = "compare-card";
+      // find which pattern this is
+      const pp = P.find(function(x){ return x.pattern === c.pattern; });
+      const col = pp ? pp.color : "var(--muted)";
+      cc.style.borderColor = pp ? pp.bdr : "var(--bg3)";
+      cc.innerHTML =
+        '<div class="cc-arabic" style="color:' + col + '">' + c.arabic + '</div>' +
+        '<div class="cc-pattern" style="color:' + col + '">' + c.pattern + '</div>' +
+        '<div class="cc-eng">' + c.english + '</div>';
+      cc.onclick = function() { speak(c.arabic); };
+      strip.appendChild(cc);
+    });
+    sec.appendChild(strip);
+
+    // Spot the pattern exercise
+    const spotHead = document.createElement("div");
+    spotHead.style.cssText = "font-size:0.68em;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin:16px 0 8px;";
+    spotHead.textContent = "⑤ Tap words that follow " + p.pattern + " — tap again to reveal";
+    sec.appendChild(spotHead);
+
+    const spotRow = document.createElement("div");
+    spotRow.className = "spot-row";
+    p.spot_words.forEach(function(sw) {
+      const tile = document.createElement("div");
+      tile.className = "spot-word";
+      tile.style.color = p.color;
+      tile.dataset.revealed = "0";
+      tile.innerHTML = sw.arabic + '<span class="spot-tooltip" style="display:none"></span>';
+      tile.onclick = function() {
+        if (tile.dataset.revealed === "0") {
+          tile.dataset.revealed = "1";
+          const tip = tile.querySelector(".spot-tooltip");
+          if (sw.is_this) {
+            tile.style.borderColor = p.color;
+            tile.style.background = p.bg;
+            tip.textContent = "✓ " + p.pattern + " — " + sw.english;
+            tip.style.color = p.color;
+          } else {
+            tile.style.borderColor = "var(--p1c)";
+            tile.style.background = "var(--p1b)";
+            tip.textContent = "✗ Not this pattern — " + sw.english;
+            tip.style.color = "var(--p1c)";
+          }
+          tip.style.display = "block";
+          speak(sw.arabic);
+        }
+      };
+      spotRow.appendChild(tile);
+    });
+    sec.appendChild(spotRow);
+
+    // Word bank
+    const wbHead = document.createElement("div");
+    wbHead.style.cssText = "font-size:0.68em;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin:16px 0 8px;";
+    wbHead.textContent = "⑥ Full word bank — tap to hear";
+    sec.appendChild(wbHead);
+
+    const grid = document.createElement("div");
+    grid.className = "words-grid";
+    p.words.forEach(function(w) {
+      const t = document.createElement("div");
+      t.className = "wt";
+      t.style.borderColor = p.bdr;
+      t.innerHTML =
+        '<button class="wt-spk" onclick="event.stopPropagation();speak(\'' + w.ar + '\')">🔊</button>' +
+        '<div class="wt-ar" style="color:' + p.color + '">' + w.ar + '</div>' +
+        '<div class="wt-tr">' + w.tr + '</div>' +
+        '<div class="wt-en">' + w.en + '</div>' +
+        '<div class="wt-root">' + w.root + '</div>';
+      t.onclick = function() { speak(w.ar); };
+      grid.appendChild(t);
+    });
+    sec.appendChild(grid);
+
+    el.appendChild(sec);
+  });
+
+  const btn = document.createElement("button");
+  btn.className = "begin-btn";
+  btn.textContent = "I understand the shapes — Take the Quiz →";
+  btn.onclick = function() { showPhase('quiz'); };
+  el.appendChild(btn);
+}
+
+// ══════════════════════════════════════════════════
+// QUIZ ENGINE — 6 question types
+// ══════════════════════════════════════════════════
+let Qs = [], qIdx = 0, qScore = 0, pScores = {};
+
+function initQuiz() {
+  Qs = buildQuestions();
+  qIdx = 0; qScore = 0;
+  pScores = {};
+  P.forEach(function(p){ pScores[p.id] = {c:0, t:0}; });
+  document.getElementById("qpfill").style.width = "0%";
+  document.getElementById("qpctr").textContent = "1 / " + Qs.length;
+  document.getElementById("qpscore").textContent = "0 / 0";
+  showPhase('quiz');
+  showQ();
+}
+
+function buildQuestions() {
+  const qs = [];
+  // For each pattern build 6 questions: 2 spot-the-pattern, 2 meaning, 2 compare-pair
+  P.forEach(function(p) {
+    // Q type 1: given word → which pattern? (4 choices)
+    p.words.slice(0,4).forEach(function(w, i) {
+      if (i < 2) qs.push({type:"identify", word:w, pattern:p});
+    });
+    // Q type 2: given word → pick meaning (4 choices)
+    p.words.slice(4,8).forEach(function(w, i) {
+      if (i < 2) qs.push({type:"meaning", word:w, pattern:p});
+    });
+    // Q type 3: two words shown, pick the فَاعِل / the مَفْعُول etc.
+    qs.push({type:"which", pattern:p});
+  });
+  return qs.sort(function(){ return Math.random()-0.5; });
+}
+
+function showQ() {
+  const q = Qs[qIdx];
+  const tot = Qs.length;
+  document.getElementById("qpfill").style.width = (qIdx/tot*100) + "%";
+  document.getElementById("qpctr").textContent = (qIdx+1) + " / " + tot;
+  document.getElementById("qfeedback").style.display = "none";
+  document.getElementById("qnext").style.display = "none";
+  document.getElementById("qnext").textContent = qIdx === tot-1 ? "See Results →" : "Next →";
+
+  if (q.type === "identify") buildIdentifyQ(q);
+  else if (q.type === "meaning") buildMeaningQ(q);
+  else buildWhichQ(q);
+
+  setTimeout(function(){ if(q.word) speak(q.word.ar); }, 300);
+}
+
+function buildIdentifyQ(q) {
+  const wrong = P.filter(function(p){ return p.id !== q.pattern.id; }).sort(function(){ return Math.random()-0.5; }).slice(0,3);
+  const opts = [q.pattern].concat(wrong).sort(function(){ return Math.random()-0.5; });
+  const letters = ["A","B","C","D"];
+
+  document.getElementById("qcard").innerHTML =
+    '<div class="qt-label">Identify the Pattern</div>' +
+    '<div class="q-big-word" style="color:' + q.pattern.color + '">' + q.word.ar + '</div>' +
+    '<div class="q-translit">' + q.word.tr + '</div>' +
+    '<div class="q-hint">Which pattern (وزن) does this word follow?</div>' +
+    '<div class="q-opts" id="qopts"></div>';
+
+  const wrap = document.getElementById("qopts");
+  opts.forEach(function(p, i) {
+    const btn = document.createElement("button");
+    btn.className = "qopt";
+    btn.innerHTML =
+      '<span class="ql">' + letters[i] + '</span>' +
+      '<span style="font-family:Lora,serif;font-size:1.2em;direction:rtl;color:' + p.color + ';margin-right:8px;">' + p.pattern + '</span>' +
+      '<span style="color:var(--muted);font-size:0.85em;">' + p.role + '</span>';
+    btn.onclick = function() { handleAnswer(p.id === q.pattern.id, q, "Pattern: " + q.pattern.pattern + " (" + q.pattern.role + ") → " + q.word.en, btn, "qopts", q.pattern.pattern); };
+    wrap.appendChild(btn);
+  });
+}
+
+function buildMeaningQ(q) {
+  const allWords = P.reduce(function(a,p){ return a.concat(p.words.map(function(w){return {w:w,p:p};})); },[]);
+  const wrong = allWords.filter(function(x){ return x.w.en !== q.word.en; }).sort(function(){return Math.random()-0.5;}).slice(0,3);
+  const opts = [{w:q.word, p:q.pattern}].concat(wrong).sort(function(){return Math.random()-0.5;});
+  const letters = ["A","B","C","D"];
+
+  document.getElementById("qcard").innerHTML =
+    '<div class="qt-label">Find the Meaning</div>' +
+    '<div class="q-big-word" style="color:' + q.pattern.color + '">' + q.word.ar + '</div>' +
+    '<div class="q-translit">' + q.word.tr + '</div>' +
+    '<div class="q-hint">Pattern: <span style="color:' + q.pattern.color + ';font-family:Lora,serif;">' + q.pattern.pattern + '</span> — ' + q.pattern.role + '</div>' +
+    '<div class="q-opts" id="qopts"></div>';
+
+  const wrap = document.getElementById("qopts");
+  opts.forEach(function(x, i) {
+    const btn = document.createElement("button");
+    btn.className = "qopt";
+    btn.innerHTML = '<span class="ql">' + letters[i] + '</span>' + x.w.en;
+    btn.onclick = function() { handleAnswer(x.w.en === q.word.en, q, q.word.ar + " = " + q.word.en, btn, "qopts", q.word.en); };
+    wrap.appendChild(btn);
+  });
+}
+
+function buildWhichQ(q) {
+  // Show two words: one matches the pattern, one doesn't
+  const correct_word = q.pattern.words[Math.floor(Math.random()*q.pattern.words.length)];
+  const other_p = P.filter(function(p){ return p.id !== q.pattern.id; })[Math.floor(Math.random()*(P.length-1))];
+  const wrong_word = other_p.words[Math.floor(Math.random()*other_p.words.length)];
+  const pair = Math.random() > 0.5 ? [correct_word, wrong_word] : [wrong_word, correct_word];
+
+  document.getElementById("qcard").innerHTML =
+    '<div class="qt-label">Which word follows this pattern?</div>' +
+    '<div style="text-align:center;margin:12px 0 8px;">' +
+      '<span style="font-family:Lora,serif;font-size:2em;color:' + q.pattern.color + ';">' + q.pattern.pattern + '</span>' +
+    '</div>' +
+    '<div style="text-align:center;font-size:0.82em;color:var(--muted);margin-bottom:20px;">' + q.pattern.role + ' — ' + q.pattern.eng_role + '</div>' +
+    '<div class="q-compare-pair" id="qpair"></div>';
+
+  const wrap = document.getElementById("qpair");
+  pair.forEach(function(w) {
+    const isCorrect = w.ar === correct_word.ar;
+    const btn = document.createElement("div");
+    btn.className = "q-cword";
+    btn.innerHTML = w.ar + '<span class="cw-tr">' + w.tr + '</span>';
+    btn.onclick = function() {
+      document.querySelectorAll(".q-cword").forEach(function(b){ b.onclick = null; });
+      if (isCorrect) {
+        btn.classList.add("correct");
+        btn.style.color = q.pattern.color;
+        qScore++;
+        pScores[q.pattern.id].c++;
+      } else {
+        btn.classList.add("wrong");
+        document.querySelectorAll(".q-cword").forEach(function(b){
+          if (b.querySelector(".cw-tr").textContent === correct_word.tr) { b.classList.add("correct"); b.style.color = q.pattern.color; }
+        });
+      }
+      pScores[q.pattern.id].t++;
+      document.getElementById("qpscore").textContent = qScore + " / " + (qIdx+1);
+      const fb = document.getElementById("qfeedback");
+      fb.className = "qfeedback " + (isCorrect ? "correct" : "wrong");
+      fb.textContent = (isCorrect ? "✓ " : "✗ ") + correct_word.ar + " follows " + q.pattern.pattern + " (" + q.pattern.role + ") — " + correct_word.en;
+      fb.style.display = "block";
+      document.getElementById("qnext").style.display = "block";
+      speak(correct_word.ar);
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+function handleAnswer(correct, q, hint, btn, wrapId, correctText) {
+  document.querySelectorAll("#" + wrapId + " .qopt").forEach(function(b){ b.disabled = true; });
+  pScores[q.pattern.id].t++;
+  if (correct) {
+    btn.classList.add("correct");
+    qScore++;
+    pScores[q.pattern.id].c++;
+  } else {
+    btn.classList.add("wrong");
+    document.querySelectorAll("#" + wrapId + " .qopt").forEach(function(b){
+      if (b.textContent.includes(correctText)) b.classList.add("correct");
+    });
+  }
+  document.getElementById("qpscore").textContent = qScore + " / " + (qIdx+1);
+  const fb = document.getElementById("qfeedback");
+  fb.className = "qfeedback " + (correct ? "correct" : "wrong");
+  fb.textContent = (correct ? "✓ " : "✗ ") + hint;
+  fb.style.display = "block";
+  document.getElementById("qnext").style.display = "block";
+}
+
+function nextQ() {
+  qIdx++;
+  if (qIdx >= Qs.length) showResults();
+  else showQ();
+}
+
+// ══════════════════════════════════════════════════
+// RESULTS
+// ══════════════════════════════════════════════════
+function showResults() {
+  showPhase('results');
+  const tot = Qs.length;
+  const pct = qScore / tot;
+  document.getElementById("rScore").textContent = qScore;
+  document.getElementById("rDenom").textContent = "/ " + tot;
+
+  let msg, sub;
+  if (pct >= 0.9) { msg = "Pattern Vision ✦"; sub = "You see the shapes. Now Layer 4 — broken plurals — awaits."; }
+  else if (pct >= 0.75) { msg = "Strong recognition."; sub = "Most patterns are clicking. One more round will lock them in."; }
+  else if (pct >= 0.55) { msg = "Getting there."; sub = "Go back and focus on the مَ prefix patterns — مَفْعَل vs مَفْعُول is the trickiest distinction."; }
+  else { msg = "Keep building."; sub = "Spend more time on the ③ Compare and ⑤ Spot exercises in the Learn tab."; }
+
+  document.getElementById("rMsg").textContent = msg;
+  document.getElementById("rSub").textContent = sub;
+
+  const grid = document.getElementById("rPatGrid");
+  grid.innerHTML = "";
+  P.forEach(function(p) {
+    const sc = pScores[p.id];
+    const pct2 = sc.t > 0 ? sc.c / sc.t : 0;
+    const c = document.createElement("div");
+    c.className = "rpc";
+    c.innerHTML =
+      '<div class="rpc-pat" style="color:' + p.color + '">' + p.pattern + '</div>' +
+      '<div class="rpc-role">' + p.role + '</div>' +
+      '<div class="rpc-bar"><div class="rpc-fill" style="width:' + (pct2*100) + '%;background:' + p.color + '"></div></div>';
+    grid.appendChild(c);
+  });
+}
+
+// ══════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════
+function showPhase(p) {
+  document.getElementById("phaseAnatomy").style.display  = p === "anatomy"  ? "block" : "none";
+  document.getElementById("phaseQuiz").style.display     = p === "quiz"     ? "block" : "none";
+  document.getElementById("phaseResults").style.display  = p === "results"  ? "block" : "none";
+  document.getElementById("navLearn").classList.toggle("active", p === "anatomy");
+  document.getElementById("navQuiz").classList.toggle("active",  p === "quiz" || p === "results");
+  document.getElementById("navRes").classList.toggle("active",   p === "results");
+  if (p === "quiz" && Qs.length === 0) initQuiz();
+  window.scrollTo(0,0);
+}
+
+function speak(text) {
+  const url = "https://translate.google.com/translate_tts?ie=UTF-8&q=" + encodeURIComponent(text) + "&tl=ar&client=tw-ob";
+  new Audio(url).play().catch(function(){});
+}
+
+// INIT
+buildAnatomy();
+</script>
+</body>
+</html>

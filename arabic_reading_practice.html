@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arabic Reading Practice | قِرَاءَةٌ عَرَبِيَّةٌ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E0D0B;
+    --surface: #19180F;
+    --card: #201F14;
+    --border: #2E2C1A;
+    --gold: #C8973A;
+    --gold-light: #E8B84B;
+    --teal: #2A7B6A;
+    --teal-light: #3AA98E;
+    --sand: #E2CDA0;
+    --sand-dim: #9E8B72;
+    --text: #EDE0C4;
+    --text-dim: #7A6E58;
+    --red: #C04A3A;
+    --green: #3A8A5A;
+    --level1: #C8973A;
+    --level2: #2A7B6A;
+    --level3: #6A3AC0;
+    --level4: #C0533A;
+    --font-arabic: 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+    --font-ui: 'IBM Plex Mono', monospace;
+    --r: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── BG TEXTURE ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(200,151,58,0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(42,123,106,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 16px 80px; }
+
+  /* ─── HEADER ─── */
+  header {
+    padding: 28px 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .logo-arabic {
+    font-family: var(--font-arabic);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0;
+    line-height: 1.1;
+    direction: rtl;
+  }
+
+  .logo-en {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .streak-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 10px 16px;
+  }
+
+  .streak-flame { font-size: 22px; }
+  .streak-info { text-align: right; }
+  .streak-num { font-size: 20px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .streak-label { font-size: 9px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; }
+
+  /* ─── LEVEL PILLS ─── */
+  .level-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .level-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    background: var(--surface);
+    color: var(--text-dim);
+    border-color: var(--border);
+  }
+
+  .level-pill.active { color: var(--bg); font-weight: 600; }
+  .level-pill[data-lvl="1"].active { background: var(--level1); border-color: var(--level1); }
+  .level-pill[data-lvl="2"].active { background: var(--level2); border-color: var(--level2); }
+  .level-pill[data-lvl="3"].active { background: var(--level3); border-color: var(--level3); }
+  .level-pill[data-lvl="4"].active { background: var(--level4); border-color: var(--level4); }
+  .level-pill:hover { border-color: var(--gold); color: var(--gold); }
+
+  .pill-count {
+    background: rgba(255,255,255,0.12);
+    border-radius: 100px;
+    padding: 1px 7px;
+    font-size: 10px;
+  }
+
+  /* ─── TABS ─── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .tab-btn {
+    padding: 10px 18px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* ─── PRACTICE TAB ─── */
+  .word-stage {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 32px 40px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .word-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(200,151,58,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .word-level-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+
+  .badge-1 { background: rgba(200,151,58,0.15); color: var(--level1); border: 1px solid rgba(200,151,58,0.3); }
+  .badge-2 { background: rgba(42,123,106,0.15); color: var(--teal-light); border: 1px solid rgba(42,123,106,0.3); }
+  .badge-3 { background: rgba(106,58,192,0.15); color: #A98AEA; border: 1px solid rgba(106,58,192,0.3); }
+  .badge-4 { background: rgba(192,83,58,0.15); color: #E8886A; border: 1px solid rgba(192,83,58,0.3); }
+
+  .word-counter {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .word-display {
+    font-family: var(--font-arabic);
+    font-size: 80px;
+    font-weight: 700;
+    color: var(--sand);
+    line-height: 1.3;
+    direction: rtl;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .word-display:hover { color: var(--gold-light); transform: scale(1.04); }
+  .word-display:active { transform: scale(0.97); }
+
+  .word-hint {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: -8px;
+  }
+
+  .word-letters {
+    font-family: var(--font-arabic);
+    font-size: 20px;
+    color: var(--text-dim);
+    direction: rtl;
+    letter-spacing: 4px;
+  }
+
+  /* ─── DIACRITIC LEGEND ─── */
+  .diacritic-legend {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .diac-tag {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .diac-char {
+    font-family: var(--font-arabic);
+    font-size: 18px;
+    color: var(--gold);
+  }
+
+  .diac-name { color: var(--text-dim); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ─── ACTION BUTTONS ─── */
+  .action-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: var(--r);
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+
+  .btn-hear {
+    background: var(--gold);
+    color: var(--bg);
+  }
+  .btn-hear:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-hear:active { transform: translateY(0); }
+
+  .btn-know {
+    background: var(--green);
+    color: #fff;
+  }
+  .btn-know:hover { background: #4AAA6A; transform: translateY(-1px); }
+
+  .btn-more {
+    background: var(--surface);
+    color: var(--sand-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-more:hover { border-color: var(--gold); color: var(--gold); }
+
+  .btn-skip {
+    background: var(--surface);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-skip:hover { border-color: var(--text-dim); }
+
+  /* ─── PROGRESS BAR ─── */
+  .progress-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); }
+  .progress-pct { font-size: 14px; font-weight: 700; color: var(--gold); }
+
+  .progress-bar-bg {
+    height: 6px;
+    background: var(--card);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  /* ─── ARTICLE TAB ─── */
+  .article-input-area {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .area-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .article-textarea {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 16px;
+    color: var(--text);
+    font-family: var(--font-arabic);
+    font-size: 20px;
+    line-height: 2;
+    resize: vertical;
+    min-height: 180px;
+    direction: rtl;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .article-textarea:focus { border-color: var(--gold); }
+  .article-textarea::placeholder { color: var(--text-dim); }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .meta-field {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: var(--font-ui);
+    outline: none;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .meta-field:focus { border-color: var(--gold); color: var(--text); }
+
+  .extract-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+    display: none;
+  }
+
+  .extract-stats.visible { display: grid; }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 12px 14px;
+    text-align: center;
+  }
+
+  .stat-num { font-size: 24px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); }
+
+  .stat-1 .stat-num { color: var(--level1); }
+  .stat-2 .stat-num { color: var(--teal-light); }
+  .stat-3 .stat-num { color: #A98AEA; }
+  .stat-4 .stat-num { color: #E8886A; }
+
+  /* ─── WORD BANK TAB ─── */
+  .bank-level-section { margin-bottom: 32px; }
+
+  .bank-level-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .bank-level-title {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .l1-color { color: var(--level1); }
+  .l2-color { color: var(--teal-light); }
+  .l3-color { color: #A98AEA; }
+  .l4-color { color: #E8886A; }
+
+  .bank-level-desc { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; }
+  .bank-count { margin-left: auto; font-size: 10px; color: var(--text-dim); }
+
+  .word-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .word-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: var(--font-arabic);
+    font-size: 26px;
+    color: var(--sand);
+    cursor: pointer;
+    transition: all 0.18s;
+    direction: rtl;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    position: relative;
+  }
+
+  .word-chip.mastered {
+    border-color: var(--green);
+    background: rgba(58,138,90,0.08);
+  }
+
+  .word-chip.mastered .chip-mark { color: var(--green); font-size: 10px; }
+
+  .word-chip:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200,151,58,0.15); }
+  .word-chip:active { transform: translateY(0); }
+
+  .word-chip .chip-src {
+    position: absolute;
+    top: -6px;
+    right: -4px;
+    font-size: 7px;
+    background: var(--teal);
+    color: #fff;
+    border-radius: 100px;
+    padding: 1px 5px;
+    font-family: var(--font-ui);
+    letter-spacing: 0.5px;
+    display: none;
+  }
+
+  .word-chip.from-article .chip-src { display: block; }
+
+  /* ─── PROGRESS TAB ─── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .big-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+    text-align: center;
+  }
+
+  .big-stat-num { font-size: 36px; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 4px; }
+  .big-stat-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+
+  .daily-log { }
+  .log-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 14px; }
+
+  .log-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    margin-bottom: 8px;
+  }
+
+  .log-date { font-size: 10px; color: var(--text-dim); min-width: 80px; }
+  .log-words { font-size: 13px; font-weight: 700; color: var(--sand); }
+  .log-bar-wrap { flex: 1; }
+  .log-bar-bg { height: 4px; background: var(--card); border-radius: 2px; overflow: hidden; }
+  .log-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; }
+  .log-source { font-size: 9px; color: var(--teal-light); letter-spacing: 0.5px; white-space: nowrap; }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-dim);
+  }
+
+  .empty-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  .empty-msg { font-size: 12px; letter-spacing: 1px; line-height: 1.8; }
+
+  /* ─── LEVEL COMPLETE BANNER ─── */
+  .level-complete {
+    background: linear-gradient(135deg, rgba(42,123,106,0.2), rgba(200,151,58,0.2));
+    border: 1px solid var(--gold);
+    border-radius: var(--r);
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .level-complete.show { display: block; }
+  .lc-title { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .lc-msg { font-size: 11px; color: var(--text-dim); }
+
+  /* ─── TRANSLATION BOX ─── */
+  .translation-box {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: -4px;
+  }
+
+  .translation-text {
+    font-size: 18px;
+    color: var(--teal-light);
+    letter-spacing: 0.5px;
+    font-style: italic;
+    transition: opacity 0.3s;
+  }
+
+  .translation-loading {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .btn-translate {
+    background: var(--surface);
+    color: var(--teal-light);
+    border: 1px solid var(--teal);
+  }
+  .btn-translate:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+  .btn-read-article {
+    background: var(--teal);
+    color: #fff;
+  }
+  .btn-read-article:hover { background: var(--teal-light); transform: translateY(-1px); }
+  .btn-read-article.reading { background: var(--red); }
+  .btn-read-article.reading:hover { background: #D05A4A; }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: var(--card);
+    border: 1px solid var(--gold);
+    border-radius: var(--r);
+    padding: 10px 20px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--gold);
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .word-display { font-size: 56px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .extract-stats { grid-template-columns: repeat(2, 1fr); }
+    .action-row { gap: 8px; }
+    .btn { padding: 10px 16px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-arabic">قِرَاءَةٌ عَرَبِيَّةٌ</div>
+      <div class="logo-en">Gulf Arabic Reading Practice</div>
+    </div>
+    <div class="streak-box">
+      <div class="streak-flame">🔥</div>
+      <div class="streak-info">
+        <div class="streak-num" id="streakNum">0</div>
+        <div class="streak-label">Day Streak</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- LEVEL SELECTOR -->
+  <div class="level-bar">
+    <div class="level-pill active" data-lvl="1" onclick="setLevel(1)">
+      Level 1 &nbsp;·&nbsp; 2–3 Letters
+      <span class="pill-count" id="cnt1">0</span>
+    </div>
+    <div class="level-pill" data-lvl="2" onclick="setLevel(2)">
+      Level 2 &nbsp;·&nbsp; 4–5 Letters
+      <span class="pill-count" id="cnt2">0</span>
+    </div>
+    <div class="level-pill" data-lvl="3" onclick="setLevel(3)">
+      Level 3 &nbsp;·&nbsp; 6–7 Letters
+      <span class="pill-count" id="cnt3">0</span>
+    </div>
+    <div class="level-pill" data-lvl="4" onclick="setLevel(4)">
+      Level 4 &nbsp;·&nbsp; 8+ Letters
+      <span class="pill-count" id="cnt4">0</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('practice', this)">▶ Practice</button>
+    <button class="tab-btn" onclick="switchTab('article', this)">＋ Add Article</button>
+    <button class="tab-btn" onclick="switchTab('bank', this)">📚 Word Bank</button>
+    <button class="tab-btn" onclick="switchTab('progress', this)">📊 Progress</button>
+  </div>
+
+  <!-- ════ PRACTICE TAB ════ -->
+  <div class="tab-pane active" id="tab-practice">
+
+    <div class="level-complete" id="levelComplete">
+      <div class="lc-title">🏆 Level Complete!</div>
+      <div class="lc-msg">You've mastered all words at this level. Move up when ready!</div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span class="progress-label" id="progressLabel">Level 1 Progress</span>
+        <span class="progress-pct" id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Word Stage -->
+    <div class="word-stage" id="wordStage">
+      <div class="word-level-badge badge-1" id="wordBadge">Level 1</div>
+      <div class="word-counter" id="wordCounter">1 / 0</div>
+      <div class="word-display" id="wordDisplay" onclick="speakCurrent()" title="Click to hear">—</div>
+      <div class="word-hint">Click the word or press HEAR to listen</div>
+
+      <!-- Diacritic legend -->
+      <div class="diacritic-legend">
+        <div class="diac-tag"><span class="diac-char">بَ</span><span class="diac-name">Fatha</span></div>
+        <div class="diac-tag"><span class="diac-char">بُ</span><span class="diac-name">Damma</span></div>
+        <div class="diac-tag"><span class="diac-char">بِ</span><span class="diac-name">Kasra</span></div>
+        <div class="diac-tag"><span class="diac-char">بّ</span><span class="diac-name">Shadda</span></div>
+        <div class="diac-tag"><span class="diac-char">بْ</span><span class="diac-name">Sukun</span></div>
+        <div class="diac-tag"><span class="diac-char">بٌ</span><span class="diac-name">Tanwin</span></div>
+      </div>
+
+      <!-- Translation display -->
+      <div class="translation-box" id="translationBox"></div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-row">
+      <button class="btn btn-hear" onclick="speakCurrent()">🔊 Hear It</button>
+      <button class="btn btn-translate" onclick="translateCurrent()">🔤 Translate</button>
+      <button class="btn btn-know" onclick="markKnown()">✓ I Know This</button>
+      <button class="btn btn-more" onclick="markPractice()">↺ Practice More</button>
+      <button class="btn btn-skip" onclick="nextWord()">→ Skip</button>
+    </div>
+
+    <div style="margin-top: 20px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); font-size: 10px; color: var(--text-dim); letter-spacing: 1px; line-height: 1.8;">
+      TIP: Click any word in the Word Bank tab to hear it instantly. 
+      Words marked ✓ are mastered. Add articles daily to expand your word bank automatically.
+    </div>
+  </div>
+
+  <!-- ════ ARTICLE TAB ════ -->
+  <div class="tab-pane" id="tab-article">
+
+    <div class="article-input-area">
+      <span class="area-label">Paste your Asharq Al-Awsat article below</span>
+      <textarea
+        class="article-textarea"
+        id="articleText"
+        placeholder="الصق نص المقالة هنا..."
+        rows="8"
+      ></textarea>
+      <div class="article-meta">
+        <input class="meta-field" id="articleTitle" type="text" placeholder="Article title (optional)">
+        <input class="meta-field" id="articleDate" type="date">
+      </div>
+
+      <!-- Extract stats -->
+      <div class="extract-stats" id="extractStats">
+        <div class="stat-card stat-1">
+          <div class="stat-num" id="ex1">0</div>
+          <div class="stat-label">Lvl 1 New Words</div>
+        </div>
+        <div class="stat-card stat-2">
+          <div class="stat-num" id="ex2">0</div>
+          <div class="stat-label">Lvl 2 New Words</div>
+        </div>
+        <div class="stat-card stat-3">
+          <div class="stat-num" id="ex3">0</div>
+          <div class="stat-label">Lvl 3 New Words</div>
+        </div>
+        <div class="stat-card stat-4">
+          <div class="stat-num" id="ex4">0</div>
+          <div class="stat-label">Lvl 4 New Words</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row" style="justify-content: flex-start;">
+      <button class="btn btn-hear" onclick="extractWords()">⬇ Extract & Add to Word Bank</button>
+      <button class="btn btn-read-article" id="readArticleBtn" onclick="toggleReadArticle()">🎧 Read Article</button>
+      <button class="btn btn-more" onclick="clearArticle()">✕ Clear</button>
+    </div>
+
+    <div style="margin-top: 24px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); font-size: 10px; color: var(--text-dim); line-height: 2; letter-spacing: 0.5px;">
+      HOW IT WORKS &nbsp;·&nbsp; Paste any Arabic text. The app automatically:<br>
+      → Detects Arabic words and categorises by letter count<br>
+      → Strips duplicates (won't re-add words already in your bank)<br>
+      → Tags new words with a "NEW" badge in the Word Bank<br>
+      → Updates practice queue for your active level immediately
+    </div>
+  </div>
+
+  <!-- ════ WORD BANK TAB ════ -->
+  <div class="tab-pane" id="tab-bank">
+    <div id="bankContent">
+      <!-- Filled by renderBank() -->
+    </div>
+  </div>
+
+  <!-- ════ PROGRESS TAB ════ -->
+  <div class="tab-pane" id="tab-progress">
+
+    <div class="stats-grid">
+      <div class="big-stat">
+        <div class="big-stat-num" id="totalWords">0</div>
+        <div class="big-stat-label">Total Words</div>
+      </div>
+      <div class="big-stat">
+        <div class="big-stat-num" id="masteredWords">0</div>
+        <div class="big-stat-label">Mastered</div>
+      </div>
+      <div class="big-stat">
+        <div class="big-stat-num" id="articlesAdded">0</div>
+        <div class="big-stat-label">Articles Added</div>
+      </div>
+    </div>
+
+    <div class="daily-log">
+      <div class="log-title">Daily Activity</div>
+      <div id="logRows"></div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  SEED DATA — Common Gulf/MSA newspaper words
+//  with full diacritics (harakat)
+// ═══════════════════════════════════════════════
+const SEED_WORDS = {
+  1: [
+    // 2-3 letter base words
+    { word: "مَنْ",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "فِي",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "هُوَ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "هِيَ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "لَا",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "مَا",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "مِنْ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "عَلَى", mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "إِلَى", mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "أَنَّ", mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "لَهُ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "بِهِ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "قَدْ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "لَمْ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "أَوْ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "نَحْنُ",mastered: false, practiceCount: 0, source: "seeded" },
+  ],
+  2: [
+    { word: "قَالَ",      mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "كَانَ",      mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "بَعْدَ",     mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "دَوْلَةٌ",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "رَئِيسٌ",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "سَلَامٌ",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "أَمْرٌ",    mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "وَقْتٌ",    mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "عَالَمٌ",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "حَرْبٌ",    mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "أَيْضًا",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "جَدِيدٌ",   mastered: false, practiceCount: 0, source: "seeded" },
+  ],
+  3: [
+    { word: "حُكُومَةٌ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "مُؤْتَمَرٌ", mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "اتِّفَاقٌ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "قِيَادَةٌ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "أَعْلَنَ",   mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "تَعَاوُنٌ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "مَسْؤُولٌ",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "مُبَادَرَةٌ",mastered: false, practiceCount: 0, source: "seeded" },
+  ],
+  4: [
+    { word: "الاجتماعات",    mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "الاقتصادية",    mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "الانتخابات",    mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "المؤتمرات",     mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "الاستراتيجية",  mastered: false, practiceCount: 0, source: "seeded" },
+    { word: "الديمقراطية",   mastered: false, practiceCount: 0, source: "seeded" },
+  ]
+};
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let wordBank = { 1: [], 2: [], 3: [], 4: [] }; // level → array of word objects
+let practiceQueue = [];
+let currentIdx = 0;
+let activeLevel = 1;
+let dailyLog = [];
+let streak = 0;
+let articleCount = 0;
+
+// ═══════════════════════════════════════════════
+//  STORAGE HELPERS — localStorage (persists when file is closed)
+// ═══════════════════════════════════════════════
+function save() {
+  try {
+    localStorage.setItem('arb_wb',           JSON.stringify(wordBank));
+    localStorage.setItem('arb_log',          JSON.stringify(dailyLog));
+    localStorage.setItem('arb_streak',       String(streak));
+    localStorage.setItem('arb_articleCount', String(articleCount));
+  } catch(e) {
+    console.warn('localStorage write failed', e);
+  }
+}
+
+async function load() {
+  try {
+    const wb  = localStorage.getItem('arb_wb');
+    if (wb)  wordBank    = JSON.parse(wb);
+    else     wordBank    = JSON.parse(JSON.stringify(SEED_WORDS));
+
+    const log = localStorage.getItem('arb_log');
+    if (log) dailyLog    = JSON.parse(log);
+
+    const str = localStorage.getItem('arb_streak');
+    if (str) streak      = parseInt(str) || 0;
+
+    const ac  = localStorage.getItem('arb_articleCount');
+    if (ac)  articleCount = parseInt(ac) || 0;
+
+    // Ensure all levels exist
+    for (let l = 1; l <= 4; l++) {
+      if (!wordBank[l]) wordBank[l] = JSON.parse(JSON.stringify(SEED_WORDS[l] || []));
+    }
+  } catch(e) {
+    wordBank = JSON.parse(JSON.stringify(SEED_WORDS));
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  ARABIC UTILITIES
+// ═══════════════════════════════════════════════
+function stripDiacritics(w) {
+  // Remove tashkeel (U+064B–U+065F, U+0670)
+  return w.replace(/[\u064B-\u065F\u0670]/g, '');
+}
+
+function baseLetterCount(w) {
+  const stripped = stripDiacritics(w);
+  // Remove alef lam
+  let s = stripped.replace(/^ال/, '');
+  return s.length;
+}
+
+function getLevel(w) {
+  const n = baseLetterCount(w);
+  if (n <= 3) return 1;
+  if (n <= 5) return 2;
+  if (n <= 7) return 3;
+  return 4;
+}
+
+function isArabic(w) {
+  return /[\u0600-\u06FF]{2,}/.test(w);
+}
+
+function normalizeWord(w) {
+  // Normalize alef variants
+  return w.replace(/[إأآ]/g, 'ا').replace(/ة$/, 'ه').replace(/ى$/, 'ي');
+}
+
+function wordExists(word, level) {
+  const norm = normalizeWord(stripDiacritics(word));
+  return wordBank[level].some(e => normalizeWord(stripDiacritics(e.word)) === norm);
+}
+
+// ═══════════════════════════════════════════════
+//  TTS
+// ═══════════════════════════════════════════════
+function speak(text) {
+  if (!window.speechSynthesis) { toast('TTS not available in this browser'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ar-SA';
+  u.rate = 0.75;
+  u.pitch = 1;
+
+  // Try to pick an Arabic voice
+  const voices = window.speechSynthesis.getVoices();
+  const arVoice = voices.find(v => v.lang.startsWith('ar'));
+  if (arVoice) u.voice = arVoice;
+
+  window.speechSynthesis.speak(u);
+}
+
+function speakCurrent() {
+  const w = getCurrentWord();
+  if (w) speak(w.word);
+}
+
+// ═══════════════════════════════════════════════
+//  PRACTICE QUEUE
+// ═══════════════════════════════════════════════
+function buildQueue() {
+  // Un-mastered first, then shuffle mastered in
+  const all = wordBank[activeLevel] || [];
+  const unmastered = all.filter(w => !w.mastered);
+  const mastered = all.filter(w => w.mastered);
+  practiceQueue = [...shuffle(unmastered), ...shuffle(mastered)];
+  currentIdx = 0;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getCurrentWord() {
+  return practiceQueue[currentIdx] || null;
+}
+
+function nextWord() {
+  currentIdx = (currentIdx + 1) % (practiceQueue.length || 1);
+  renderWord();
+}
+
+function markKnown() {
+  const w = getCurrentWord();
+  if (!w) return;
+  const entry = wordBank[activeLevel].find(e => e.word === w.word);
+  if (entry) { entry.mastered = true; entry.practiceCount++; }
+  logToday(w.word);
+  save();
+  toast('✓ Marked as mastered!');
+  nextWord();
+  renderAll();
+}
+
+function markPractice() {
+  const w = getCurrentWord();
+  if (w) {
+    const entry = wordBank[activeLevel].find(e => e.word === w.word);
+    if (entry) entry.practiceCount++;
+    logToday(w.word);
+    save();
+  }
+  nextWord();
+}
+
+// ═══════════════════════════════════════════════
+//  DAILY LOG
+// ═══════════════════════════════════════════════
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function logToday(word) {
+  const today = todayStr();
+  let entry = dailyLog.find(e => e.date === today);
+  if (!entry) {
+    entry = { date: today, words: [], articles: 0 };
+    dailyLog.unshift(entry);
+    if (dailyLog.length > 60) dailyLog.pop();
+    updateStreak();
+  }
+  if (!entry.words.includes(word)) entry.words.push(word);
+}
+
+function updateStreak() {
+  // Count consecutive days
+  let s = 0;
+  let checkDate = new Date();
+  for (let i = 0; i < 60; i++) {
+    const ds = checkDate.toISOString().slice(0, 10);
+    if (dailyLog.find(e => e.date === ds)) {
+      s++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else break;
+  }
+  streak = s;
+  document.getElementById('streakNum').textContent = streak;
+}
+
+// ═══════════════════════════════════════════════
+//  WORD EXTRACTION FROM ARTICLE
+// ═══════════════════════════════════════════════
+function extractWords() {
+  const text = document.getElementById('articleText').value;
+  if (!text.trim()) { toast('Please paste an article first'); return; }
+
+  const rawWords = text.match(/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]+/g) || [];
+  const newCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+
+  const seen = new Set();
+  rawWords.forEach(w => {
+    if (w.length < 2) return;
+    const norm = normalizeWord(stripDiacritics(w));
+    if (seen.has(norm)) return;
+    seen.add(norm);
+
+    const lvl = getLevel(w);
+    if (!wordExists(w, lvl)) {
+      wordBank[lvl].push({ word: w, mastered: false, practiceCount: 0, source: 'article' });
+      newCounts[lvl]++;
+    }
+  });
+
+  // Log article
+  const today = todayStr();
+  let logEntry = dailyLog.find(e => e.date === today);
+  if (!logEntry) { logEntry = { date: today, words: [], articles: 0 }; dailyLog.unshift(logEntry); }
+  logEntry.articles = (logEntry.articles || 0) + 1;
+  articleCount++;
+  updateStreak();
+  save();
+
+  // Show stats
+  document.getElementById('ex1').textContent = newCounts[1];
+  document.getElementById('ex2').textContent = newCounts[2];
+  document.getElementById('ex3').textContent = newCounts[3];
+  document.getElementById('ex4').textContent = newCounts[4];
+  document.getElementById('extractStats').classList.add('visible');
+
+  const total = newCounts[1] + newCounts[2] + newCounts[3] + newCounts[4];
+  toast(`✓ Added ${total} new words across all levels!`);
+
+  // Rebuild queue if currently on affected level
+  buildQueue();
+  renderAll();
+}
+
+function clearArticle() {
+  document.getElementById('articleText').value = '';
+  document.getElementById('articleTitle').value = '';
+  document.getElementById('extractStats').classList.remove('visible');
+}
+
+// ═══════════════════════════════════════════════
+//  TRANSLATION (MyMemory free API, no key needed)
+// ═══════════════════════════════════════════════
+let translationCache = {};
+
+async function translateCurrent() {
+  const w = getCurrentWord();
+  if (!w) return;
+  const word = stripDiacritics(w.word).trim();
+  const box = document.getElementById('translationBox');
+
+  // Cache hit
+  if (translationCache[word]) {
+    box.innerHTML = `<span class="translation-text">${translationCache[word]}</span>`;
+    return;
+  }
+
+  box.innerHTML = '<span class="translation-loading">Translating…</span>';
+  try {
+    const res = await fetch(
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=ar|en`
+    );
+    const data = await res.json();
+    const meaning = data?.responseData?.translatedText || 'Translation unavailable';
+    // Clean up ALL-CAPS machine artifacts
+    const clean = meaning.charAt(0).toUpperCase() + meaning.slice(1).toLowerCase();
+    translationCache[word] = clean;
+    box.innerHTML = `<span class="translation-text">"${clean}"</span>`;
+  } catch(e) {
+    box.innerHTML = `<span class="translation-text" style="color:var(--text-dim)">Network unavailable</span>`;
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  READ ARTICLE (TTS for full article text)
+// ═══════════════════════════════════════════════
+let isReadingArticle = false;
+
+function toggleReadArticle() {
+  const btn = document.getElementById('readArticleBtn');
+  if (isReadingArticle) {
+    window.speechSynthesis.cancel();
+    isReadingArticle = false;
+    btn.textContent = '🎧 Read Article';
+    btn.classList.remove('reading');
+    return;
+  }
+
+  const text = document.getElementById('articleText').value.trim();
+  if (!text) { toast('Paste an article first'); return; }
+
+  if (!window.speechSynthesis) { toast('TTS not available in this browser'); return; }
+  window.speechSynthesis.cancel();
+
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang  = 'ar-SA';
+  u.rate  = 0.75;
+  u.pitch = 1;
+
+  const voices = window.speechSynthesis.getVoices();
+  const arVoice = voices.find(v => v.lang.startsWith('ar'));
+  if (arVoice) u.voice = arVoice;
+
+  u.onstart = () => {
+    isReadingArticle = true;
+    btn.textContent = '⏹ Stop Reading';
+    btn.classList.add('reading');
+  };
+  u.onend = u.onerror = () => {
+    isReadingArticle = false;
+    btn.textContent = '🎧 Read Article';
+    btn.classList.remove('reading');
+  };
+
+  window.speechSynthesis.speak(u);
+}
+
+// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+function renderWord() {
+  const w = getCurrentWord();
+  const all = wordBank[activeLevel] || [];
+  const unmastered = all.filter(x => !x.mastered);
+
+  document.getElementById('wordCounter').textContent =
+    `${currentIdx + 1} / ${practiceQueue.length}`;
+
+  const lvlColors = ['badge-1','badge-2','badge-3','badge-4'];
+  const badge = document.getElementById('wordBadge');
+  badge.className = 'word-level-badge ' + lvlColors[activeLevel - 1];
+  badge.textContent = `Level ${activeLevel}`;
+
+  // Clear translation on word change
+  document.getElementById('translationBox').innerHTML = '';
+
+  if (!w) {
+    document.getElementById('wordDisplay').textContent = '—';
+    return;
+  }
+  document.getElementById('wordDisplay').textContent = w.word;
+
+  // Level complete?
+  const lcBanner = document.getElementById('levelComplete');
+  if (unmastered.length === 0 && all.length > 0) {
+    lcBanner.classList.add('show');
+  } else {
+    lcBanner.classList.remove('show');
+  }
+}
+
+function renderProgress() {
+  const all = wordBank[activeLevel] || [];
+  const mastered = all.filter(w => w.mastered).length;
+  const total = all.length || 1;
+  const pct = Math.round((mastered / total) * 100);
+  document.getElementById('progressLabel').textContent = `Level ${activeLevel} Progress — ${mastered} / ${total} mastered`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function renderCounts() {
+  for (let l = 1; l <= 4; l++) {
+    document.getElementById('cnt' + l).textContent = wordBank[l].length;
+  }
+}
+
+function renderBank() {
+  const levelLabels = {
+    1: { title: 'Level 1', desc: '2–3 letter base words', cls: 'l1-color' },
+    2: { title: 'Level 2', desc: '4–5 letter words', cls: 'l2-color' },
+    3: { title: 'Level 3', desc: '6–7 letter words', cls: 'l3-color' },
+    4: { title: 'Level 4', desc: '8+ letter words', cls: 'l4-color' },
+  };
+
+  let html = '';
+  for (let l = 1; l <= 4; l++) {
+    const words = wordBank[l] || [];
+    const lbl = levelLabels[l];
+    html += `
+      <div class="bank-level-section">
+        <div class="bank-level-header">
+          <div class="bank-level-title ${lbl.cls}">${lbl.title}</div>
+          <div class="bank-level-desc">${lbl.desc}</div>
+          <div class="bank-count">${words.length} words</div>
+        </div>
+        <div class="word-grid">
+    `;
+
+    if (words.length === 0) {
+      html += `<div class="empty-state" style="padding:20px;text-align:center;color:var(--text-dim);font-size:11px;">No words yet. Add an article to populate this level.</div>`;
+    } else {
+      words.forEach((w, i) => {
+        const masteredClass = w.mastered ? ' mastered' : '';
+        const articleClass = w.source === 'article' ? ' from-article' : '';
+        html += `
+          <div class="word-chip${masteredClass}${articleClass}" onclick="speak('${w.word.replace(/'/g,"\\'")}')">
+            <span class="chip-src">NEW</span>
+            ${w.word}
+            ${w.mastered ? '<span class="chip-mark">✓</span>' : ''}
+          </div>
+        `;
+      });
+    }
+
+    html += `</div></div>`;
+  }
+  document.getElementById('bankContent').innerHTML = html;
+}
+
+function renderProgress_tab() {
+  let total = 0, mastered = 0;
+  for (let l = 1; l <= 4; l++) {
+    total += wordBank[l].length;
+    mastered += wordBank[l].filter(w => w.mastered).length;
+  }
+  document.getElementById('totalWords').textContent = total;
+  document.getElementById('masteredWords').textContent = mastered;
+  document.getElementById('articlesAdded').textContent = articleCount;
+
+  // Daily log
+  const maxWords = Math.max(1, ...dailyLog.map(e => e.words.length));
+  let logHtml = '';
+  if (dailyLog.length === 0) {
+    logHtml = '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-msg">No activity yet.<br>Start practicing to see your daily log.</div></div>';
+  } else {
+    dailyLog.slice(0, 14).forEach(entry => {
+      const pct = Math.round((entry.words.length / maxWords) * 100);
+      const srcLabel = entry.articles ? `+${entry.articles} article${entry.articles > 1 ? 's' : ''}` : '';
+      logHtml += `
+        <div class="log-row">
+          <div class="log-date">${entry.date}</div>
+          <div class="log-words">${entry.words.length} words</div>
+          <div class="log-bar-wrap">
+            <div class="log-bar-bg">
+              <div class="log-bar-fill" style="width:${pct}%"></div>
+            </div>
+          </div>
+          <div class="log-source">${srcLabel}</div>
+        </div>
+      `;
+    });
+  }
+  document.getElementById('logRows').innerHTML = logHtml;
+}
+
+function renderAll() {
+  renderCounts();
+  renderProgress();
+  renderWord();
+}
+
+// ═══════════════════════════════════════════════
+//  TABS & LEVELS
+// ═══════════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+
+  if (name === 'bank') renderBank();
+  if (name === 'progress') renderProgress_tab();
+}
+
+function setLevel(lvl) {
+  activeLevel = lvl;
+  document.querySelectorAll('.level-pill').forEach(p => {
+    p.classList.toggle('active', parseInt(p.dataset.lvl) === lvl);
+  });
+  buildQueue();
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (document.getElementById('articleText') === document.activeElement) return;
+  if (e.key === ' ' || e.key === 'h') { e.preventDefault(); speakCurrent(); }
+  if (e.key === 'ArrowRight' || e.key === 'n') nextWord();
+  if (e.key === 'k') markKnown();
+  if (e.key === 'p') markPractice();
+});
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+async function init() {
+  await load();
+
+  // Merge seed data for levels that are empty
+  for (let l = 1; l <= 4; l++) {
+    if (wordBank[l].length === 0 && SEED_WORDS[l]) {
+      wordBank[l] = JSON.parse(JSON.stringify(SEED_WORDS[l]));
+    }
+  }
+
+  document.getElementById('streakNum').textContent = streak;
+
+  // Set today's date default
+  document.getElementById('articleDate').value = todayStr();
+
+  buildQueue();
+  renderAll();
+
+  // Load TTS voices (Chrome needs this async)
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+}
+
+init();
+</script>
+</body>
+</html>
