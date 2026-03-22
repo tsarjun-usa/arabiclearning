@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مَنْهَج · Arabic Mastery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E0D0B;--surface:#19180F;--card:#201F14;--border:#2E2C1A;
+  --gold:#C8973A;--gold-light:#E8B84B;--teal:#2A7B6A;--teal-light:#3AA98E;
+  --sand:#E2CDA0;--sand-dim:#9E8B72;--text:#EDE0C4;--text-dim:#7A6E58;
+  --green:#3A8A5A;--red:#C04A3A;--purple:#6A3AC0;
+  --font-ar:'Noto Naskh Arabic','Traditional Arabic',serif;
+  --font-ui:'IBM Plex Mono',monospace;--r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(200,151,58,.08) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(42,123,106,.05) 0%,transparent 60%);pointer-events:none;z-index:0;}
+.wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:0 16px 80px;}
+
+/* HEADER */
+header{padding:22px 0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.logo-ar{font-family:var(--font-ar);font-size:28px;font-weight:700;color:var(--gold);direction:rtl;line-height:1;}
+.logo-en{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-top:2px;}
+.hstats{display:flex;gap:8px;flex-wrap:wrap;}
+.hs{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:7px 11px;text-align:center;}
+.hs .n{font-size:17px;font-weight:700;color:var(--gold);line-height:1;}
+.hs .l{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.hs.due .n{color:var(--red);}
+.hs.streak .n{color:var(--gold-light);}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto;}
+.tb{padding:9px 15px;font-family:var(--font-ui);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;background:none;border:none;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap;}
+.tb.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tb:hover:not(.active){color:var(--text);}
+.tab-pane{display:none;}.tab-pane.active{display:block;}
+
+/* BUTTONS */
+.btn{font-family:var(--font-ui);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;border:none;border-radius:var(--r);padding:10px 18px;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:7px;font-weight:600;}
+.btn-gold{background:var(--gold);color:var(--bg);}.btn-gold:hover{background:var(--gold-light);transform:translateY(-1px);}
+.btn-teal{background:var(--teal);color:#fff;}.btn-teal:hover{background:var(--teal-light);transform:translateY(-1px);}
+.btn-ghost{background:var(--surface);color:var(--sand-dim);border:1px solid var(--border);}.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn-green{background:var(--green);color:#fff;}.btn-green:hover{background:#4AAA6A;transform:translateY(-1px);}
+.btn-sm{padding:6px 12px;font-size:9px;}
+
+/* PANELS */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.panel-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;}
+.field{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:9px 13px;color:var(--text);font-family:var(--font-ui);font-size:12px;outline:none;transition:border-color .2s;}
+.field:focus{border-color:var(--gold);}
+.field::placeholder{color:var(--text-dim);}
+label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:5px;}
+
+/* DAILY SESSION BLOCKS */
+.session-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.sblock{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;position:relative;transition:all .2s;cursor:pointer;}
+.sblock:hover{border-color:var(--gold);transform:translateY(-2px);}
+.sblock.done{border-color:var(--green);background:rgba(58,138,90,.07);}
+.sblock.done::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--green);font-size:14px;font-weight:700;}
+.sblock.active-block{border-color:var(--gold);box-shadow:0 0 16px rgba(200,151,58,.15);}
+.sb-icon{font-size:22px;margin-bottom:6px;}
+.sb-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sand);margin-bottom:3px;}
+.sb-desc{font-size:9px;color:var(--text-dim);line-height:1.5;}
+.sb-count{margin-top:6px;font-size:9px;color:var(--gold);font-weight:700;}
+.sb-time{position:absolute;bottom:10px;right:12px;font-size:8px;color:var(--text-dim);}
+
+/* BRIEFING */
+.briefing{background:linear-gradient(135deg,rgba(200,151,58,.06),rgba(42,123,106,.06));border:1px solid rgba(200,151,58,.2);border-radius:12px;padding:18px 20px;margin-bottom:20px;}
+.briefing-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.briefing-body{font-size:12px;color:var(--text);line-height:1.9;}
+.briefing-body strong{color:var(--gold-light);}
+.tech-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.tag{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);}
+.tag.active-tag{border-color:var(--teal);color:var(--teal-light);}
+
+/* PROGRESS BAR */
+.prog-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:11px 15px;margin-bottom:16px;}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.prog-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.prog-pct{font-size:12px;font-weight:700;color:var(--gold);}
+.prog-bg{height:5px;background:var(--card);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:3px;transition:width .4s ease;}
+
+/* PRACTICE STAGE */
+.stage{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 24px 28px;text-align:center;margin-bottom:18px;position:relative;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+.stage::before{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(200,151,58,.06) 0%,transparent 70%);pointer-events:none;}
+.stage-badge{position:absolute;top:12px;left:12px;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:100px;font-weight:600;background:rgba(200,151,58,.15);color:var(--gold);border:1px solid rgba(200,151,58,.3);}
+.stage-counter{position:absolute;top:12px;right:12px;font-size:9px;color:var(--text-dim);}
+.sr-badge{position:absolute;bottom:12px;right:12px;font-size:8px;padding:2px 8px;border-radius:100px;}
+.sr-p1{background:rgba(192,74,58,.15);color:#E07060;border:1px solid rgba(192,74,58,.3);}
+.sr-due{background:rgba(192,74,58,.15);color:#E07060;border:1px solid rgba(192,74,58,.3);}
+.sr-new{background:rgba(42,123,106,.12);color:var(--teal-light);border:1px solid rgba(42,123,106,.25);}
+.sr-sched{background:rgba(200,151,58,.12);color:var(--gold);border:1px solid rgba(200,151,58,.25);}
+.word-big{font-family:var(--font-ar);font-size:68px;font-weight:700;color:var(--sand);direction:rtl;line-height:1.3;cursor:pointer;transition:all .15s;user-select:none;}
+.word-big:hover{color:var(--gold-light);transform:scale(1.04);}
+.word-en{font-size:14px;color:var(--teal-light);font-style:italic;}
+.word-mod{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);}
+.word-hint{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
+
+/* CHOICES */
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px;}
+.choice{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 10px;font-family:var(--font-ui);font-size:12px;font-weight:600;color:var(--sand);cursor:pointer;transition:all .18s;text-align:center;}
+.choice:hover:not(:disabled){border-color:var(--gold);color:var(--gold);transform:translateY(-2px);}
+.choice:disabled{cursor:default;transform:none!important;}
+.choice.correct{background:rgba(58,138,90,.18);border-color:var(--green)!important;color:#6ACA8A!important;}
+.choice.wrong{background:rgba(192,74,58,.18);border-color:var(--red)!important;color:#E07060!important;}
+.choice-ar{font-family:var(--font-ar);font-size:24px;direction:rtl;}
+.feedback{border-radius:var(--r);padding:9px 14px;text-align:center;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;display:none;align-items:center;justify-content:center;gap:8px;font-weight:700;}
+.feedback.show{display:flex;}
+.fb-ok{background:rgba(58,138,90,.15);border:1px solid var(--green);color:#6ACA8A;}
+.fb-bad{background:rgba(192,74,58,.15);border:1px solid var(--red);color:#E07060;}
+.action-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+
+/* WORD BANK TABLE */
+.wb-table{width:100%;border-collapse:collapse;font-size:12px;}
+.wb-table th{background:var(--card);padding:8px 10px;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);border-bottom:1px solid var(--border);text-align:left;}
+.wb-table td{padding:8px 10px;border-bottom:1px solid rgba(46,44,26,.5);vertical-align:middle;}
+.wb-table tr:hover td{background:rgba(200,151,58,.03);}
+.wb-ar{font-family:var(--font-ar);font-size:22px;direction:rtl;color:var(--sand);}
+.wb-en{color:var(--text);}
+.wb-mod{font-size:8px;letter-spacing:1px;color:var(--text-dim);}
+.wb-sr{font-size:8px;}
+.mastered-cell{color:var(--green);}
+.due-cell{color:var(--red);}
+.new-cell{color:var(--teal-light);}
+
+/* MODULE PILLS */
+.mod-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.mod-pill{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(--text-dim);transition:all .2s;}
+.mod-pill.active{background:var(--gold);color:var(--bg);border-color:var(--gold);font-weight:700;}
+.mod-pill:hover:not(.active){border-color:var(--gold);color:var(--gold);}
+
+/* TOOL CARDS */
+.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.tool-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 14px;text-align:center;text-decoration:none;color:var(--text);transition:all .2s;display:block;}
+.tool-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,151,58,.1);}
+.tc-icon{font-size:28px;margin-bottom:8px;}
+.tc-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sand);margin-bottom:4px;}
+.tc-desc{font-size:9px;color:var(--text-dim);line-height:1.5;}
+.tc-badge{display:inline-block;margin-top:6px;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:2px 8px;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;}
+.stat-num{font-size:28px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:3px;}
+.stat-lbl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.log-row{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px;}
+.log-date{font-size:9px;color:var(--text-dim);min-width:80px;}
+.log-desc{font-size:11px;font-weight:700;color:var(--sand);flex:1;}
+.log-bar{height:3px;background:var(--card);border-radius:2px;overflow:hidden;flex:1;}
+.log-fill{height:100%;background:var(--gold);border-radius:2px;}
+
+/* TECHNIQUE EXPLAINER */
+.technique-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+.tech-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;}
+.tech-name{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.tech-desc{font-size:10px;color:var(--text-dim);line-height:1.6;}
+
+/* GITHUB INSTRUCTIONS */
+.gh-step{display:flex;gap:14px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;align-items:flex-start;}
+.gh-num{width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--bg);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gh-text{font-size:11px;color:var(--text);line-height:1.7;}
+.gh-text code{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:1px 6px;color:var(--teal-light);font-family:var(--font-ui);font-size:10px;}
+.gh-text strong{color:var(--gold-light);}
+
+/* LEARNING MODE TOGGLE */
+.mode-toggle{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:18px;width:fit-content;margin-left:auto;margin-right:auto;}
+.mode-btn{font-family:var(--font-ui);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;border:none;padding:7px 14px;cursor:pointer;background:none;color:var(--text-dim);transition:all .2s;}
+.mode-btn.active{background:var(--gold);color:var(--bg);font-weight:700;}
+
+/* INFO BOX */
+.info-box{padding:11px 15px;background:rgba(42,123,106,.08);border:1px solid rgba(42,123,106,.25);border-radius:var(--r);font-size:10px;color:var(--text-dim);line-height:1.8;margin-bottom:14px;}
+.info-box strong{color:var(--teal-light);}
+
+/* CONTEXT SENTENCE */
+.context-ar{font-family:var(--font-ar);font-size:22px;color:var(--sand);direction:rtl;line-height:1.8;text-align:right;width:100%;background:var(--card);border-radius:var(--r);padding:12px 16px;margin-bottom:8px;}
+.context-highlight{color:var(--gold-light);font-weight:700;}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--card);border:1px solid var(--gold);border-radius:var(--r);padding:8px 16px;font-size:10px;letter-spacing:1px;color:var(--gold);z-index:999;transition:transform .3s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+@media(max-width:640px){
+  .session-grid{grid-template-columns:repeat(2,1fr);}
+  .tool-grid{grid-template-columns:repeat(2,1fr);}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .technique-cards{grid-template-columns:1fr;}
+  .word-big{font-size:50px;}
+  .choices{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <div class="logo-ar">مَنْهَج</div>
+    <div class="logo-en">Arabic Mastery · Daily Training Hub</div>
+  </div>
+  <div class="hstats">
+    <div class="hs streak"><div class="n" id="hStreak">0</div><div class="l">Streak 🔥</div></div>
+    <div class="hs"><div class="n" id="hTotal">0</div><div class="l">Words</div></div>
+    <div class="hs"><div class="n" id="hMastered">0</div><div class="l">Mastered</div></div>
+    <div class="hs due"><div class="n" id="hDue">0</div><div class="l">Due Today</div></div>
+    <div class="hs"><div class="n" id="hSession">0/6</div><div class="l">Today</div></div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tb active" onclick="switchTab('today',this)">📋 Today</button>
+  <button class="tb" onclick="switchTab('practice',this)">⚡ Practice</button>
+  <button class="tb" onclick="switchTab('library',this)">📚 Library</button>
+  <button class="tb" onclick="switchTab('tools',this)">🛠 Tools</button>
+  <button class="tb" onclick="switchTab('progress',this)">📊 Progress</button>
+  <button class="tb" onclick="switchTab('setup',this)">⚙ Setup</button>
+</div>
+
+<!-- ══════════ TODAY TAB ══════════ -->
+<div class="tab-pane active" id="tab-today">
+
+  <div class="briefing" id="dailyBriefing">
+    <div class="briefing-title">📋 Today's Briefing — <span id="todayDate"></span></div>
+    <div class="briefing-body" id="briefingText">Loading your personalised session…</div>
+    <div class="tech-tags" id="techTags"></div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-top">
+      <span class="prog-label" id="sessionProgLabel">Today's Session</span>
+      <span class="prog-pct" id="sessionProgPct">0%</span>
+    </div>
+    <div class="prog-bg"><div class="prog-fill" id="sessionProgFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="session-grid" id="sessionGrid">
+    <!-- Filled by JS -->
+  </div>
+
+  <div class="info-box">
+    <strong>Learning science behind your daily hour:</strong> Each block uses a different technique — 
+    spaced retrieval, active recall, interleaving, contextual listening, and elaboration. 
+    Completing all 6 blocks encodes vocabulary through multiple memory pathways simultaneously.
+    Priority words from your diplomat curriculum appear in <em>every</em> block.
+  </div>
+</div>
+
+<!-- ══════════ PRACTICE TAB ══════════ -->
+<div class="tab-pane" id="tab-practice">
+
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setPMode('ar2en',this)">👁 See Arabic</button>
+    <button class="mode-btn" onclick="setPMode('en2ar',this)">🔄 See English</button>
+    <button class="mode-btn" onclick="setPMode('listen',this)">👂 Listen</button>
+    <button class="mode-btn" onclick="setPMode('fill',this)">✏️ Fill Gap</button>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-top">
+      <span class="prog-label" id="pProgLabel">Priority 1 — Diplomat Vocab</span>
+      <span class="prog-pct" id="pProgPct">0%</span>
+    </div>
+    <div class="prog-bg"><div class="prog-fill" id="pProgFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="stage" id="practiceStage">
+    <div class="stage-badge" id="pBadge">Priority 1</div>
+    <div class="stage-counter" id="pCounter">0 / 0</div>
+    <div class="word-big" id="pWord" onclick="speakPractice()">—</div>
+    <div class="word-hint" id="pHint">Add videos or use Library to begin</div>
+    <div class="word-en" id="pTranslation" style="display:none;"></div>
+    <div class="word-mod" id="pMod"></div>
+    <div class="sr-badge" id="pSrBadge" style="display:none;"></div>
+  </div>
+
+  <div class="feedback" id="pFeedback"></div>
+  <div class="action-row">
+    <button class="btn btn-gold" onclick="speakPractice()">🔊 Hear</button>
+    <button class="btn btn-ghost" id="pRevealBtn" onclick="revealPractice()" style="display:none;">👁 Reveal</button>
+    <button class="btn btn-ghost" onclick="skipPractice()">→ Skip</button>
+  </div>
+  <div class="choices" id="pChoices"></div>
+
+  <div class="panel" style="margin-top:6px;">
+    <div class="panel-title">Why these 4 practice modes?</div>
+    <div class="technique-cards">
+      <div class="tech-card"><div class="tech-name">👁 See Arabic → Recall English</div><div class="tech-desc">Classic active recall — the single most effective memory technique. Forcing retrieval strengthens the neural pathway.</div></div>
+      <div class="tech-card"><div class="tech-name">🔄 See English → Recall Arabic</div><div class="tech-desc">Reverse retrieval — trains production, not just recognition. Critical for speaking and writing.</div></div>
+      <div class="tech-card"><div class="tech-name">👂 Listen → Identify</div><div class="tech-desc">Auditory encoding — creates a second memory trace independent of the written form. Essential for listening comprehension.</div></div>
+      <div class="tech-card"><div class="tech-name">✏️ Fill the Gap</div><div class="tech-desc">Contextual recall — seeing a word used in a real sentence activates elaborative encoding, the deepest form of memory.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LIBRARY TAB ══════════ -->
+<div class="tab-pane" id="tab-library">
+
+  <div class="mod-pills" id="modPills">
+    <button class="mod-pill active" onclick="filterLib('all',this)">All (294)</button>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+    <input type="text" class="field" id="libSearch" placeholder="Search Arabic or English…" oninput="filterLibSearch()" style="flex:1;min-width:180px;">
+    <button class="btn btn-ghost btn-sm" onclick="sortLib('sr')">Sort: Due First</button>
+    <button class="btn btn-ghost btn-sm" onclick="sortLib('lvl')">Sort: Level</button>
+    <button class="btn btn-ghost btn-sm" onclick="sortLib('alpha')">Sort: A-Z</button>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="wb-table" id="libTable">
+      <thead>
+        <tr>
+          <th>Arabic</th>
+          <th>English</th>
+          <th>Level</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="libBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ TOOLS TAB ══════════ -->
+<div class="tab-pane" id="tab-tools">
+  <div class="info-box" style="margin-bottom:20px;">
+    <strong>All tools share the same word bank.</strong> Words you learn here appear in the tools. 
+    Words you encounter in the tools feed back here. Keep all HTML files in the same GitHub folder.
+  </div>
+
+  <div class="tool-grid">
+    <a class="tool-card" href="arabic_reading_practice.html" target="_blank">
+      <div class="tc-icon">📖</div>
+      <div class="tc-title">Reading Practice</div>
+      <div class="tc-desc">Diacritics, shadda, damma, kasra. 4 levels by word length. Paste news articles.</div>
+      <div class="tc-badge">15 min/day</div>
+    </a>
+    <a class="tool-card" href="arabic_video_trainer.html" target="_blank">
+      <div class="tc-icon">🎬</div>
+      <div class="tc-title">Video Trainer</div>
+      <div class="tc-desc">YouTube up to 5 min. Conjugation, possessives, tenses — all from your video.</div>
+      <div class="tc-badge">15 min/day</div>
+    </a>
+    <a class="tool-card" href="arabic_vocab_game.html" target="_blank">
+      <div class="tc-icon">🃏</div>
+      <div class="tc-title">Vocab Image Game</div>
+      <div class="tc-desc">Image + 4-choice quiz. Dopamine loop with wrong-word review. Fast and fun.</div>
+      <div class="tc-badge">10 min/day</div>
+    </a>
+    <a class="tool-card" href="arabic_root_layer1.html" target="_blank">
+      <div class="tc-icon">🌿</div>
+      <div class="tc-title">Root Explorer</div>
+      <div class="tc-desc">100 Arabic roots + all derivatives. Search, browse, quiz. Unlocks reading speed.</div>
+      <div class="tc-badge">Layer 1</div>
+    </a>
+    <a class="tool-card" href="verb_forms_layer2.html" target="_blank">
+      <div class="tc-icon">⚡</div>
+      <div class="tc-title">Verb Forms</div>
+      <div class="tc-desc">Forms I–X of any root. Pattern recognition — learn the shape, not just the word.</div>
+      <div class="tc-badge">Layer 2</div>
+    </a>
+    <a class="tool-card" href="word_patterns_game_layer3.html" target="_blank">
+      <div class="tc-icon">🎮</div>
+      <div class="tc-title">Word Patterns</div>
+      <div class="tc-desc">فَاعِل، مَفْعُول، فِعَال — read words you've never seen before.</div>
+      <div class="tc-badge">Layer 3</div>
+    </a>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Recommended Daily Sequence</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:10px;color:var(--text-dim);line-height:1.8;">
+      <div><strong style="color:var(--gold)">Mon · Thu</strong><br>Practice → Reading → Video → Root Explorer</div>
+      <div><strong style="color:var(--gold)">Tue · Fri</strong><br>Practice → Reading → Video → Verb Forms</div>
+      <div><strong style="color:var(--gold)">Wed · Sat</strong><br>Practice → Reading → Video → Word Patterns</div>
+    </div>
+    <div style="margin-top:10px;font-size:10px;color:var(--text-dim);">
+      Sun — Free choice. Use whichever tool had the lowest score that week.<br>
+      Always do Practice + Reading + Video first — these are the core three.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PROGRESS TAB ══════════ -->
+<div class="tab-pane" id="tab-progress">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num" id="stTotal">0</div><div class="stat-lbl">Total Words</div></div>
+    <div class="stat-card"><div class="stat-num" id="stMastered">0</div><div class="stat-lbl">Mastered</div></div>
+    <div class="stat-card"><div class="stat-num" id="stDue">0</div><div class="stat-lbl">Due Today</div></div>
+    <div class="stat-card"><div class="stat-num" id="stStreak">0</div><div class="stat-lbl">Day Streak 🔥</div></div>
+  </div>
+
+  <div class="prog-wrap" style="margin-bottom:20px;">
+    <div class="prog-top">
+      <span class="prog-label">Priority 1 Mastery (Diplomat Vocab)</span>
+      <span class="prog-pct" id="p1Pct">0%</span>
+    </div>
+    <div class="prog-bg"><div class="prog-fill" id="p1Fill" style="width:0%"></div></div>
+  </div>
+
+  <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;">Module Progress</div>
+  <div id="modProgress" style="margin-bottom:20px;"></div>
+
+  <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;">Daily Activity (last 14 days)</div>
+  <div id="logRows"></div>
+</div>
+
+<!-- ══════════ SETUP TAB ══════════ -->
+<div class="tab-pane" id="tab-setup">
+
+  <!-- GITHUB INSTRUCTIONS -->
+  <div class="panel">
+    <div class="panel-title">🐙 GitHub Pages — Step by Step</div>
+    <div class="gh-step"><div class="gh-num">1</div><div class="gh-text">Go to <strong>github.com</strong> → sign in → click <strong>+</strong> top right → <strong>New repository</strong>. Name it <code>arabic-trainer</code>. Select <strong>Public</strong>. Check <strong>Add a README</strong>. Click <strong>Create repository</strong>.</div></div>
+    <div class="gh-step"><div class="gh-num">2</div><div class="gh-text">Inside your repository, click <strong>Settings</strong> (top menu) → then <strong>Pages</strong> in the left sidebar → under Branch select <strong>main</strong> → click <strong>Save</strong>. Your live URL will appear: <code>https://yourname.github.io/arabic-trainer</code></div></div>
+    <div class="gh-step"><div class="gh-num">3</div><div class="gh-text">Click <strong>Add file → Upload files</strong>. Drag ALL your HTML files in at once: <code>home.html</code>, <code>arabic_reading_practice.html</code>, <code>arabic_video_trainer.html</code>, <code>arabic_vocab_game.html</code>, <code>arabic_root_layer1.html</code>, <code>verb_forms_layer2.html</code>, <code>word_patterns_game_layer3.html</code>. Click <strong>Commit changes</strong>.</div></div>
+    <div class="gh-step"><div class="gh-num">4</div><div class="gh-text">Wait 60 seconds. Open <code>https://yourname.github.io/arabic-trainer/home.html</code> — that is your daily home screen. Bookmark it.</div></div>
+    <div class="gh-step"><div class="gh-num">5</div><div class="gh-text">Every time I give you an updated file: go to your repository → click the filename → click the pencil ✏️ edit icon → paste new content → click <strong>Commit changes</strong>. Or use <strong>Upload files</strong> to replace it.</div></div>
+    <div style="padding:10px 14px;background:rgba(42,123,106,.08);border:1px solid rgba(42,123,106,.2);border-radius:var(--r);font-size:10px;color:var(--text-dim);margin-top:10px;line-height:1.8;">
+      ⚡ <strong style="color:var(--teal-light)">Important:</strong> All files must be in the <em>same folder</em> in your repository (the root). Do not create subfolders. This is what lets the tools link to each other correctly.
+    </div>
+  </div>
+
+  <!-- ADD MORE PDF PACKAGES -->
+  <div class="panel">
+    <div class="panel-title">📦 Load Additional PDF Vocabulary Packages</div>
+    <div style="font-size:10px;color:var(--text-dim);line-height:1.8;margin-bottom:12px;">
+      Upload a <code>.json</code> file directly OR paste a JSON block below.
+      Both formats are accepted: the standard vocab format with fields
+      <code>ar</code>, <code>en</code>, <code>tr</code>, <code>ctxAr</code>, <code>ctxEn</code>, <code>lvl</code>.
+      Words already in your bank are skipped automatically.
+    </div>
+    <!-- Upload a JSON file directly -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:10px 13px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);">
+      <div style="font-size:10px;color:var(--text-dim);flex:1;line-height:1.7;">
+        <strong style="color:var(--gold-light);">Option A — Upload a JSON file</strong><br>
+        Click to select a <code>.json</code> file from your computer — it loads instantly, no copy-paste needed.
+      </div>
+      <label class="btn btn-teal" style="cursor:pointer;margin:0;">
+        📁 Upload JSON file
+        <input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="loadJsonFile(this)">
+      </label>
+    </div>
+
+    <!-- Or paste JSON text -->
+    <label>Option B — Paste JSON vocabulary here</label>
+    <textarea class="field" id="jsonPackage" rows="5" placeholder='[{"ar":"كَلِمَةٌ","tr":"kalima","en":"word","ctxAr":"هذه كلمة","ctxEn":"This is a word","lvl":1}, ...]'></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="loadJsonPackage()">⬇ Load pasted JSON</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('jsonPackage').value=''">✕ Clear</button>
+    </div>
+    <div id="packageResult" style="margin-top:8px;font-size:10px;color:var(--teal-light);"></div>
+  </div>
+
+  <!-- DATA MANAGEMENT -->
+  <div class="panel">
+    <div class="panel-title">💾 Data Management</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-ghost btn-sm" onclick="exportData()">⬇ Export Backup</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importFile').click()">⬆ Import Backup</button>
+      <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(this)">
+      <button class="btn btn-ghost btn-sm" onclick="resetMastery()">↺ Reset Mastery Only</button>
+    </div>
+    <div style="margin-top:10px;font-size:9px;color:var(--text-dim);line-height:1.8;">
+      Export saves all your progress, mastery scores and SM-2 data as a JSON file.<br>
+      Import restores it. Do this before updating your HTML files as a precaution.
+    </div>
+  </div>
+
+  <!-- WHAT EACH FILE DOES -->
+  <div class="panel">
+    <div class="panel-title">📁 Your File Structure on GitHub</div>
+    <div style="font-size:10px;color:var(--text-dim);line-height:2.2;font-family:var(--font-ui);">
+      <span style="color:var(--gold);">home.html</span> → This file. Your daily hub. Open this every day.<br>
+      <span style="color:var(--teal-light);">arabic_reading_practice.html</span> → Reading & diacritics drill<br>
+      <span style="color:var(--teal-light);">arabic_video_trainer.html</span> → Video comprehension (max 5 min videos)<br>
+      <span style="color:var(--teal-light);">arabic_vocab_game.html</span> → Image vocabulary game<br>
+      <span style="color:var(--teal-light);">arabic_root_layer1.html</span> → Root explorer (100 roots)<br>
+      <span style="color:var(--teal-light);">verb_forms_layer2.html</span> → Verb forms I–X<br>
+      <span style="color:var(--teal-light);">word_patterns_game_layer3.html</span> → Word pattern recognition
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ═══════════════════════════════════════════════════════════
+//  VOCABULARY — 294 words from Saudi Arabic course PDFs
+//  Levels: 0=2-4 letters  1=5 letters  2=6-7 letters  3=phrases
+//  Fields: ar, tr, en, ctxAr, ctxEn, lvl
+// ═══════════════════════════════════════════════════════════
+const VOCAB = [{"ar": "أَنَا", "tr": "ana", "en": "I / I am", "ctxAr": "أَنَا مِنْ أَمْرِيكَا", "ctxEn": "I am from America", "lvl": 0}, {"ar": "اسْمِي", "tr": "ismi", "en": "my name", "ctxAr": "اسْمِي أَحْمَد", "ctxEn": "My name is Ahmad", "lvl": 0}, {"ar": "هُوَ", "tr": "huwa", "en": "he", "ctxAr": "هُوَ مُوَظَّف", "ctxEn": "He is an employee", "lvl": 0}, {"ar": "هِيَ", "tr": "hiya", "en": "she", "ctxAr": "هِيَ مُوَظَّفَة", "ctxEn": "She is an employee", "lvl": 0}, {"ar": "هُمْ", "tr": "hum", "en": "they", "ctxAr": "هُمْ مِنَ السِّفَارَة", "ctxEn": "They are from the embassy", "lvl": 0}, {"ar": "أَنْتَ", "tr": "anta", "en": "you (masc.)", "ctxAr": "أَنْتَ مِنْ وَيْن؟", "ctxEn": "Where are you from?", "lvl": 0}, {"ar": "أَنْتِ", "tr": "anti", "en": "you (fem.)", "ctxAr": "أَنْتِ جَدِيدَة؟", "ctxEn": "Are you new?", "lvl": 0}, {"ar": "بَسْ", "tr": "bas", "en": "but / just (Gulf)", "ctxAr": "بَسْ مَا عِنْدِي وَقْت", "ctxEn": "But I don't have time", "lvl": 0}, {"ar": "مَعَ", "tr": "maa", "en": "with", "ctxAr": "مَعَنَا هُنَا", "ctxEn": "With us here", "lvl": 0}, {"ar": "إِيه", "tr": "ih", "en": "yes (Gulf Arabic)", "ctxAr": "إِيه، صَحّ", "ctxEn": "Yes, that's right", "lvl": 0}, {"ar": "صَحّ", "tr": "sahh", "en": "correct / right", "ctxAr": "هَذَا صَحّ", "ctxEn": "This is correct", "lvl": 0}, {"ar": "شَيْء", "tr": "shay'", "en": "thing / something", "ctxAr": "مَا فِيه شَيْء", "ctxEn": "There is nothing", "lvl": 0}, {"ar": "حُلْو", "tr": "hulw", "en": "sweet / delicious (masc.)", "ctxAr": "الأَكْل حُلْو", "ctxEn": "The food is delicious", "lvl": 0}, {"ar": "حُلْوَة", "tr": "hulwa", "en": "beautiful / sweet (fem.)", "ctxAr": "قَهْوَة حُلْوَة", "ctxEn": "Sweet coffee", "lvl": 0}, {"ar": "زَيْن", "tr": "zayn", "en": "good / well (Gulf)", "ctxAr": "كُلّ شَيْء زَيْن", "ctxEn": "Everything is good", "lvl": 0}, {"ar": "كَثِير", "tr": "kathiir", "en": "a lot / very", "ctxAr": "شُكْراً كَثِير", "ctxEn": "Thank you very much", "lvl": 0}, {"ar": "مُهِمّ", "tr": "muhimm", "en": "important", "ctxAr": "هَذَا مُهِمّ", "ctxEn": "This is important", "lvl": 0}, {"ar": "نَفْس", "tr": "nafs", "en": "same / self", "ctxAr": "نَفْس السِّعْر", "ctxEn": "The same price", "lvl": 0}, {"ar": "مَثَل", "tr": "mathal", "en": "like / such as", "ctxAr": "مَثَل هَذَا", "ctxEn": "Like this", "lvl": 0}, {"ar": "يَعْنِي", "tr": "ya'ni", "en": "meaning / I mean", "ctxAr": "يَعْنِي كَيْف؟", "ctxEn": "What do you mean?", "lvl": 0}, {"ar": "أَوْ", "tr": "aw", "en": "or", "ctxAr": "نَقْد أَوْ بِطَاقَة؟", "ctxEn": "Cash or card?", "lvl": 0}, {"ar": "مَوّ", "tr": "mo", "en": "not (Gulf negation)", "ctxAr": "مَوّ صَحّ", "ctxEn": "That's not right", "lvl": 0}, {"ar": "وَلَد", "tr": "walad", "en": "boy / son", "ctxAr": "عِنْدِي وَلَد", "ctxEn": "I have a son", "lvl": 0}, {"ar": "بِنْت", "tr": "bint", "en": "girl / daughter", "ctxAr": "عِنْدِي بِنْت", "ctxEn": "I have a daughter", "lvl": 0}, {"ar": "كَلْب", "tr": "kalb", "en": "dog", "ctxAr": "عِنْدِي كَلْب", "ctxEn": "I have a dog", "lvl": 0}, {"ar": "أُمِّي", "tr": "ummi", "en": "my mother (Gulf)", "ctxAr": "أُمِّي فِي البَيْت", "ctxEn": "My mother is at home", "lvl": 0}, {"ar": "أَبُوي", "tr": "abuuy", "en": "my father (Gulf)", "ctxAr": "أَبُوي مُوَظَّف", "ctxEn": "My father is an employee", "lvl": 0}, {"ar": "أَخُو", "tr": "akhu", "en": "brother (Gulf)", "ctxAr": "أَخُو كَبِير", "ctxEn": "Older brother", "lvl": 0}, {"ar": "أُخْت", "tr": "ukht", "en": "sister", "ctxAr": "عِنْدِي أُخْت", "ctxEn": "I have a sister", "lvl": 0}, {"ar": "عَمّ", "tr": "amm", "en": "uncle (paternal)", "ctxAr": "عِنْدَ الْعَمّ", "ctxEn": "At the uncle's", "lvl": 0}, {"ar": "خَالَة", "tr": "khaala", "en": "aunt (maternal)", "ctxAr": "خَالَة كَرِيمَة", "ctxEn": "Generous aunt", "lvl": 0}, {"ar": "عُمْر", "tr": "umr", "en": "age", "ctxAr": "عُمْرِي ثَلَاثُون", "ctxEn": "My age is thirty", "lvl": 0}, {"ar": "عِنْدِي", "tr": "indi", "en": "I have", "ctxAr": "عِنْدِي مَوْعِد", "ctxEn": "I have an appointment", "lvl": 0}, {"ar": "أَهْلاً", "tr": "ahlan", "en": "hello / welcome", "ctxAr": "أَهْلاً وَسَهْلاً", "ctxEn": "Welcome!", "lvl": 0}, {"ar": "شُكْراً", "tr": "shukran", "en": "thank you", "ctxAr": "شُكْراً جَزِيلاً", "ctxEn": "Thank you very much", "lvl": 0}, {"ar": "جَدِيد", "tr": "jadiid", "en": "new (masc.)", "ctxAr": "مُوَظَّف جَدِيد", "ctxEn": "New employee", "lvl": 0}, {"ar": "كَبِير", "tr": "kabiir", "en": "big / old", "ctxAr": "مَدِينَة كَبِيرَة", "ctxEn": "A big city", "lvl": 0}, {"ar": "صَغِير", "tr": "saghiir", "en": "small / young", "ctxAr": "وَلَد صَغِير", "ctxEn": "A young boy", "lvl": 0}, {"ar": "حَار", "tr": "haar", "en": "hot", "ctxAr": "الجَوّ حَار", "ctxEn": "The weather is hot", "lvl": 0}, {"ar": "بَارِد", "tr": "baarid", "en": "cold", "ctxAr": "الجَوّ بَارِد", "ctxEn": "The weather is cold", "lvl": 0}, {"ar": "قَرِيب", "tr": "qariib", "en": "near / close", "ctxAr": "قَرِيب مِنَ السِّفَارَة", "ctxEn": "Close to the embassy", "lvl": 0}, {"ar": "بَعِيد", "tr": "ba'iid", "en": "far", "ctxAr": "بَعِيد عَنِ البَيْت", "ctxEn": "Far from home", "lvl": 0}, {"ar": "رَخِيص", "tr": "rakhiis", "en": "cheap / inexpensive", "ctxAr": "السِّعْر رَخِيص", "ctxEn": "The price is cheap", "lvl": 0}, {"ar": "غَالِي", "tr": "ghaali", "en": "expensive", "ctxAr": "هَذَا غَالِي", "ctxEn": "This is expensive", "lvl": 0}, {"ar": "طَازِج", "tr": "taazij", "en": "fresh", "ctxAr": "خُضَار طَازِج", "ctxEn": "Fresh vegetables", "lvl": 0}, {"ar": "يَسَار", "tr": "yasaar", "en": "left", "ctxAr": "لِفّ يَسَار", "ctxEn": "Turn left", "lvl": 0}, {"ar": "يَمِين", "tr": "yamiin", "en": "right", "ctxAr": "لِفّ يَمِين", "ctxEn": "Turn right", "lvl": 0}, {"ar": "فَوْق", "tr": "fawq", "en": "above / upstairs", "ctxAr": "فَوْق الطَّابِق", "ctxEn": "Above the floor", "lvl": 0}, {"ar": "جَنْب", "tr": "janb", "en": "next to", "ctxAr": "جَنْب المَطْعَم", "ctxEn": "Next to the restaurant", "lvl": 0}, {"ar": "وَرَا", "tr": "wara", "en": "behind (Gulf)", "ctxAr": "وَرَا البِنَايَة", "ctxEn": "Behind the building", "lvl": 0}, {"ar": "قَدَّام", "tr": "qaddaam", "en": "in front of (Gulf)", "ctxAr": "قَدَّام الإِشَارَة", "ctxEn": "In front of the traffic light", "lvl": 0}, {"ar": "بَيْن", "tr": "bayn", "en": "between", "ctxAr": "بَيْن الشَّارِعَيْن", "ctxEn": "Between the two streets", "lvl": 0}, {"ar": "لَفّ", "tr": "laff", "en": "turn", "ctxAr": "لِفّ يَمِين", "ctxEn": "Turn right", "lvl": 0}, {"ar": "سِيدَا", "tr": "siida", "en": "straight ahead (Gulf)", "ctxAr": "امْشِ سِيدَا", "ctxEn": "Go straight ahead", "lvl": 0}, {"ar": "طَرِيق", "tr": "tariiq", "en": "road / route", "ctxAr": "عَلَى الطَّرِيق", "ctxEn": "On the road", "lvl": 0}, {"ar": "بَيْت", "tr": "bayt", "en": "house / home", "ctxAr": "فِي البَيْت", "ctxEn": "At home", "lvl": 0}, {"ar": "مَطَار", "tr": "mataar", "en": "airport", "ctxAr": "فِي المَطَار", "ctxEn": "At the airport", "lvl": 0}, {"ar": "مَطْعَم", "tr": "mat'am", "en": "restaurant", "ctxAr": "مَطْعَم شَعْبِيّ", "ctxEn": "A popular restaurant", "lvl": 0}, {"ar": "مَكْتَب", "tr": "maktab", "en": "office", "ctxAr": "مَكْتَبُنَا هُنَا", "ctxEn": "Our office is here", "lvl": 0}, {"ar": "فُنْدُق", "tr": "funduq", "en": "hotel", "ctxAr": "فُنْدُق خَمْس نُجُوم", "ctxEn": "Five-star hotel", "lvl": 0}, {"ar": "غُرْفَة", "tr": "ghurfa", "en": "room", "ctxAr": "غُرْفَة نَوْم", "ctxEn": "Bedroom", "lvl": 0}, {"ar": "شَارِع", "tr": "shaari'", "en": "street", "ctxAr": "الشَّارِع الرَّئِيسِيّ", "ctxEn": "The main street", "lvl": 0}, {"ar": "سُوق", "tr": "suuq", "en": "market", "ctxAr": "فِي السُّوق", "ctxEn": "In the market", "lvl": 0}, {"ar": "شَقَّة", "tr": "shaqqa", "en": "apartment", "ctxAr": "أَسْكُن فِي شَقَّة", "ctxEn": "I live in an apartment", "lvl": 0}, {"ar": "دَوَّار", "tr": "dawwaar", "en": "roundabout", "ctxAr": "عِنْدَ الدَّوَّار", "ctxEn": "At the roundabout", "lvl": 0}, {"ar": "وَرْشَة", "tr": "warsha", "en": "workshop / repair shop", "ctxAr": "وَرْشَة سَيَّارَات", "ctxEn": "Car repair shop", "lvl": 0}, {"ar": "سَفَر", "tr": "safar", "en": "travel", "ctxAr": "رِحْلَة سَفَر", "ctxEn": "Travel trip", "lvl": 0}, {"ar": "قِسْم", "tr": "qism", "en": "section / department", "ctxAr": "قِسْم القُنْصُلِيّ", "ctxEn": "The consular section", "lvl": 0}, {"ar": "شَنْطَة", "tr": "shanta", "en": "bag / luggage", "ctxAr": "شَنْطَة السَّفَر", "ctxEn": "Travel bag", "lvl": 0}, {"ar": "صُورَة", "tr": "suura", "en": "photo / picture", "ctxAr": "صُورَة جَوَاز السَّفَر", "ctxEn": "Passport photo", "lvl": 0}, {"ar": "صُعُود", "tr": "su'uud", "en": "boarding", "ctxAr": "بِطَاقَة الصُّعُود", "ctxEn": "Boarding pass", "lvl": 0}, {"ar": "سَرِير", "tr": "sariir", "en": "bed", "ctxAr": "سَرِير مُزْدَوَج", "ctxEn": "Double bed", "lvl": 0}, {"ar": "شَخْص", "tr": "shakhs", "en": "person", "ctxAr": "شَخْص وَاحِد", "ctxEn": "One person", "lvl": 0}, {"ar": "رُخْصَة", "tr": "rukhsa", "en": "driving licence", "ctxAr": "رُخْصَة القِيَادَة", "ctxEn": "Driving licence", "lvl": 0}, {"ar": "كَحُول", "tr": "kahuul", "en": "alcohol", "ctxAr": "كَحُول مَمْنُوع", "ctxEn": "Alcohol is prohibited", "lvl": 0}, {"ar": "سَبَب", "tr": "sabab", "en": "reason", "ctxAr": "مَا السَّبَب؟", "ctxEn": "What is the reason?", "lvl": 0}, {"ar": "وَجْهَة", "tr": "wajha", "en": "destination", "ctxAr": "وَجْهَة السَّفَر", "ctxEn": "Travel destination", "lvl": 0}, {"ar": "نَوْع", "tr": "naw'", "en": "type / kind", "ctxAr": "أَيُّ نَوْع؟", "ctxEn": "Which type?", "lvl": 0}, {"ar": "شَامِل", "tr": "shaamil", "en": "including / inclusive", "ctxAr": "شَامِل الفُطُور", "ctxEn": "Including breakfast", "lvl": 0}, {"ar": "هُوِيَّة", "tr": "huwiyya", "en": "ID / identity", "ctxAr": "بِطَاقَة هُوِيَّة", "ctxEn": "ID card", "lvl": 0}, {"ar": "أَكْل", "tr": "akl", "en": "food / eating", "ctxAr": "وَقْت الأَكْل", "ctxEn": "Mealtime", "lvl": 0}, {"ar": "قَهْوَة", "tr": "qahwa", "en": "coffee", "ctxAr": "فِنْجَان قَهْوَة", "ctxEn": "A cup of coffee", "lvl": 0}, {"ar": "فُطُور", "tr": "futur", "en": "breakfast", "ctxAr": "وَجْبَة الفُطُور", "ctxEn": "Breakfast meal", "lvl": 0}, {"ar": "سِعْر", "tr": "si'r", "en": "price", "ctxAr": "كَمِ السِّعْر؟", "ctxEn": "What is the price?", "lvl": 0}, {"ar": "سَلَطَة", "tr": "salata", "en": "salad", "ctxAr": "سَلَطَة طَازِجَة", "ctxEn": "Fresh salad", "lvl": 0}, {"ar": "كِيس", "tr": "kiis", "en": "bag (shopping)", "ctxAr": "كِيس بَقَالَة", "ctxEn": "Shopping bag", "lvl": 0}, {"ar": "فُلُوس", "tr": "fuluus", "en": "money (Gulf)", "ctxAr": "مَا عِنْدِي فُلُوس", "ctxEn": "I have no money", "lvl": 0}, {"ar": "فِكَّة", "tr": "fikka", "en": "small change", "ctxAr": "عِنْدَك فِكَّة؟", "ctxEn": "Do you have change?", "lvl": 0}, {"ar": "رِيَال", "tr": "riyaal", "en": "Saudi Riyal", "ctxAr": "خَمْسَة رِيَالَات", "ctxEn": "Five Riyals", "lvl": 0}, {"ar": "شَطَّة", "tr": "shatta", "en": "hot chili sauce", "ctxAr": "بِدُون شَطَّة", "ctxEn": "Without chili sauce", "lvl": 0}, {"ar": "نَقْد", "tr": "naqd", "en": "cash", "ctxAr": "أَدْفَع بِالنَّقْد", "ctxEn": "I pay in cash", "lvl": 0}, {"ar": "لَحْم", "tr": "lahm", "en": "meat", "ctxAr": "لَحْم طَازِج", "ctxEn": "Fresh meat", "lvl": 0}, {"ar": "حَجْم", "tr": "hajm", "en": "size", "ctxAr": "أَيُّ حَجْم؟", "ctxEn": "Which size?", "lvl": 0}, {"ar": "هِلَّة", "tr": "hilla", "en": "cent / halala", "ctxAr": "خَمْسُون هِلَّة", "ctxEn": "Fifty cents", "lvl": 0}, {"ar": "رُبْع", "tr": "rub'", "en": "quarter", "ctxAr": "رُبْع سَاعَة", "ctxEn": "A quarter of an hour", "lvl": 0}, {"ar": "وَقْت", "tr": "waqt", "en": "time", "ctxAr": "مَا عِنْدِي وَقْت", "ctxEn": "I don't have time", "lvl": 0}, {"ar": "سَنَة", "tr": "sana", "en": "year", "ctxAr": "كَمْ سَنَة؟", "ctxEn": "How many years?", "lvl": 0}, {"ar": "شَهْر", "tr": "shahr", "en": "month", "ctxAr": "شَهْر كَامِل", "ctxEn": "A full month", "lvl": 0}, {"ar": "صَيْف", "tr": "sayf", "en": "summer", "ctxAr": "فِي الصَّيْف", "ctxEn": "In the summer", "lvl": 0}, {"ar": "شِتَاء", "tr": "shitaa'", "en": "winter", "ctxAr": "فِي الشِّتَاء", "ctxEn": "In the winter", "lvl": 0}, {"ar": "ظُهْر", "tr": "zuhr", "en": "noon / midday", "ctxAr": "بَعْدَ الظُّهْر", "ctxEn": "After noon", "lvl": 0}, {"ar": "أَمْس", "tr": "ams", "en": "yesterday", "ctxAr": "أَمْس ذَهَبْت", "ctxEn": "I went yesterday", "lvl": 0}, {"ar": "مَوْعِد", "tr": "maw'id", "en": "appointment", "ctxAr": "عِنْدِي مَوْعِد", "ctxEn": "I have an appointment", "lvl": 0}, {"ar": "دَوَام", "tr": "dawaam", "en": "work shift / hours", "ctxAr": "وَقْت الدَّوَام", "ctxEn": "Work hours", "lvl": 0}, {"ar": "نَصّ", "tr": "nuss", "en": "half (Gulf)", "ctxAr": "نَصّ سَاعَة", "ctxEn": "Half an hour", "lvl": 0}, {"ar": "جُمْعَة", "tr": "jum'a", "en": "Friday", "ctxAr": "يَوْم الجُمْعَة", "ctxEn": "Friday", "lvl": 0}, {"ar": "خَمِيس", "tr": "khamiis", "en": "Thursday", "ctxAr": "يَوْم الخَمِيس", "ctxEn": "Thursday", "lvl": 0}, {"ar": "بَحْر", "tr": "bahr", "en": "sea", "ctxAr": "شَاطِئ البَحْر", "ctxEn": "The seashore", "lvl": 0}, {"ar": "نَهْر", "tr": "nahr", "en": "river", "ctxAr": "نَهْر النِّيل", "ctxEn": "The Nile River", "lvl": 0}, {"ar": "جَوّ", "tr": "jaww", "en": "weather / atmosphere", "ctxAr": "الجَوّ حَار", "ctxEn": "The weather is hot", "lvl": 0}, {"ar": "بَلَد", "tr": "balad", "en": "country", "ctxAr": "مِنْ أَيِّ بَلَد؟", "ctxEn": "From which country?", "lvl": 0}, {"ar": "صِفْر", "tr": "sifr", "en": "zero", "ctxAr": "صِفْر دَرَجَات", "ctxEn": "Zero degrees", "lvl": 0}, {"ar": "وَاحِد", "tr": "waahid", "en": "one", "ctxAr": "وَاحِد فَقَط", "ctxEn": "Just one", "lvl": 0}, {"ar": "ثَلَاثَة", "tr": "thalaatha", "en": "three", "ctxAr": "ثَلَاثَة أَيَّام", "ctxEn": "Three days", "lvl": 0}, {"ar": "أَرْبَعَة", "tr": "arba'a", "en": "four", "ctxAr": "أَرْبَعَة أَشْخَاص", "ctxEn": "Four people", "lvl": 0}, {"ar": "خَمْسَة", "tr": "khamsa", "en": "five", "ctxAr": "خَمْسَة رِيَالَات", "ctxEn": "Five Riyals", "lvl": 0}, {"ar": "سِتَّة", "tr": "sitta", "en": "six", "ctxAr": "سِتَّة أَشْهُر", "ctxEn": "Six months", "lvl": 0}, {"ar": "سَبْعَة", "tr": "sab'a", "en": "seven", "ctxAr": "سَبْعَة أَيَّام", "ctxEn": "Seven days", "lvl": 0}, {"ar": "تِسْعَة", "tr": "tis'a", "en": "nine", "ctxAr": "تِسْعَة صَبَاحاً", "ctxEn": "Nine in the morning", "lvl": 0}, {"ar": "عَشْرَة", "tr": "ashra", "en": "ten", "ctxAr": "عَشْرَة دَقَائِق", "ctxEn": "Ten minutes", "lvl": 0}, {"ar": "مِئَة", "tr": "mi'a", "en": "hundred", "ctxAr": "مِئَة رِيَال", "ctxEn": "One hundred Riyals", "lvl": 0}, {"ar": "أَلْف", "tr": "alf", "en": "thousand", "ctxAr": "أَلْف رِيَال", "ctxEn": "One thousand Riyals", "lvl": 0}, {"ar": "سِتِّين", "tr": "sittiin", "en": "sixty", "ctxAr": "سِتِّين دَقِيقَة", "ctxEn": "Sixty minutes", "lvl": 0}, {"ar": "رَجَع", "tr": "raja'", "en": "returned / went back", "ctxAr": "رَجَع إِلَى البَيْت", "ctxEn": "He returned home", "lvl": 0}, {"ar": "وَصَل", "tr": "wasal", "en": "arrived / receipt", "ctxAr": "وَصَل أَمْس", "ctxEn": "He arrived yesterday", "lvl": 0}, {"ar": "أَطْلُب", "tr": "atlub", "en": "I order / I request", "ctxAr": "أَطْلُب سَيَّارَة", "ctxEn": "I order a car", "lvl": 0}, {"ar": "أَقْدَر", "tr": "aqdar", "en": "I can / I am able", "ctxAr": "أَقْدَر أَسَاعِدَك", "ctxEn": "I can help you", "lvl": 0}, {"ar": "أَرْسَل", "tr": "arsil", "en": "send", "ctxAr": "أَرْسِل رِسَالَة", "ctxEn": "Send a message", "lvl": 0}, {"ar": "انْزِل", "tr": "inzil", "en": "go down / get out", "ctxAr": "انْزِل هُنَا", "ctxEn": "Get off here", "lvl": 0}, {"ar": "امْشِ", "tr": "imshi", "en": "go / walk", "ctxAr": "امْشِ سِيدَا", "ctxEn": "Walk straight", "lvl": 0}, {"ar": "تَجِي", "tr": "tiji", "en": "you come (Gulf)", "ctxAr": "مَتَى تَجِي؟", "ctxEn": "When do you come?", "lvl": 0}, {"ar": "أَضِيف", "tr": "udiif", "en": "I add", "ctxAr": "أَضِيف شَطَّة؟", "ctxEn": "Shall I add chili?", "lvl": 0}, {"ar": "أَحُطّ", "tr": "ahut", "en": "I put / I place", "ctxAr": "أَحُطّ هُنَا", "ctxEn": "I put it here", "lvl": 0}, {"ar": "تَغَيَّر", "tr": "taghayyar", "en": "has changed", "ctxAr": "تَغَيَّر الجَدْوَل", "ctxEn": "The schedule has changed", "lvl": 0}, {"ar": "أَتَّجِه", "tr": "attajjah", "en": "I am heading", "ctxAr": "أَتَّجِه يَمِين", "ctxEn": "I head right", "lvl": 0}, {"ar": "وَاقِف", "tr": "waaqif", "en": "standing", "ctxAr": "وَاقِف هُنَا", "ctxEn": "Standing here", "lvl": 0}, {"ar": "أَسْكُن", "tr": "askun", "en": "I live / I reside", "ctxAr": "أَسْكُن هُنَا", "ctxEn": "I live here", "lvl": 0}, {"ar": "ثَانِي", "tr": "thaani", "en": "second / another", "ctxAr": "مَرَّة ثَانِيَة", "ctxEn": "A second time", "lvl": 0}, {"ar": "أَوَّل", "tr": "awwal", "en": "first", "ctxAr": "أَوَّل مَرَّة", "ctxEn": "First time", "lvl": 0}, {"ar": "كُلّ", "tr": "kull", "en": "every / all", "ctxAr": "كُلّ يَوْم", "ctxEn": "Every day", "lvl": 0}, {"ar": "مُمْكِن", "tr": "mumkin", "en": "maybe / possible", "ctxAr": "مُمْكِن تُسَاعِدُنِي؟", "ctxEn": "Can you help me?", "lvl": 0}, {"ar": "مَعْظَم", "tr": "ma'zam", "en": "most / majority", "ctxAr": "مَعْظَم الوَقْت", "ctxEn": "Most of the time", "lvl": 0}, {"ar": "هُنَاك", "tr": "hunaak", "en": "there / over there", "ctxAr": "هُوَ هُنَاك", "ctxEn": "He is over there", "lvl": 0}, {"ar": "هُنَا", "tr": "huna", "en": "here", "ctxAr": "تَعَال هُنَا", "ctxEn": "Come here", "lvl": 0}, {"ar": "زَحْمَة", "tr": "zahma", "en": "traffic / crowd", "ctxAr": "فِيه زَحْمَة", "ctxEn": "There's traffic", "lvl": 0}, {"ar": "حَادِث", "tr": "haadith", "en": "accident", "ctxAr": "وَقَع حَادِث", "ctxEn": "An accident happened", "lvl": 0}, {"ar": "جَدْوَل", "tr": "jadwal", "en": "schedule / table", "ctxAr": "جَدْوَل يَوْمِيّ", "ctxEn": "Daily schedule", "lvl": 0}, {"ar": "حَسَب", "tr": "hasab", "en": "depending on / according to", "ctxAr": "حَسَب الطَّلَب", "ctxEn": "According to the request", "lvl": 0}, {"ar": "فَرْع", "tr": "far'", "en": "branch", "ctxAr": "فَرْع آخَر", "ctxEn": "Another branch", "lvl": 0}, {"ar": "مُوَظَّف", "tr": "muwazzaf", "en": "employee / officer", "ctxAr": "مُوَظَّف جَدِيد", "ctxEn": "New employee", "lvl": 0}, {"ar": "سِيَاح", "tr": "siyyaah", "en": "tourists", "ctxAr": "كَثِير مِنَ السِّيَاح", "ctxEn": "Many tourists", "lvl": 0}, {"ar": "زَمِيل", "tr": "zamiil", "en": "colleague", "ctxAr": "زَمِيل فِي العَمَل", "ctxEn": "Work colleague", "lvl": 0}, {"ar": "بَنْزِين", "tr": "banziin", "en": "petrol / gasoline", "ctxAr": "أَحْتَاج بَنْزِين", "ctxEn": "I need petrol", "lvl": 0}, {"ar": "مَمْنُوع", "tr": "mamnu'", "en": "prohibited / not allowed", "ctxAr": "مَمْنُوع الدُّخُول", "ctxEn": "Entry prohibited", "lvl": 0}, {"ar": "طَابِق", "tr": "taabiq", "en": "floor / storey", "ctxAr": "الطَّابِق الثَّانِي", "ctxEn": "The second floor", "lvl": 0}, {"ar": "غَدَاء", "tr": "ghadaa'", "en": "lunch", "ctxAr": "وَقْت الغَدَاء", "ctxEn": "Lunchtime", "lvl": 0}, {"ar": "هَدِيَّة", "tr": "hadiyya", "en": "gift", "ctxAr": "هَدِيَّة جَمِيلَة", "ctxEn": "A beautiful gift", "lvl": 0}, {"ar": "جَوَاز", "tr": "jawaaz", "en": "passport", "ctxAr": "جَوَاز السَّفَر", "ctxEn": "Travel passport", "lvl": 0}, {"ar": "بُدُون", "tr": "biduun", "en": "without", "ctxAr": "بُدُون سُكَّر", "ctxEn": "Without sugar", "lvl": 0}, {"ar": "أَقَلّ", "tr": "aqall", "en": "less / fewer", "ctxAr": "أَقَلّ مِن ذَلِك", "ctxEn": "Less than that", "lvl": 0}, {"ar": "أَكْبَر", "tr": "akbar", "en": "bigger / largest", "ctxAr": "الأَكْبَر سِنَّاً", "ctxEn": "The oldest", "lvl": 0}, {"ar": "أَقْرَب", "tr": "aqrab", "en": "closer / nearest", "ctxAr": "الأَقْرَب إِلَيْنَا", "ctxEn": "The nearest to us", "lvl": 0}, {"ar": "سَفَارَة", "tr": "sifaara", "en": "embassy", "ctxAr": "أَعْمَل فِي السَّفَارَة", "ctxEn": "I work at the embassy", "lvl": 1}, {"ar": "سِيَاسِيّ", "tr": "siyaasiyy", "en": "political", "ctxAr": "القِسْم السِّيَاسِيّ", "ctxEn": "The political section", "lvl": 1}, {"ar": "قُنْصُلِيّ", "tr": "qunsuliyy", "en": "consular", "ctxAr": "القِسْم القُنْصُلِيّ", "ctxEn": "The consular section", "lvl": 1}, {"ar": "مَبْسُوط", "tr": "mabsuut", "en": "happy / pleased", "ctxAr": "أَنَا مَبْسُوط", "ctxEn": "I am happy", "lvl": 1}, {"ar": "مَشْهُور", "tr": "mashhuur", "en": "famous", "ctxAr": "مَطْعَم مَشْهُور", "ctxEn": "A famous restaurant", "lvl": 1}, {"ar": "مَحَامِي", "tr": "muhaami", "en": "lawyer / attorney", "ctxAr": "هُوَ مَحَامِي", "ctxEn": "He is a lawyer", "lvl": 1}, {"ar": "وَالِدِي", "tr": "waalidii", "en": "my father (formal)", "ctxAr": "وَالِدِي دِبْلُومَاسِيّ", "ctxEn": "My father is a diplomat", "lvl": 1}, {"ar": "مُتَزَوِّج", "tr": "mutazawwij", "en": "married", "ctxAr": "هُوَ مُتَزَوِّج", "ctxEn": "He is married", "lvl": 1}, {"ar": "أَشْتَغِل", "tr": "ashtaghil", "en": "I work (Gulf)", "ctxAr": "أَشْتَغِل فِي السَّفَارَة", "ctxEn": "I work at the embassy", "lvl": 1}, {"ar": "أَتَكَلَّم", "tr": "atakallam", "en": "I speak", "ctxAr": "أَتَكَلَّم عَرَبِيّ", "ctxEn": "I speak Arabic", "lvl": 1}, {"ar": "جَوْعَان", "tr": "jaw'aan", "en": "hungry", "ctxAr": "أَنَا جَوْعَان", "ctxEn": "I am hungry", "lvl": 1}, {"ar": "مُعَزَّوم", "tr": "mu'azzoom", "en": "invited (you are)", "ctxAr": "أَنْتَ مُعَزَّوم", "ctxEn": "You are invited", "lvl": 1}, {"ar": "مَدِينَة", "tr": "madiina", "en": "city", "ctxAr": "مَدِينَة كَبِيرَة", "ctxEn": "A big city", "lvl": 1}, {"ar": "عَاصِمَة", "tr": "'aasima", "en": "capital city", "ctxAr": "الرِّيَاض عَاصِمَة", "ctxEn": "Riyadh is the capital", "lvl": 1}, {"ar": "وِلَايَة", "tr": "wilaaya", "en": "state / province", "ctxAr": "وِلَايَة كَبِيرَة", "ctxEn": "A big state", "lvl": 1}, {"ar": "مَنْطَقَة", "tr": "mantaqa", "en": "area / region", "ctxAr": "هَذِهِ المَنْطَقَة", "ctxEn": "This area", "lvl": 1}, {"ar": "جَامِعَة", "tr": "jaami'a", "en": "university", "ctxAr": "طَالِب فِي الجَامِعَة", "ctxEn": "A university student", "lvl": 1}, {"ar": "زِيَارَة", "tr": "ziyaara", "en": "visit", "ctxAr": "زِيَارَة رَسْمِيَّة", "ctxEn": "An official visit", "lvl": 1}, {"ar": "سِوَاقَة", "tr": "siwaaqа", "en": "driving", "ctxAr": "رُخْصَة السِّوَاقَة", "ctxEn": "Driving licence", "lvl": 1}, {"ar": "إِلْغَاء", "tr": "ilghaa'", "en": "cancellation", "ctxAr": "إِلْغَاء الحَجْز", "ctxEn": "Cancellation of booking", "lvl": 1}, {"ar": "بَسِيطَة", "tr": "basiita", "en": "simple / easy", "ctxAr": "قَاعِدَة بَسِيطَة", "ctxEn": "A simple rule", "lvl": 1}, {"ar": "سَوَائِل", "tr": "sawaa'il", "en": "liquids", "ctxAr": "مَمْنُوع السَّوَائِل", "ctxEn": "Liquids are prohibited", "lvl": 1}, {"ar": "جِنْسِيَّة", "tr": "jinsiyya", "en": "nationality", "ctxAr": "مَا جِنْسِيَّتَك؟", "ctxEn": "What is your nationality?", "lvl": 1}, {"ar": "إِشَارَة", "tr": "ishaara", "en": "traffic light / signal", "ctxAr": "عِنْدَ الإِشَارَة", "ctxEn": "At the traffic light", "lvl": 1}, {"ar": "تَقَاطُع", "tr": "taqaatu'", "en": "intersection", "ctxAr": "عِنْدَ التَّقَاطُع", "ctxEn": "At the intersection", "lvl": 1}, {"ar": "تَطْبِيق", "tr": "tatbiiq", "en": "application / app", "ctxAr": "اسْتَخْدِم التَّطْبِيق", "ctxEn": "Use the app", "lvl": 1}, {"ar": "تَأْكِيد", "tr": "ta'kiid", "en": "confirmation", "ctxAr": "رِسَالَة تَأْكِيد", "ctxEn": "Confirmation message", "lvl": 1}, {"ar": "مَشْكَلَة", "tr": "mushkila", "en": "problem", "ctxAr": "مَا فِيه مَشْكَلَة", "ctxEn": "No problem", "lvl": 1}, {"ar": "صِيَانَة", "tr": "siyaana", "en": "maintenance", "ctxAr": "وَرْشَة صِيَانَة", "ctxEn": "Maintenance workshop", "lvl": 1}, {"ar": "بِسُرْعَة", "tr": "bisur'a", "en": "quickly / fast", "ctxAr": "رُوح بِسُرْعَة", "ctxEn": "Go quickly", "lvl": 1}, {"ar": "اثْنَيْن", "tr": "ithnayn", "en": "two", "ctxAr": "اثْنَيْن فَقَط", "ctxEn": "Only two", "lvl": 1}, {"ar": "ثَلَاثَة", "tr": "thalaatha", "en": "three", "ctxAr": "ثَلَاثَة أَيَّام", "ctxEn": "Three days", "lvl": 1}, {"ar": "عِشْرِين", "tr": "ishriyn", "en": "twenty", "ctxAr": "عِشْرِين رِيَالاً", "ctxEn": "Twenty Riyals", "lvl": 1}, {"ar": "خَمْسِين", "tr": "khamsiin", "en": "fifty", "ctxAr": "خَمْسُون رِيَالاً", "ctxEn": "Fifty Riyals", "lvl": 1}, {"ar": "أَرْبَعِين", "tr": "arba'iin", "en": "forty", "ctxAr": "أَرْبَعُون دَقِيقَة", "ctxEn": "Forty minutes", "lvl": 1}, {"ar": "أَطْفَال", "tr": "atfaal", "en": "children", "ctxAr": "سِعْر الأَطْفَال", "ctxEn": "Children's price", "lvl": 1}, {"ar": "أَجَانِب", "tr": "ajaanib", "en": "foreigners", "ctxAr": "تَسْعِيرَة الأَجَانِب", "ctxEn": "Foreigners' pricing", "lvl": 1}, {"ar": "أَسْعَار", "tr": "as'aar", "en": "prices", "ctxAr": "الأَسْعَار مَعْقُولَة", "ctxEn": "Prices are reasonable", "lvl": 1}, {"ar": "فَوَاكِه", "tr": "fawakih", "en": "fruits", "ctxAr": "أُحِبّ الفَوَاكِه", "ctxEn": "I like fruits", "lvl": 1}, {"ar": "مَجَّانِيّ", "tr": "majjaaniyy", "en": "free of charge", "ctxAr": "الدُّخُول مَجَّانِيّ", "ctxEn": "Entry is free", "lvl": 1}, {"ar": "تَذْكِرَة", "tr": "tadhkira", "en": "ticket", "ctxAr": "تَذْكِرَة الطَّيَرَان", "ctxEn": "Flight ticket", "lvl": 1}, {"ar": "شَوْرَبَة", "tr": "shurba", "en": "soup", "ctxAr": "شَوْرَبَة سَاخِنَة", "ctxEn": "Hot soup", "lvl": 1}, {"ar": "بَطَاطِس", "tr": "bataatis", "en": "French fries / potatoes", "ctxAr": "بَطَاطِس مَقْلِيَّة", "ctxEn": "Fried potatoes", "lvl": 1}, {"ar": "بَيْضَاء", "tr": "baydaa'", "en": "white (fem.)", "ctxAr": "جُبْنَة بَيْضَاء", "ctxEn": "White cheese", "lvl": 1}, {"ar": "دَائِماً", "tr": "daa'iman", "en": "always", "ctxAr": "دَائِماً فِي الوَقْت", "ctxEn": "Always on time", "lvl": 1}, {"ar": "أَحْتَاج", "tr": "ahtaaj", "en": "I need", "ctxAr": "أَحْتَاج مُسَاعَدَة", "ctxEn": "I need help", "lvl": 1}, {"ar": "أَتَنَقَّى", "tr": "atanaqqaa", "en": "I choose / I pick", "ctxAr": "أَتَنَقَّى مِنَ القَائِمَة", "ctxEn": "I choose from the menu", "lvl": 1}, {"ar": "أَلَاقِي", "tr": "alaaqii", "en": "I find (Gulf)", "ctxAr": "أَلَاقِيه هُنَا", "ctxEn": "I find it here", "lvl": 1}, {"ar": "مُنَاسِب", "tr": "munaasib", "en": "suitable / convenient", "ctxAr": "هَذَا الوَقْت مُنَاسِب؟", "ctxEn": "Is this time suitable?", "lvl": 1}, {"ar": "عُنْوَان", "tr": "unwaan", "en": "address", "ctxAr": "مَا العُنْوَان؟", "ctxEn": "What is the address?", "lvl": 1}, {"ar": "أَسْأَلَك", "tr": "as'alak", "en": "I ask you", "ctxAr": "أَسْأَلَك سُؤَالاً", "ctxEn": "I ask you a question", "lvl": 1}, {"ar": "مَدَارِس", "tr": "madaaris", "en": "schools", "ctxAr": "كَثِير مِنَ المَدَارِس", "ctxEn": "Many schools", "lvl": 1}, {"ar": "مُمَتَّاز", "tr": "mumtaaz", "en": "excellent", "ctxAr": "مُمَتَّاز جِدَّاً", "ctxEn": "Excellent!", "lvl": 1}, {"ar": "تَسَوَّلَف", "tr": "tasawwalf", "en": "to chat casually (Gulf)", "ctxAr": "تَعَال نَتْسَوْلَف", "ctxEn": "Come let's chat", "lvl": 1}, {"ar": "أَوْلَاد", "tr": "awlaad", "en": "kids / children", "ctxAr": "كَيْفَ الأَوْلَاد؟", "ctxEn": "How are the kids?", "lvl": 1}, {"ar": "سِنِّين", "tr": "siniyn", "en": "years (pl., Gulf)", "ctxAr": "كَمْ سِنِّين؟", "ctxEn": "How many years?", "lvl": 1}, {"ar": "مَتَاحِف", "tr": "mataahif", "en": "museums", "ctxAr": "زُرْنَا المَتَاحِف", "ctxEn": "We visited the museums", "lvl": 1}, {"ar": "مَطَاعِم", "tr": "mataa'im", "en": "restaurants", "ctxAr": "كَثِير مَطَاعِم", "ctxEn": "Many restaurants", "lvl": 1}, {"ar": "مَوْقِع", "tr": "mawqi'", "en": "website / location", "ctxAr": "عَلَى المَوْقِع", "ctxEn": "On the website", "lvl": 1}, {"ar": "مَرْحَبَا", "tr": "marhaba", "en": "hello / hi", "ctxAr": "مَرْحَبَا بِكُم", "ctxEn": "Welcome all", "lvl": 1}, {"ar": "عَشَانَك", "tr": "ashaanak", "en": "for you (masc., Gulf)", "ctxAr": "هَذَا عَشَانَك", "ctxEn": "This is for you", "lvl": 1}, {"ar": "هَيَّا", "tr": "hayya", "en": "come on / let's go", "ctxAr": "هَيَّا نَرُوح", "ctxEn": "Come on, let's go", "lvl": 1}, {"ar": "دِبْلُومَاسِيّ", "tr": "dibloomaasiyy", "en": "diplomat", "ctxAr": "هُوَ دِبْلُومَاسِيّ", "ctxEn": "He is a diplomat", "lvl": 2}, {"ar": "أَمْرِيكِيّ", "tr": "amriikiyy", "en": "American", "ctxAr": "مُوَظَّف أَمْرِيكِيّ", "ctxEn": "American employee", "lvl": 2}, {"ar": "اقْتِصَادِيّ", "tr": "iqtisaadiyy", "en": "economic", "ctxAr": "القِسْم الاقْتِصَادِيّ", "ctxEn": "The economic section", "lvl": 2}, {"ar": "إِجْرَاءَات", "tr": "ijraa'aat", "en": "procedures / process", "ctxAr": "إِجْرَاءَات المَطَار", "ctxEn": "Airport procedures", "lvl": 2}, {"ar": "قَوَانِين", "tr": "qawaaniin", "en": "laws / rules", "ctxAr": "قَوَانِين المُرُور", "ctxEn": "Traffic laws", "lvl": 2}, {"ar": "خَضْرَوَات", "tr": "khadarawaat", "en": "vegetables", "ctxAr": "خَضْرَوَات طَازِجَة", "ctxEn": "Fresh vegetables", "lvl": 2}, {"ar": "أَسْتَأْجِر", "tr": "asta'jir", "en": "I rent", "ctxAr": "أَسْتَأْجِر سَيَّارَة", "ctxEn": "I rent a car", "lvl": 2}, {"ar": "مُسْتَعْجِل", "tr": "musta'jil", "en": "in a hurry", "ctxAr": "أَنَا مُسْتَعْجِل", "ctxEn": "I am in a hurry", "lvl": 2}, {"ar": "أَسْتَخْدِم", "tr": "astakhdim", "en": "I use", "ctxAr": "أَسْتَخْدِم التَّطْبِيق", "ctxEn": "I use the app", "lvl": 2}, {"ar": "صَيْدَلِيَّة", "tr": "saydaliyya", "en": "pharmacy", "ctxAr": "أَقْرَب صَيْدَلِيَّة", "ctxEn": "The nearest pharmacy", "lvl": 2}, {"ar": "لَيْلَتَيْن", "tr": "laylatayni", "en": "two nights", "ctxAr": "إِقَامَة لَيْلَتَيْن", "ctxEn": "Two-night stay", "lvl": 2}, {"ar": "ثَمَانِيَة", "tr": "thamaaniya", "en": "eight", "ctxAr": "ثَمَانِيَة أَشْخَاص", "ctxEn": "Eight people", "lvl": 2}, {"ar": "ثَلَاثِين", "tr": "thalaathiin", "en": "thirty", "ctxAr": "ثَلَاثُون دَقِيقَة", "ctxEn": "Thirty minutes", "lvl": 2}, {"ar": "مَنْظِّفَات", "tr": "munazzifaat", "en": "cleaning supplies / detergents", "ctxAr": "قِسْم المُنَظِّفَات", "ctxEn": "Cleaning supplies section", "lvl": 2}, {"ar": "مَخْبُوزَات", "tr": "makhbuuzaat", "en": "baked goods", "ctxAr": "طَازِجَة مَخْبُوزَات", "ctxEn": "Fresh baked goods", "lvl": 2}, {"ar": "سَفَارَات", "tr": "sifaaraat", "en": "embassies", "ctxAr": "حَيّ السَّفَارَات", "ctxEn": "The embassies district", "lvl": 2}, {"ar": "سَيَّارَات", "tr": "sayyaaraat", "en": "cars", "ctxAr": "مَوْقِف سَيَّارَات", "ctxEn": "Car park", "lvl": 2}, {"ar": "اشْتَرَيْنَا", "tr": "ishtarayna", "en": "we bought", "ctxAr": "اشْتَرَيْنَا هَدَايَا", "ctxEn": "We bought gifts", "lvl": 2}, {"ar": "يَسْبَحُون", "tr": "yasbahoon", "en": "they swim", "ctxAr": "يَسْبَحُون فِي البَحْر", "ctxEn": "They swim in the sea", "lvl": 2}, {"ar": "يَزُورُون", "tr": "yazuruun", "en": "they visit", "ctxAr": "يَزُورُون المَتَاحِف", "ctxEn": "They visit the museums", "lvl": 2}, {"ar": "يَبِيعُون", "tr": "yabiuun", "en": "they sell", "ctxAr": "يَبِيعُون كُلّ شَيْء", "ctxEn": "They sell everything", "lvl": 2}, {"ar": "بَرْنَامَج", "tr": "barnaamaj", "en": "programme / schedule", "ctxAr": "بَرْنَامَج الرِّحْلَة", "ctxEn": "Trip programme", "lvl": 2}, {"ar": "أَحْيَاناً", "tr": "ahyaanan", "en": "sometimes", "ctxAr": "أَحْيَاناً أَذْهَب", "ctxEn": "Sometimes I go", "lvl": 2}, {"ar": "بِالنِّسْبَة", "tr": "bilnisba", "en": "regarding / as for", "ctxAr": "بِالنِّسْبَة لِلسِّعْر", "ctxEn": "Regarding the price", "lvl": 2}, {"ar": "صَبَاح الخَيْر", "tr": "sabaah al-khayr", "en": "good morning", "ctxAr": "صَبَاح الخَيْر يَا دُكْتُور", "ctxEn": "Good morning, Doctor", "lvl": 3}, {"ar": "صَبَاح النُّور", "tr": "sabaah al-nuur", "en": "good morning (response)", "ctxAr": "صَبَاح النُّور وَالسُّرُور", "ctxEn": "Good morning and joy (response)", "lvl": 3}, {"ar": "مَسَاء الخَيْر", "tr": "masaa' al-khayr", "en": "good evening", "ctxAr": "مَسَاء الخَيْر جَمِيعاً", "ctxEn": "Good evening everyone", "lvl": 3}, {"ar": "مَسَاء النُّور", "tr": "masaa' al-nuur", "en": "good evening (response)", "ctxAr": "مَسَاء النُّور وَالأَفْرَاح", "ctxEn": "Good evening (response)", "lvl": 3}, {"ar": "مَعَ السَّلَامَة", "tr": "maa al-salaama", "en": "goodbye (go in peace)", "ctxAr": "مَعَ السَّلَامَة وَإِلَى اللِّقَاء", "ctxEn": "Goodbye and see you", "lvl": 3}, {"ar": "الحَمْد لِلَّه", "tr": "alhamdu lillaah", "en": "thank God / praise God", "ctxAr": "الحَمْد لِلَّه كُلّ شَيْء زَيْن", "ctxEn": "Thank God everything is fine", "lvl": 3}, {"ar": "كَيْفَ حَالَك؟", "tr": "kayfa haalak?", "en": "how are you? (masc.)", "ctxAr": "كَيْفَ حَالَك يَوْم؟", "ctxEn": "How are you today?", "lvl": 3}, {"ar": "مِنْ وَيْن؟", "tr": "min wayn?", "en": "from where? (Gulf)", "ctxAr": "أَنْتَ مِنْ وَيْن أَصْلاً؟", "ctxEn": "Where are you originally from?", "lvl": 3}, {"ar": "قِسْم الأَمْن", "tr": "qism al-amn", "en": "security section", "ctxAr": "رَاجِع قِسْم الأَمْن", "ctxEn": "See the security section", "lvl": 3}, {"ar": "إِنْ شَاء اللَّه", "tr": "in shaa' allaah", "en": "God willing", "ctxAr": "إِنْ شَاء اللَّه نَشُوفَك", "ctxEn": "God willing we will see you", "lvl": 3}, {"ar": "أَوَّل مَرَّة", "tr": "awwal marra", "en": "first time", "ctxAr": "هَذِهِ أَوَّل مَرَّة", "ctxEn": "This is the first time", "lvl": 3}, {"ar": "فُرْصَة سَعِيدَة", "tr": "fursa sa'iida", "en": "nice to meet you", "ctxAr": "فُرْصَة سَعِيدَة بِمَعْرِفَتَك", "ctxEn": "Nice to meet you", "lvl": 3}, {"ar": "لَوْ سَمَحْت", "tr": "law samaht", "en": "please / excuse me", "ctxAr": "لَوْ سَمَحْت، أَيْنَ المَكْتَب؟", "ctxEn": "Please, where is the office?", "lvl": 3}, {"ar": "وَثَائِق التَّطْعِيم", "tr": "wathaa'iq al-tatt'iim", "en": "vaccination documents", "ctxAr": "هَلْ عِنْدَك وَثَائِق التَّطْعِيم؟", "ctxEn": "Do you have vaccination documents?", "lvl": 3}, {"ar": "مَوَاد مَحْظُورَة", "tr": "mawaad mahzuura", "en": "prohibited items", "ctxAr": "مَمْنُوع حَمْل مَوَاد مَحْظُورَة", "ctxEn": "Carrying prohibited items is banned", "lvl": 3}, {"ar": "اللَّه يُسَلِّمَك", "tr": "allaah yusallimak", "en": "may God keep you safe", "ctxAr": "اللَّه يُسَلِّمَك عَلَى المَرُور", "ctxEn": "Thank you for passing by", "lvl": 3}, {"ar": "جَوَاز السَّفَر", "tr": "jawaaz al-safar", "en": "passport", "ctxAr": "هَلْ مَعَك جَوَاز السَّفَر؟", "ctxEn": "Do you have your passport with you?", "lvl": 3}, {"ar": "تَارِيخ المَغَادَرَة", "tr": "taariikh al-mughaadara", "en": "departure date", "ctxAr": "مَا تَارِيخ المَغَادَرَة؟", "ctxEn": "What is the departure date?", "lvl": 3}, {"ar": "تَارِيخ المِيلَاد", "tr": "taariikh al-milaad", "en": "date of birth", "ctxAr": "مَا تَارِيخ مِيلَادَك؟", "ctxEn": "What is your date of birth?", "lvl": 3}, {"ar": "حِزَام الأَمَان", "tr": "hizaam al-amaan", "en": "seat belt", "ctxAr": "ارْبُط حِزَام الأَمَان", "ctxEn": "Fasten your seat belt", "lvl": 3}, {"ar": "جِهَاز التَّفْتِيش", "tr": "jihaaz al-taftiish", "en": "security scanner", "ctxAr": "مُرَّ مِنْ جِهَاز التَّفْتِيش", "ctxEn": "Pass through the security scanner", "lvl": 3}, {"ar": "مَوْقِف سَيَّارَات", "tr": "mawqif sayyaaraat", "en": "car park", "ctxAr": "فِي مَوْقِف السَّيَّارَات", "ctxEn": "In the car park", "lvl": 3}, {"ar": "خِدْمَة تَوْصِيل", "tr": "khidmat tawsiil", "en": "delivery service", "ctxAr": "يُوجَد خِدْمَة تَوْصِيل", "ctxEn": "There is a delivery service", "lvl": 3}, {"ar": "إِنْشَاء حِسَاب", "tr": "inshaa' hisaab", "en": "creating an account", "ctxAr": "ابْدَأ بِإِنْشَاء حِسَاب", "ctxEn": "Start by creating an account", "lvl": 3}, {"ar": "البَرِيد الإِلِكْتُرُونِيّ", "tr": "al-bariid al-ilikturuuniyy", "en": "email", "ctxAr": "أَدْخِل البَرِيد الإِلِكْتُرُونِيّ", "ctxEn": "Enter your email", "lvl": 3}, {"ar": "كَلِمَة المُرُور", "tr": "kalimat al-muruur", "en": "password", "ctxAr": "أَدْخِل كَلِمَة المُرُور", "ctxEn": "Enter the password", "lvl": 3}, {"ar": "يَوْم السَّبْت", "tr": "yawm al-sabt", "en": "Saturday", "ctxAr": "نَجْتَمِع يَوْم السَّبْت", "ctxEn": "We meet on Saturday", "lvl": 3}, {"ar": "رَقْم التِّلِفُون", "tr": "raqm al-tilifuun", "en": "phone number", "ctxAr": "مَا رَقْم التِّلِفُون؟", "ctxEn": "What is the phone number?", "lvl": 3}, {"ar": "أَغْرَاض البَيْت", "tr": "aghraa'd al-bayt", "en": "household groceries", "ctxAr": "أَشْتَرِي أَغْرَاض البَيْت", "ctxEn": "I buy household groceries", "lvl": 3}, {"ar": "عَلَى فِكْرَة", "tr": "ala fikra", "en": "by the way", "ctxAr": "عَلَى فِكْرَة، سَمِعْت؟", "ctxEn": "By the way, did you hear?", "lvl": 3}, {"ar": "بِالضَّبْط", "tr": "bil-dabt", "en": "exactly / precisely", "ctxAr": "نَعَم، بِالضَّبْط", "ctxEn": "Yes, exactly", "lvl": 3}, {"ar": "البَحْر الأَحْمَر", "tr": "al-bahr al-ahmar", "en": "the Red Sea", "ctxAr": "رَحَلْنَا إِلَى البَحْر الأَحْمَر", "ctxEn": "We travelled to the Red Sea", "lvl": 3}, {"ar": "المُتْحَف الوَطَنِيّ", "tr": "al-mathaf al-wataniyy", "en": "the National Museum", "ctxAr": "زُرْنَا المُتْحَف الوَطَنِيّ", "ctxEn": "We visited the National Museum", "lvl": 3}, {"ar": "عَلَى اليَمِين", "tr": "ala al-yamiin", "en": "to the right", "ctxAr": "دُور عَلَى اليَمِين", "ctxEn": "Turn to the right", "lvl": 3}, {"ar": "نُقْطَة الانْطِلَاق", "tr": "nuqtat al-intilaaق", "en": "starting point", "ctxAr": "مَا نُقْطَة الانْطِلَاق؟", "ctxEn": "What is the starting point?", "lvl": 3}, {"ar": "تَفَاصِيل الرِّحْلَة", "tr": "tafaasiil al-rihla", "en": "trip details", "ctxAr": "اعْرِض تَفَاصِيل الرِّحْلَة", "ctxEn": "Show the trip details", "lvl": 3}, {"ar": "أَمَاكِن سِيَاحِيَّة", "tr": "amaakln siyaahiyya", "en": "tourist attractions", "ctxAr": "كَثِير أَمَاكِن سِيَاحِيَّة", "ctxEn": "Many tourist attractions", "lvl": 3}, {"ar": "اسْم العَائِلَة", "tr": "ism al-'aa'ila", "en": "family name / surname", "ctxAr": "مَا اسْم العَائِلَة؟", "ctxEn": "What is the family name?", "lvl": 3}, {"ar": "أَرْخَص مِن", "tr": "arkhas min", "en": "cheaper than", "ctxAr": "هَذَا أَرْخَص مِن ذَاك", "ctxEn": "This is cheaper than that", "lvl": 3}, {"ar": "أَكَثَر مِن", "tr": "akthar min", "en": "more than", "ctxAr": "أَكْثَر مِن سَاعَة", "ctxEn": "More than an hour", "lvl": 3}, {"ar": "عَايِشِين فِي", "tr": "'aayishiin fi", "en": "living in (Gulf pl.)", "ctxAr": "عَايِشِين فِي الرِّيَاض", "ctxEn": "Living in Riyadh", "lvl": 3}, {"ar": "صَحَّتَيْن", "tr": "sahhtayn", "en": "bon appétit", "ctxAr": "صَحَّتَيْن وَهَنَاءً", "ctxEn": "Bon appétit", "lvl": 3}, {"ar": "الطَّرِيق السَّرِيع", "tr": "al-tariiq al-sarii'", "en": "highway / motorway", "ctxAr": "عَلَى الطَّرِيق السَّرِيع", "ctxEn": "On the highway", "lvl": 3}, {"ar": "عَن طَرِيق", "tr": "'an tariiq", "en": "through / via", "ctxAr": "عَن طَرِيق التَّطْبِيق", "ctxEn": "Via the app", "lvl": 3}, {"ar": "مَا فِيه مِنْيُو", "tr": "ma fiih minyu", "en": "there is no menu", "ctxAr": "آسِف، مَا فِيه مِنْيُو", "ctxEn": "Sorry, there is no menu", "lvl": 3}, {"ar": "مِن زَمَان", "tr": "min zamaan", "en": "for a long time / long ago", "ctxAr": "مَا شُفْتَك مِن زَمَان", "ctxEn": "Haven't seen you in a long time", "lvl": 3}];
+
+// ═══════════════════════════════════════════════════════════
+//  LEVEL METADATA
+// ═══════════════════════════════════════════════════════════
+const LEVEL_META = [
+  { id: 0, name: 'Level 1', sub: '2–4 letters'  },
+  { id: 1, name: 'Level 2', sub: '5 letters'    },
+  { id: 2, name: 'Level 3', sub: '6–7 letters'  },
+  { id: 3, name: 'Level 4', sub: 'Phrases'      },
+];
+
+// ═══════════════════════════════════════════════════════════
+//  SPACED REPETITION — SM-2 algorithm
+// ═══════════════════════════════════════════════════════════
+function srInit() {
+  return { ef: 2.5, reps: 0, interval: 0, nextReview: null, correct: 0, wrong: 0 };
+}
+
+function srReview(item, correct) {
+  var sr = item.sr || srInit();
+  if (correct) {
+    sr.reps = (sr.reps || 0) + 1;
+    if (sr.reps === 1)      sr.interval = 1;
+    else if (sr.reps === 2) sr.interval = 4;
+    else                    sr.interval = Math.round((sr.interval || 4) * sr.ef);
+    sr.ef = Math.max(1.3, (sr.ef || 2.5) + 0.1);
+    sr.correct = (sr.correct || 0) + 1;
+  } else {
+    sr.reps = 0;
+    sr.interval = 1;
+    sr.ef = Math.max(1.3, (sr.ef || 2.5) - 0.2);
+    sr.wrong = (sr.wrong || 0) + 1;
+  }
+  var next = new Date();
+  next.setDate(next.getDate() + sr.interval);
+  sr.nextReview = next.toISOString().slice(0, 10);
+  item.sr = sr;
+}
+
+function srIsDue(item) {
+  return !item.sr || !item.sr.nextReview || item.sr.nextReview <= todayStr();
+}
+
+function srLabel(item) {
+  if (!item.sr || !item.sr.nextReview) return { cls: 'sr-new', txt: 'NEW' };
+  if (item.sr.nextReview <= todayStr()) return { cls: 'sr-due', txt: 'DUE' };
+  var diff = Math.round((new Date(item.sr.nextReview) - new Date()) / 86400000);
+  return { cls: 'sr-sched', txt: 'in ' + diff + 'd' };
+}
+
+function isMastered(item) {
+  return item.sr && item.sr.reps >= 4 && item.sr.ef >= 2.0;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+var bank         = [];   // live word bank — vocab + sr data per word
+var dailyLog     = [];
+var streak       = 0;
+var sessionDone  = {};
+var practiceQueue = [];
+var practiceIdx  = 0;
+var practiceMode = 'ar2en';
+var libFilter    = 'all';
+var libSort      = 'sr';
+var libSearch    = '';
+
+// ═══════════════════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════════════════
+var LS = {
+  bank:    'manhaj_bank_v2',
+  log:     'manhaj_log_v2',
+  streak:  'manhaj_streak_v2',
+  session: 'manhaj_session_v2',
+};
+
+function save() {
+  try {
+    localStorage.setItem(LS.bank,    JSON.stringify(bank));
+    localStorage.setItem(LS.log,     JSON.stringify(dailyLog));
+    localStorage.setItem(LS.streak,  String(streak));
+    localStorage.setItem(LS.session, JSON.stringify(sessionDone));
+  } catch(e) { console.warn('save failed', e); }
+}
+
+function load() {
+  try {
+    var b = localStorage.getItem(LS.bank);
+    if (b) bank = JSON.parse(b);
+    var l = localStorage.getItem(LS.log);
+    if (l) dailyLog = JSON.parse(l);
+    var s = localStorage.getItem(LS.streak);
+    if (s) streak = parseInt(s) || 0;
+    var sd = localStorage.getItem(LS.session);
+    if (sd) {
+      var parsed = JSON.parse(sd);
+      sessionDone = (parsed._date === todayStr()) ? parsed : { _date: todayStr() };
+    } else {
+      sessionDone = { _date: todayStr() };
+    }
+  } catch(e) {
+    bank = [];
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BANK INITIALISATION — merge VOCAB into bank
+// ═══════════════════════════════════════════════════════════
+function initBank() {
+  VOCAB.forEach(function(v) {
+    var exists = bank.some(function(b) { return b.ar === v.ar && b.en === v.en; });
+    if (!exists) {
+      bank.push({
+        ar:    v.ar,
+        en:    v.en,
+        tr:    v.tr    || '',
+        ctxAr: v.ctxAr || '',
+        ctxEn: v.ctxEn || '',
+        lvl:   v.lvl   || 0,
+        sr:    srInit()
+      });
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DATE + STREAK
+// ═══════════════════════════════════════════════════════════
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function logToday(type) {
+  var today = todayStr();
+  var e = dailyLog.find(function(x) { return x.date === today; });
+  if (!e) {
+    e = { date: today, actions: {}, correct: 0, wrong: 0 };
+    dailyLog.unshift(e);
+    if (dailyLog.length > 60) dailyLog.pop();
+  }
+  e.actions[type] = (e.actions[type] || 0) + 1;
+  updateStreak();
+}
+
+function updateStreak() {
+  var s = 0;
+  var d = new Date();
+  for (var i = 0; i < 60; i++) {
+    var ds = d.toISOString().slice(0, 10);
+    if (dailyLog.find(function(e) { return e.date === ds; })) {
+      s++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  streak = s;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STATS HELPERS
+// ═══════════════════════════════════════════════════════════
+function countDue() {
+  return bank.filter(function(w) {
+    return w.sr && w.sr.reps > 0 && srIsDue(w);
+  }).length;
+}
+
+function countUnseen() {
+  return bank.filter(function(w) {
+    return !w.sr || w.sr.reps === 0;
+  }).length;
+}
+
+function countMastered() {
+  return bank.filter(isMastered).length;
+}
+
+function updateHeaderStats() {
+  document.getElementById('hStreak').textContent   = streak;
+  document.getElementById('hTotal').textContent    = bank.length;
+  document.getElementById('hMastered').textContent = countMastered();
+  document.getElementById('hDue').textContent      = countDue();
+  var done = Object.keys(sessionDone).filter(function(k) { return k !== '_date'; }).length;
+  document.getElementById('hSession').textContent  = done + '/6';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TODAY TAB
+// ═══════════════════════════════════════════════════════════
+var SESSION_BLOCKS = [
+  { id:'warmup',  icon:'🌅', title:'Warm-Up',    desc:'Flashcards — due reviews first, then new words', time:'10 min', tab:'practice' },
+  { id:'reading', icon:'📖', title:'Reading',     desc:'Reading Practice — paste a short news article',  time:'15 min', url:'arabic_reading_practice.html' },
+  { id:'video',   icon:'🎬', title:'Video',       desc:'Video Trainer — max 5 min video',                time:'15 min', url:'arabic_video_trainer.html' },
+  { id:'game',    icon:'🃏', title:'Vocab Game',  desc:'Image vocab game — quiz from your word bank',    time:'10 min', url:'arabic_vocab_game.html' },
+  { id:'grammar', icon:'🌿', title:'Grammar',     desc:'Grammar layer — rotates daily',                  time:'15 min', tab:'tools' },
+  { id:'review',  icon:'📊', title:'Review',      desc:'Check progress, note weak spots',                time:'5 min',  tab:'progress' },
+];
+
+function getTodayGrammarTool() {
+  var day   = new Date().getDay();
+  var tools = [
+    { name:'Root Explorer',  url:'arabic_root_layer1.html' },
+    { name:'Root Explorer',  url:'arabic_root_layer1.html' },
+    { name:'Verb Forms',     url:'verb_forms_layer2.html' },
+    { name:'Root Explorer',  url:'arabic_root_layer1.html' },
+    { name:'Verb Forms',     url:'verb_forms_layer2.html' },
+    { name:'Word Patterns',  url:'word_patterns_game_layer3.html' },
+    { name:'Word Patterns',  url:'word_patterns_game_layer3.html' },
+  ];
+  return tools[day];
+}
+
+function renderBriefing() {
+  var due      = countDue();
+  var unseen   = countUnseen();
+  var mastered = countMastered();
+  var total    = bank.length;
+  var pct      = total ? Math.round((mastered / total) * 100) : 0;
+  var grammar  = getTodayGrammarTool();
+  var today    = new Date();
+  var days     = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  document.getElementById('todayDate').textContent =
+    days[today.getDay()] + ', ' +
+    today.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+
+  var done      = Object.keys(sessionDone).filter(function(k) { return k !== '_date'; }).length;
+  var newToday  = getTodayNewWords();
+  var todayTotal = due + newToday.length;
+
+  var html = 'Today: <strong>' + todayTotal + ' words</strong> — ';
+  html += '<strong>' + due + ' reviews</strong> due + ';
+  html += '<strong>' + newToday.length + ' new</strong>. ';
+  html += '<strong>' + unseen + '</strong> words ahead in curriculum. ';
+  html += 'Mastery: <strong>' + pct + '% (' + mastered + '/' + total + ')</strong>. ';
+  html += 'Grammar: <strong>' + grammar.name + '</strong>. ';
+  if (done === 6) {
+    html += '<strong style="color:var(--green)">✓ Full session complete!</strong>';
+  } else if (done > 0) {
+    html += '<strong>' + done + '/6 blocks done</strong> — keep going!';
+  } else {
+    html += 'Start with Warm-Up to begin.';
+  }
+
+  document.getElementById('briefingText').innerHTML = html;
+
+  var techs = [
+    { name:'Spaced Repetition',    active: true },
+    { name:'Active Recall',         active: true },
+    { name:'Interleaving',          active: true },
+    { name:'Contextual Listening',  active: done >= 2 },
+    { name:'Retrieval Practice',    active: true },
+    { name:'Distributed Practice',  active: streak > 0 },
+  ];
+  document.getElementById('techTags').innerHTML = techs.map(function(t) {
+    return '<div class="tag' + (t.active ? ' active-tag' : '') + '">' + t.name + '</div>';
+  }).join('');
+}
+
+function renderSessionBlocks() {
+  var grammar = getTodayGrammarTool();
+  var grid    = document.getElementById('sessionGrid');
+  grid.innerHTML = SESSION_BLOCKS.map(function(b) {
+    var done     = sessionDone[b.id];
+    var desc     = b.id === 'grammar' ? grammar.name + ' — ' + b.desc : b.desc;
+    var dueCount = b.id === 'warmup' ? countDue() + getTodayNewWords().length : null;
+    var isNext   = isNextBlock(b.id);
+    return '<div class="sblock' +
+      (done    ? ' done'         : '') +
+      (isNext && !done ? ' active-block' : '') +
+      '" onclick="launchBlock(\'' + b.id + '\',\'' + (b.url || '') + '\',\'' +
+      (b.tab || '') + '\',\'' + (grammar.url || '') + '\')">' +
+      '<div class="sb-icon">' + b.icon + '</div>' +
+      '<div class="sb-title">' + b.title + '</div>' +
+      '<div class="sb-desc">' + desc + '</div>' +
+      (dueCount !== null ? '<div class="sb-count">' + dueCount + ' words due</div>' : '') +
+      '<div class="sb-time">' + b.time + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function isNextBlock(id) {
+  for (var i = 0; i < SESSION_BLOCKS.length; i++) {
+    var bid = SESSION_BLOCKS[i].id;
+    if (!sessionDone[bid]) return bid === id;
+  }
+  return false;
+}
+
+function launchBlock(id, url, tab, grammarUrl) {
+  if (url)                            window.open(url, '_blank');
+  else if (id === 'grammar' && grammarUrl) window.open(grammarUrl, '_blank');
+  else if (tab)                       switchTabByName(tab);
+  if (id === 'warmup' || id === 'review') markBlockDone(id);
+  else {
+    setTimeout(function() {
+      if (!sessionDone[id]) toast('Double-click the block to mark it done');
+    }, 2000);
+  }
+}
+
+function markBlockDone(id) {
+  sessionDone[id]  = true;
+  sessionDone._date = todayStr();
+  save();
+  logToday(id);
+  updateHeaderStats();
+  renderBriefing();
+  renderSessionBlocks();
+  updateSessionProgress();
+}
+
+function updateSessionProgress() {
+  var done = Object.keys(sessionDone).filter(function(k) { return k !== '_date'; }).length;
+  var pct  = Math.round((done / 6) * 100);
+  document.getElementById('sessionProgLabel').textContent = 'Today — ' + done + ' / 6 blocks';
+  document.getElementById('sessionProgPct').textContent   = pct + '%';
+  document.getElementById('sessionProgFill').style.width  = pct + '%';
+}
+
+document.addEventListener('dblclick', function(e) {
+  var sb = e.target.closest('.sblock');
+  if (sb) {
+    var idx   = Array.from(sb.parentNode.children).indexOf(sb);
+    var block = SESSION_BLOCKS[idx];
+    if (block) markBlockDone(block.id);
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+//  PRACTICE TAB — rebuilt from scratch
+// ═══════════════════════════════════════════════════════════
+var NEW_PER_DAY = 10;
+
+function getTodayNewWords() {
+  var newWords = bank.filter(function(w) {
+    return !w.sr || w.sr.reps === 0;
+  }).sort(function(a, b) {
+    return (a.lvl - b.lvl) || a.en.localeCompare(b.en);
+  });
+  var today         = todayStr();
+  var logEntry      = dailyLog.find(function(e) { return e.date === today; });
+  var alreadyNew    = (logEntry && logEntry.newIntroduced) || 0;
+  var remaining     = Math.max(0, NEW_PER_DAY - alreadyNew);
+  return newWords.slice(0, remaining);
+}
+
+function markNewIntroduced(count) {
+  var today = todayStr();
+  var e = dailyLog.find(function(x) { return x.date === today; });
+  if (!e) { e = { date: today, actions: {}, correct: 0, wrong: 0, newIntroduced: 0 }; dailyLog.unshift(e); }
+  e.newIntroduced = (e.newIntroduced || 0) + count;
+}
+
+function buildPracticeQueue() {
+  var due = bank.filter(function(w) {
+    return w.sr && w.sr.reps > 0 && srIsDue(w);
+  }).sort(function(a, b) {
+    return (a.sr.nextReview || '').localeCompare(b.sr.nextReview || '');
+  });
+  var newWords  = getTodayNewWords();
+  practiceQueue = shuffle(due).concat(newWords).slice(0, 60);
+  practiceIdx   = 0;
+  renderPractice();
+}
+
+function setPMode(mode, btn) {
+  practiceMode = mode;
+  document.querySelectorAll('.mode-toggle .mode-btn').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  buildPracticeQueue();
+}
+
+function renderPractice() {
+  if (!bank.length) {
+    document.getElementById('pWord').textContent = '—';
+    document.getElementById('pHint').textContent = 'Word bank loading…';
+    document.getElementById('pChoices').innerHTML = '';
+    updatePracticeProgress();
+    return;
+  }
+  if (practiceIdx >= practiceQueue.length) {
+    // Refill if user has exhausted the queue
+    buildPracticeQueue();
+    return;
+  }
+
+  var cur = practiceQueue[practiceIdx];
+
+  document.getElementById('pCounter').textContent      = (practiceIdx + 1) + ' / ' + practiceQueue.length;
+  document.getElementById('pFeedback').className       = 'feedback';
+  document.getElementById('pTranslation').style.display = 'none';
+  document.getElementById('pRevealBtn').style.display   = 'none';
+
+  // Level + SR badge
+  var lbl   = srLabel(cur);
+  var badge = document.getElementById('pSrBadge');
+  badge.className   = 'sr-badge ' + lbl.cls;
+  badge.textContent = LEVEL_META[cur.lvl].name + ' · ' + lbl.txt;
+  badge.style.display = 'block';
+
+  document.getElementById('pMod').textContent   = LEVEL_META[cur.lvl].sub;
+  document.getElementById('pBadge').textContent = LEVEL_META[cur.lvl].name;
+
+  // Render based on mode
+  if (practiceMode === 'ar2en') {
+    document.getElementById('pWord').textContent      = cur.ar;
+    document.getElementById('pWord').style.fontSize   = '';
+    document.getElementById('pWord').setAttribute('dir', 'rtl');
+    document.getElementById('pHint').textContent      = 'Click word or 🔊 · choose the meaning below';
+    genChoices(cur, 'en');
+
+  } else if (practiceMode === 'en2ar') {
+    document.getElementById('pWord').textContent      = cur.en;
+    document.getElementById('pWord').style.fontSize   = '20px';
+    document.getElementById('pWord').removeAttribute('dir');
+    document.getElementById('pHint').textContent      = 'Pick the Arabic word';
+    genChoices(cur, 'ar');
+
+  } else if (practiceMode === 'listen') {
+    document.getElementById('pWord').textContent      = '👂';
+    document.getElementById('pWord').style.fontSize   = '48px';
+    document.getElementById('pWord').removeAttribute('dir');
+    document.getElementById('pHint').textContent      = 'Listen and identify the word';
+    document.getElementById('pRevealBtn').style.display = 'inline-flex';
+    setTimeout(function() { speak(cur.ar); }, 400);
+    genChoices(cur, 'en');
+
+  } else if (practiceMode === 'fill') {
+    // Context mode — show ctxAr with the word blanked
+    var ctxAr = cur.ctxAr || cur.ar;
+    var blanked = ctxAr.replace(cur.ar, '______');
+    document.getElementById('pWord').textContent      = blanked;
+    document.getElementById('pWord').style.fontSize   = cur.ctxAr ? '28px' : '';
+    document.getElementById('pWord').setAttribute('dir', 'rtl');
+    document.getElementById('pHint').textContent      = 'Context: ' + (cur.ctxEn || cur.en);
+    genChoices(cur, 'en');
+  }
+
+  updatePracticeProgress();
+}
+
+function genChoices(cur, field) {
+  var div = document.getElementById('pChoices');
+  div.innerHTML = '';
+
+  // Decoys: prefer same level for trickier distractors
+  var pool    = bank.filter(function(w) { return w.ar !== cur.ar; });
+  var sameLvl = pool.filter(function(w) { return w.lvl === cur.lvl; });
+  var decoys  = shuffle(sameLvl.length >= 3 ? sameLvl : pool).slice(0, 3);
+  var opts    = shuffle(decoys.concat([cur]));
+
+  opts.forEach(function(opt) {
+    var btn = document.createElement('button');
+    btn.className   = 'choice' + (field === 'ar' ? ' choice-ar' : '');
+    btn.dir         = field === 'ar' ? 'rtl' : 'ltr';
+    btn.textContent = field === 'ar' ? opt.ar : opt.en;
+    btn.onclick     = function() { handlePracticeAnswer(opt, btn, cur, field); };
+    div.appendChild(btn);
+  });
+}
+
+function handlePracticeAnswer(opt, btn, cur, field) {
+  var ok = field === 'ar' ? opt.ar === cur.ar : opt.en === cur.en;
+  document.querySelectorAll('#pChoices .choice').forEach(function(b) { b.disabled = true; });
+
+  var wasNew = !cur.sr || cur.sr.reps === 0;
+  srReview(cur, ok);
+  if (wasNew) markNewIntroduced(1);
+
+  if (ok) {
+    btn.classList.add('correct');
+    var fb = document.getElementById('pFeedback');
+    fb.className = 'feedback fb-ok show';
+    fb.innerHTML = '✓ &nbsp;<strong dir="rtl">' + cur.ar + '</strong> = ' + cur.en;
+    logToday('practice');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('#pChoices .choice').forEach(function(b) {
+      if (b.textContent === (field === 'ar' ? cur.ar : cur.en)) b.classList.add('correct');
+    });
+    var fb = document.getElementById('pFeedback');
+    fb.className = 'feedback fb-bad show';
+    fb.innerHTML = '✗ &nbsp;<strong dir="rtl">' + cur.ar + '</strong> = ' + cur.en;
+    speak(cur.ar);
+  }
+
+  save();
+  updateHeaderStats();
+  practiceIdx++;
+  setTimeout(renderPractice, 1100);
+}
+
+function speakPractice() {
+  if (!practiceQueue.length) return;
+  var cur = practiceQueue[Math.min(practiceIdx, practiceQueue.length - 1)];
+  if (cur) speak(cur.ar);
+}
+
+function revealPractice() {
+  var cur = practiceQueue[Math.min(practiceIdx, practiceQueue.length - 1)];
+  if (cur) {
+    var el = document.getElementById('pTranslation');
+    el.textContent    = cur.en;
+    el.style.display  = 'block';
+  }
+}
+
+function skipPractice() {
+  practiceIdx++;
+  renderPractice();
+}
+
+function updatePracticeProgress() {
+  var todayTotal  = countDue() + getTodayNewWords().length;
+  var done        = practiceIdx;
+  var pct         = todayTotal ? Math.round((done / Math.max(done, todayTotal)) * 100) : 0;
+  var unseenLeft  = Math.max(0, countUnseen() - getTodayNewWords().length);
+
+  document.getElementById('pProgLabel').textContent =
+    done + ' done · ' + Math.max(0, todayTotal - done) + ' remaining · ' + unseenLeft + ' ahead';
+  document.getElementById('pProgPct').textContent   = pct + '%';
+  document.getElementById('pProgFill').style.width  = pct + '%';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LIBRARY TAB
+// ═══════════════════════════════════════════════════════════
+function renderModPills() {
+  var pills = document.getElementById('modPills');
+  var total = bank.length;
+  var html  = '<button class="mod-pill' + (libFilter === 'all' ? ' active' : '') +
+              '" onclick="filterLib(\'all\',this)">All (' + total + ')</button>';
+
+  LEVEL_META.forEach(function(lm) {
+    var count = bank.filter(function(w) { return w.lvl === lm.id; }).length;
+    html += '<button class="mod-pill' + (libFilter === lm.id ? ' active' : '') +
+            '" onclick="filterLib(' + lm.id + ',this)">' +
+            lm.name + ' <span style="opacity:.6;font-size:9px">(' + count + ')</span></button>';
+  });
+
+  pills.innerHTML = html;
+}
+
+function filterLib(val, btn) {
+  libFilter = val;
+  document.querySelectorAll('.mod-pill').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderLibTable();
+}
+
+function filterLibSearch() {
+  libSearch = document.getElementById('libSearch').value.toLowerCase();
+  renderLibTable();
+}
+
+function sortLib(by) {
+  libSort = by;
+  renderLibTable();
+}
+
+function renderLibTable() {
+  var words = bank.filter(function(w) {
+    if (libFilter !== 'all' && w.lvl !== libFilter) return false;
+    if (libSearch && !w.en.toLowerCase().includes(libSearch) && !w.ar.includes(libSearch) &&
+        !w.tr.toLowerCase().includes(libSearch)) return false;
+    return true;
+  });
+
+  if (libSort === 'sr') {
+    words.sort(function(a, b) {
+      var ad = srIsDue(a) ? 0 : 1, bd = srIsDue(b) ? 0 : 1;
+      if (ad !== bd) return ad - bd;
+      return a.lvl - b.lvl;
+    });
+  } else if (libSort === 'lvl') {
+    words.sort(function(a, b) { return a.lvl - b.lvl || a.en.localeCompare(b.en); });
+  } else {
+    words.sort(function(a, b) { return a.en.localeCompare(b.en); });
+  }
+
+  var tbody = document.getElementById('libBody');
+  tbody.innerHTML = words.map(function(w) {
+    var lbl    = srLabel(w);
+    var mas    = isMastered(w);
+    var sCls   = mas ? 'mastered-cell' : srIsDue(w) ? 'due-cell' : 'new-cell';
+    var sTxt   = mas ? '✓ Mastered'    : srIsDue(w) ? 'Due'       : lbl.txt;
+    var safeAr = w.ar.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return '<tr>' +
+      '<td><span class="wb-ar" dir="rtl">' + w.ar + '</span></td>' +
+      '<td class="wb-en">'  + w.en + '</td>' +
+      '<td><span class="wb-mod">' + LEVEL_META[w.lvl].name + '</span></td>' +
+      '<td><span class="wb-sr ' + sCls + '">' + sTxt + '</span></td>' +
+      '<td><button class="btn btn-ghost btn-sm" onclick="speak(\'' + safeAr + '\')">🔊</button></td>' +
+      '</tr>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PROGRESS TAB
+// ═══════════════════════════════════════════════════════════
+function renderProgress() {
+  var total    = bank.length;
+  var mastered = countMastered();
+  var due      = countDue();
+
+  document.getElementById('stTotal').textContent    = total;
+  document.getElementById('stMastered').textContent = mastered;
+  document.getElementById('stDue').textContent      = due;
+  document.getElementById('stStreak').textContent   = streak;
+
+  // Overall mastery bar
+  var overallPct = total ? Math.round((mastered / total) * 100) : 0;
+  document.getElementById('p1Pct').textContent   = overallPct + '%';
+  document.getElementById('p1Fill').style.width  = overallPct + '%';
+
+  // Per-level progress
+  var modProg = document.getElementById('modProgress');
+  modProg.innerHTML = LEVEL_META.map(function(lm) {
+    var lw   = bank.filter(function(w) { return w.lvl === lm.id; });
+    var lm2  = lw.filter(isMastered).length;
+    var lpct = lw.length ? Math.round((lm2 / lw.length) * 100) : 0;
+    return '<div style="margin-bottom:10px;">' +
+      '<div style="display:flex;justify-content:space-between;font-size:9px;letter-spacing:1px;' +
+      'text-transform:uppercase;color:var(--text-dim);margin-bottom:5px;">' +
+      '<span>' + lm.name + ' — ' + lm.sub + '</span>' +
+      '<span>' + lm2 + '/' + lw.length + ' · ' + lpct + '%</span></div>' +
+      '<div class="prog-bg"><div class="prog-fill" style="width:' + lpct + '%"></div></div>' +
+      '</div>';
+  }).join('');
+
+  // Daily log
+  var mx = Math.max.apply(null, [1].concat(dailyLog.map(function(e) {
+    return Object.values(e.actions || {}).reduce(function(a, b) { return a + b; }, 0);
+  })));
+  var logEl = document.getElementById('logRows');
+  logEl.innerHTML = dailyLog.slice(0, 14).map(function(e) {
+    var tot  = Object.values(e.actions || {}).reduce(function(a, b) { return a + b; }, 0);
+    var pct  = Math.round((tot / mx) * 100);
+    var tags = Object.entries(e.actions || {}).map(function(kv) { return kv[0] + ':' + kv[1]; }).join(' · ');
+    return '<div class="log-row">' +
+      '<div class="log-date">' + e.date + '</div>' +
+      '<div class="log-desc">' + tot + ' actions</div>' +
+      '<div class="log-bar"><div class="log-fill" style="width:' + pct + '%"></div></div>' +
+      '<div style="font-size:8px;color:var(--teal-light);white-space:nowrap;">' + tags + '</div>' +
+      '</div>';
+  }).join('') || '<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:10px;">No activity yet — start your first session!</div>';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PACKAGE LOADING (Setup tab — paste more JSON vocab)
+// ═══════════════════════════════════════════════════════════
+function loadJsonFile(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var res = document.getElementById('packageResult');
+  res.textContent = 'Reading file…';
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var words = JSON.parse(e.target.result);
+      if (!Array.isArray(words)) throw new Error('Expected a JSON array');
+      var added = installVocabWords(words);
+      res.style.color = 'var(--teal-light)';
+      res.textContent = '✓ Loaded ' + file.name + ' — added ' + added.added + ' new words (' + added.skipped + ' already in bank)';
+    } catch(err) {
+      res.style.color = 'var(--red)';
+      res.textContent = 'Error reading file: ' + err.message;
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function installVocabWords(words) {
+  var added = 0, skipped = 0;
+  words.forEach(function(v) {
+    if (!v.ar || !v.en) { skipped++; return; }
+    var exists = bank.some(function(b) { return b.ar === v.ar && b.en === v.en; });
+    if (!exists) {
+      bank.push({
+        ar:    v.ar,
+        en:    v.en,
+        tr:    v.tr    || '',
+        ctxAr: v.ctxAr || '',
+        ctxEn: v.ctxEn || '',
+        lvl:   Math.min(3, Math.max(0, parseInt(v.lvl) || 0)),
+        sr:    srInit()
+      });
+      added++;
+    } else {
+      skipped++;
+    }
+  });
+  save();
+  updateHeaderStats();
+  renderModPills();
+  renderLibTable();
+  buildPracticeQueue();
+  return { added: added, skipped: skipped };
+}
+
+function loadJsonPackage() {
+  var raw = document.getElementById('jsonPackage').value.trim();
+  var res = document.getElementById('packageResult');
+  if (!raw) { res.textContent = 'Please paste a JSON package'; return; }
+  try {
+    var words = JSON.parse(raw);
+    if (!Array.isArray(words)) throw new Error('Expected JSON array');
+    var result = installVocabWords(words);
+    res.style.color = 'var(--teal-light)';
+    res.textContent = '✓ Added ' + result.added + ' new words (' + result.skipped + ' already in bank)';
+    document.getElementById('jsonPackage').value = '';
+  } catch(e) {
+    res.textContent = 'Error: ' + e.message;
+    res.style.color = 'var(--red)';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DATA EXPORT / IMPORT / RESET
+// ═══════════════════════════════════════════════════════════
+function exportData() {
+  var data = { bank: bank, dailyLog: dailyLog, streak: streak, sessionDone: sessionDone, exported: new Date().toISOString() };
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var a    = document.createElement('a');
+  a.href   = URL.createObjectURL(blob);
+  a.download = 'manhaj_backup_' + todayStr() + '.json';
+  a.click();
+  toast('✓ Backup exported');
+}
+
+function importData(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (data.bank)        bank        = data.bank;
+      if (data.dailyLog)    dailyLog    = data.dailyLog;
+      if (data.streak)      streak      = data.streak;
+      if (data.sessionDone) sessionDone = data.sessionDone;
+      save();
+      init();
+      toast('✓ Restored ' + bank.length + ' words');
+    } catch(err) { toast('Error: ' + err.message); }
+  };
+  reader.readAsText(file);
+}
+
+function resetMastery() {
+  if (!confirm('Reset all mastery scores? Your word list is kept.')) return;
+  bank.forEach(function(w) { w.sr = srInit(); });
+  save();
+  init();
+  toast('↺ Mastery reset');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TTS
+// ═══════════════════════════════════════════════════════════
+function speak(text) {
+  if (!window.speechSynthesis) { toast('TTS not available'); return; }
+  window.speechSynthesis.cancel();
+  var u   = new SpeechSynthesisUtterance(text);
+  u.lang  = 'ar-SA';
+  u.rate  = 0.78;
+  u.pitch = 1;
+  var voices = window.speechSynthesis.getVoices();
+  var arV    = voices.find(function(v) { return v.lang.startsWith('ar'); });
+  if (arV) u.voice = arV;
+  window.speechSynthesis.speak(u);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tb').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'today')    { renderBriefing(); renderSessionBlocks(); updateSessionProgress(); }
+  if (name === 'practice') buildPracticeQueue();
+  if (name === 'library')  { renderModPills(); renderLibTable(); }
+  if (name === 'progress') renderProgress();
+}
+
+function switchTabByName(name) {
+  var names = ['today','practice','library','tools','progress','setup'];
+  var btns  = document.querySelectorAll('.tb');
+  var idx   = names.indexOf(name);
+  if (idx >= 0) switchTab(name, btns[idx]);
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+var toastTimer;
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2600);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+function init() {
+  load();
+  initBank();
+  updateStreak();
+  updateHeaderStats();
+  renderBriefing();
+  renderSessionBlocks();
+  updateSessionProgress();
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+  }
+}
+
+init();
+
+</script>
+</body>
+</html>
