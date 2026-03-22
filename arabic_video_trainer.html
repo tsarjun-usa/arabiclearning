@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arabic Video Trainer | فَهْمُ الفِيدِيُو</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0E0D0B; --surface:#19180F; --card:#201F14; --border:#2E2C1A;
+  --gold:#C8973A; --gold-light:#E8B84B; --teal:#2A7B6A; --teal-light:#3AA98E;
+  --sand:#E2CDA0; --sand-dim:#9E8B72; --text:#EDE0C4; --text-dim:#7A6E58;
+  --green:#3A8A5A; --red:#C04A3A; --purple:#6A3AC0;
+  --font-ar:'Noto Naskh Arabic','Traditional Arabic',serif;
+  --font-ui:'IBM Plex Mono',monospace; --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(200,151,58,.08) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(42,123,106,.05) 0%,transparent 60%);pointer-events:none;z-index:0;}
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 16px 80px;}
+
+header{padding:24px 0 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.logo-ar{font-family:var(--font-ar);font-size:26px;font-weight:700;color:var(--gold);direction:rtl;line-height:1.1;}
+.logo-en{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:2px;}
+.header-stats{display:flex;gap:10px;flex-wrap:wrap;}
+.hstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;text-align:center;}
+.hstat .n{font-size:18px;font-weight:700;color:var(--gold);line-height:1;}
+.hstat .l{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.hstat.due-stat .n{color:var(--red);}
+
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:26px;overflow-x:auto;}
+.tab-btn{padding:10px 16px;font-family:var(--font-ui);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;background:none;border:none;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap;}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-btn:hover:not(.active){color:var(--text);}
+.tab-pane{display:none;}.tab-pane.active{display:block;}
+
+.btn{font-family:var(--font-ui);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;border:none;border-radius:var(--r);padding:11px 20px;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:7px;font-weight:600;}
+.btn-gold{background:var(--gold);color:var(--bg);}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-1px);}
+.btn-teal{background:var(--teal);color:#fff;}
+.btn-teal:hover{background:var(--teal-light);transform:translateY(-1px);}
+.btn-ghost{background:var(--surface);color:var(--sand-dim);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#4AAA6A;}
+.btn-yt{background:#C00;color:#fff;border-radius:var(--r);}
+.btn-yt:hover{background:#E00;transform:translateY(-1px);}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:16px;}
+.panel-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;}
+
+.field{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;color:var(--text);font-family:var(--font-ui);font-size:12px;outline:none;transition:border-color .2s;}
+.field:focus{border-color:var(--gold);}
+.field::placeholder{color:var(--text-dim);}
+.field-ar{font-family:var(--font-ar);font-size:18px;direction:rtl;line-height:1.8;}
+textarea.field{resize:vertical;}
+label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:6px;}
+
+.prog-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;margin-bottom:18px;}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.prog-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.prog-pct{font-size:13px;font-weight:700;color:var(--gold);}
+.prog-bg{height:5px;background:var(--card);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:3px;transition:width .4s ease;}
+
+.stage{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 28px 28px;text-align:center;margin-bottom:20px;position:relative;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+.stage::before{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(200,151,58,.06) 0%,transparent 70%);pointer-events:none;}
+.stage-badge{position:absolute;top:14px;left:14px;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:100px;font-weight:600;}
+.badge-vocab{background:rgba(200,151,58,.15);color:var(--gold);border:1px solid rgba(200,151,58,.3);}
+.badge-conj{background:rgba(42,123,106,.15);color:var(--teal-light);border:1px solid rgba(42,123,106,.3);}
+.badge-poss{background:rgba(106,58,192,.15);color:#A98AEA;border:1px solid rgba(106,58,192,.3);}
+.badge-tense{background:rgba(192,83,58,.15);color:#E8886A;border:1px solid rgba(192,83,58,.3);}
+.stage-counter{position:absolute;top:14px;right:14px;font-size:9px;color:var(--text-dim);letter-spacing:1px;}
+.sr-badge{position:absolute;bottom:14px;right:14px;font-size:8px;letter-spacing:1px;padding:2px 8px;border-radius:100px;}
+.sr-due{background:rgba(192,74,58,.15);color:#E07060;border:1px solid rgba(192,74,58,.3);}
+.sr-new{background:rgba(42,123,106,.12);color:var(--teal-light);border:1px solid rgba(42,123,106,.25);}
+.sr-review{background:rgba(200,151,58,.12);color:var(--gold);border:1px solid rgba(200,151,58,.25);}
+
+.word-big{font-family:var(--font-ar);font-size:72px;font-weight:700;color:var(--sand);direction:rtl;line-height:1.3;cursor:pointer;transition:all .15s;user-select:none;}
+.word-big:hover{color:var(--gold-light);transform:scale(1.04);}
+.word-sub{font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
+.word-en{font-size:14px;color:var(--teal-light);letter-spacing:.5px;font-style:italic;}
+
+/* TIMESTAMP CONTEXT BAR */
+.ts-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:2px;}
+.ts-chip{background:rgba(192,0,0,.15);border:1px solid rgba(192,0,0,.35);color:#FF6666;border-radius:6px;padding:4px 10px;font-size:10px;letter-spacing:.5px;cursor:pointer;transition:all .15s;font-family:var(--font-ui);}
+.ts-chip:hover{background:rgba(192,0,0,.3);color:#FF9999;transform:translateY(-1px);}
+.ts-chip:active{transform:translateY(0);}
+.ts-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+
+.sentence-ar{font-family:var(--font-ar);font-size:26px;font-weight:600;color:var(--sand);direction:rtl;line-height:1.7;text-align:right;width:100%;}
+.sentence-en{font-size:12px;color:var(--text-dim);line-height:1.6;font-style:italic;}
+
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.choice{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;font-family:var(--font-ui);font-size:12px;font-weight:600;color:var(--sand);cursor:pointer;transition:all .18s;text-align:center;}
+.choice:hover:not(:disabled){border-color:var(--gold);color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,151,58,.12);}
+.choice:disabled{cursor:default;transform:none!important;}
+.choice.correct{background:rgba(58,138,90,.18);border-color:var(--green)!important;color:#6ACA8A!important;}
+.choice.wrong{background:rgba(192,74,58,.18);border-color:var(--red)!important;color:#E07060!important;}
+.choice-ar{font-family:var(--font-ar);font-size:24px;direction:rtl;}
+
+.feedback{border-radius:var(--r);padding:10px 16px;text-align:center;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;display:none;align-items:center;justify-content:center;gap:8px;font-weight:700;}
+.feedback.show{display:flex;}
+.feedback.ok{background:rgba(58,138,90,.15);border:1px solid var(--green);color:#6ACA8A;}
+.feedback.bad{background:rgba(192,74,58,.15);border:1px solid var(--red);color:#E07060;}
+
+.action-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+
+.mode-toggle{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px;width:fit-content;margin-left:auto;margin-right:auto;}
+.mode-btn{font-family:var(--font-ui);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;border:none;padding:8px 16px;cursor:pointer;background:none;color:var(--text-dim);transition:all .2s;}
+.mode-btn.active{background:var(--gold);color:var(--bg);font-weight:700;}
+
+.sub-tabs{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:22px;}
+.sub-tab{font-family:var(--font-ui);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;border:none;padding:10px 16px;cursor:pointer;background:none;color:var(--text-dim);transition:all .2s;flex:1;text-align:center;}
+.sub-tab.active{background:var(--teal);color:#fff;font-weight:700;}
+.sub-tab:hover:not(.active){color:var(--text);}
+.sub-pane{display:none;}.sub-pane.active{display:block;}
+
+/* VIDEO EMBED — inline iframe */
+.yt-player-box{border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--border);margin-bottom:14px;position:relative;padding-bottom:56.25%;height:0;}
+.yt-player-box #ytPlayer{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
+.yt-player-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text-dim);}
+.yt-player-status{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:14px;text-align:center;}
+
+/* TRANSCRIPT */
+.transcript-display{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;max-height:400px;overflow-y:auto;direction:rtl;font-family:var(--font-ar);font-size:20px;line-height:2.4;text-align:right;}
+.t-word{cursor:pointer;border-radius:4px;padding:2px 5px;margin:1px;transition:all .15s;display:inline;}
+.t-word:hover{background:rgba(200,151,58,.15);color:var(--gold);}
+.t-word.vocab-word{color:var(--gold-light);}
+.t-word.verb-word{color:var(--teal-light);}
+.t-word.has-ts{border-bottom:1px dotted rgba(192,0,0,.5);}
+.t-word.highlighted{background:rgba(200,151,58,.3);color:var(--gold-light);}
+.t-stamp{font-family:var(--font-ui);font-size:10px;color:rgba(192,0,0,.7);direction:ltr;cursor:pointer;margin-left:4px;margin-right:4px;}
+.t-stamp:hover{color:#FF6666;}
+
+.word-panel{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:2px solid var(--gold);padding:20px 24px;transform:translateY(100%);transition:transform .3s ease;z-index:200;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.word-panel.show{transform:translateY(0);}
+.wp-word{font-family:var(--font-ar);font-size:48px;font-weight:700;color:var(--sand);direction:rtl;min-width:120px;}
+.wp-info{flex:1;}
+.wp-en{font-size:18px;color:var(--teal-light);font-style:italic;margin-bottom:4px;}
+.wp-hint{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.wp-add-row{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;}
+.wp-input{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:var(--font-ui);font-size:11px;outline:none;width:150px;}
+.wp-input:focus{border-color:var(--gold);}
+.wp-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--text-dim);font-size:18px;cursor:pointer;font-family:var(--font-ui);}
+.wp-close:hover{color:var(--text);}
+
+.conj-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:16px;}
+.conj-table{width:100%;border-collapse:collapse;font-size:12px;}
+.conj-table th{background:var(--surface);padding:8px 12px;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);border-bottom:1px solid var(--border);text-align:left;}
+.conj-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.conj-table tr:last-child td{border-bottom:none;}
+.conj-table tr:hover td{background:rgba(200,151,58,.04);}
+.td-pronoun{color:var(--text-dim);min-width:100px;}
+.td-ar{font-family:var(--font-ar);font-size:20px;direction:rtl;color:var(--sand);}
+.td-past{color:var(--sand-dim);}
+.td-present{color:var(--teal-light);}
+.toggle-table-btn{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text-dim);border-radius:var(--r);padding:6px 12px;cursor:pointer;font-family:var(--font-ui);transition:all .2s;margin-bottom:10px;}
+.toggle-table-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;text-align:center;}
+.stat-num{font-size:32px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:4px;}
+.stat-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+.mode-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px;}
+.mstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
+.mstat-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.mstat-name{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.mstat-pct{font-size:13px;font-weight:700;color:var(--gold);}
+.mstat-bg{height:4px;background:var(--card);border-radius:2px;overflow:hidden;}
+.mstat-fill{height:100%;border-radius:2px;}
+.log-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px;}
+.log-date{font-size:9px;color:var(--text-dim);min-width:80px;}
+.log-activity{font-size:12px;font-weight:700;color:var(--sand);flex:1;}
+.log-bar-bg{height:3px;background:var(--card);border-radius:2px;overflow:hidden;flex:1;}
+.log-bar-fill{height:100%;background:var(--gold);border-radius:2px;}
+
+.extract-grid{display:none;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
+.extract-grid.show{display:grid;}
+.ex-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;}
+.ex-num{font-size:22px;font-weight:700;line-height:1;margin-bottom:3px;}
+.ex-lbl{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);}
+
+.vocab-chips{display:flex;flex-wrap:wrap;gap:6px;max-height:160px;overflow-y:auto;padding:4px 0;}
+.vocab-chip{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-family:var(--font-ar);font-size:20px;color:var(--sand);cursor:pointer;transition:all .15s;direction:rtl;display:inline-flex;align-items:center;gap:6px;}
+.vocab-chip.mastered{border-color:var(--green);background:rgba(58,138,90,.08);}
+.vocab-chip:hover{border-color:var(--gold);transform:translateY(-1px);}
+.chip-check{color:var(--green);font-size:9px;}
+
+.tense-badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;}
+.tense-past{background:rgba(200,151,58,.15);color:var(--gold);border:1px solid rgba(200,151,58,.3);}
+.tense-present{background:rgba(42,123,106,.15);color:var(--teal-light);border:1px solid rgba(42,123,106,.3);}
+.tense-future{background:rgba(106,58,192,.15);color:#A98AEA;border:1px solid rgba(106,58,192,.3);}
+.tense-command{background:rgba(192,83,58,.15);color:#E8886A;border:1px solid rgba(192,83,58,.3);}
+
+.suffix-ref{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.suffix-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;text-align:center;}
+.suffix-ar{font-family:var(--font-ar);font-size:24px;color:var(--gold);direction:rtl;}
+.suffix-en{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-top:3px;}
+
+.empty-stage{text-align:center;padding:20px;color:var(--text-dim);}
+.empty-stage .e-icon{font-size:32px;margin-bottom:8px;opacity:.5;}
+.empty-stage .e-msg{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;line-height:2;}
+
+.info-box{padding:12px 16px;background:rgba(42,123,106,.08);border:1px solid rgba(42,123,106,.25);border-radius:var(--r);font-size:10px;color:var(--text-dim);line-height:1.9;}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--card);border:1px solid var(--gold);border-radius:var(--r);padding:9px 18px;font-size:10px;letter-spacing:1px;color:var(--gold);z-index:999;transition:transform .3s ease;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+@media(max-width:600px){
+  .word-big{font-size:52px;}
+  .choices{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .mode-stats{grid-template-columns:1fr;}
+  .extract-grid{grid-template-columns:repeat(2,1fr);}
+  .sentence-ar{font-size:20px;}
+  .suffix-ref{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <div class="logo-ar">فَهْمُ الفِيدِيُو</div>
+    <div class="logo-en">Arabic Video Comprehension Trainer</div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat"><div class="n" id="hVocab">0</div><div class="l">Vocab</div></div>
+    <div class="hstat"><div class="n" id="hVerbs">0</div><div class="l">Verbs</div></div>
+    <div class="hstat"><div class="n" id="hMastered">0</div><div class="l">Mastered</div></div>
+    <div class="hstat due-stat"><div class="n" id="hDue">0</div><div class="l">Due Today</div></div>
+    <div class="hstat"><div class="n" id="hStreak">0</div><div class="l">Streak 🔥</div></div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('setup',this)">🎬 Setup</button>
+  <button class="tab-btn" onclick="switchTab('watch',this)">📺 Watch</button>
+  <button class="tab-btn" onclick="switchTab('vocab',this)">📚 Vocab</button>
+  <button class="tab-btn" onclick="switchTab('grammar',this)">🔤 Grammar</button>
+  <button class="tab-btn" onclick="switchTab('progress',this)">📊 Progress</button>
+</div>
+
+<!-- ══ SETUP ══ -->
+<div class="tab-pane active" id="tab-setup">
+  <div class="panel">
+    <div class="panel-title">YouTube Video URL</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <input type="text" class="field" id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." style="flex:1;min-width:200px;">
+      <button class="btn btn-yt" onclick="loadVideo()">▶ Open Video</button>
+    </div>
+    <div style="margin-top:10px;padding:10px 14px;background:rgba(200,151,58,.06);border:1px solid rgba(200,151,58,.2);border-radius:var(--r);font-size:9px;color:var(--text-dim);line-height:1.8;">
+      ⚡ <strong style="color:var(--gold);">How it works:</strong> Clicking "Open Video" launches YouTube in a separate Chrome window 
+      tiled to the right of this app — no embed errors ever. Keep both windows open side by side.
+      When you click a 📍 timestamp during a quiz, the video jumps to that exact moment automatically.
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Paste Transcript — with optional timestamps</div>
+    <div style="font-size:9px;color:var(--text-dim);margin-bottom:10px;line-height:1.8;">
+      Accepts plain Arabic text, SRT format, or simple timestamps:<br>
+      <span style="color:var(--teal-light);">[0:05] هذا الكتاب جميل جداً</span>&nbsp;&nbsp;or&nbsp;&nbsp;
+      <span style="color:var(--teal-light);">00:00:05,000 --> 00:00:09,000</span>
+    </div>
+    <textarea class="field field-ar" id="transcriptInput" rows="9"
+      placeholder="الصق نص النسخة هنا — مع التوقيتات إن أمكن&#10;[0:05] هذا مثال على التنسيق..."></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:flex-end;">
+      <div style="flex:1;min-width:180px;">
+        <label>Source / Video Label</label>
+        <input type="text" class="field" id="sourceLabel" placeholder="e.g. Al Jazeera 23 Mar 2026" style="font-size:12px;padding:8px 12px;">
+      </div>
+      <button class="btn btn-gold" onclick="extractTranscript()">⬇ Extract & Build</button>
+      <button class="btn btn-ghost" onclick="clearSetup()">✕ Clear</button>
+    </div>
+    <div class="extract-grid" id="extractGrid">
+      <div class="ex-card"><div class="ex-num" id="exWords" style="color:var(--gold)">0</div><div class="ex-lbl">Words Found</div></div>
+      <div class="ex-card"><div class="ex-num" id="exVocab" style="color:var(--teal-light)">0</div><div class="ex-lbl">New Vocab</div></div>
+      <div class="ex-card"><div class="ex-num" id="exVerbs" style="color:#A98AEA">0</div><div class="ex-lbl">Verbs Detected</div></div>
+      <div class="ex-card"><div class="ex-num" id="exSent" style="color:#E8886A">0</div><div class="ex-lbl">Sentences + Timestamps</div></div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong style="color:var(--gold)">All grammar quizzes are 100% from your videos.</strong> Each video you add grows your permanent database — verbs, nouns and sentences are remembered across every session. Spaced Repetition resurfaces items at the right time. The red "Due Today" counter shows what needs review right now.
+  </div>
+</div>
+
+<!-- ══ WATCH ══ -->
+<div class="tab-pane" id="tab-watch">
+
+  <!-- YouTube IFrame Player API target -->
+  <div class="yt-player-box" id="ytPlayerBox">
+    <div class="yt-player-placeholder" id="ytPlayerPlaceholder">
+      <span style="font-size:36px;">&#128250;</span>
+      <span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;">Load a video in Setup tab</span>
+    </div>
+    <div id="ytPlayer"></div>
+  </div>
+  <div class="yt-player-status" id="ytPlayerStatus">No video loaded</div>
+
+  <div class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+      <div class="panel-title" style="margin-bottom:0;">Clickable Transcript</div>
+      <div style="display:flex;gap:8px;font-size:9px;color:var(--text-dim);">
+        <span style="color:var(--gold-light);">■</span> Vocab &nbsp;
+        <span style="color:var(--teal-light);">■</span> Verb &nbsp;
+        <span style="color:rgba(192,0,0,.7);">— —</span> Has timestamp
+      </div>
+    </div>
+    <div class="transcript-display" id="transcriptDisplay">
+      <span style="color:var(--text-dim);font-family:var(--font-ui);font-size:12px;direction:ltr;">Paste a transcript in Setup to see it here as clickable words.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VOCAB ══ -->
+<div class="tab-pane" id="tab-vocab">
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setVocabMode('visual',this)">👁 Visual</button>
+    <button class="mode-btn" onclick="setVocabMode('listen',this)">👂 Listen</button>
+    <button class="mode-btn" onclick="setVocabMode('reverse',this)">🔄 Reverse</button>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-top">
+      <span class="prog-label" id="vocabProgLabel">Vocab Progress</span>
+      <span class="prog-pct" id="vocabProgPct">0%</span>
+    </div>
+    <div class="prog-bg"><div class="prog-fill" id="vocabProgFill" style="width:0%"></div></div>
+  </div>
+  <div class="stage" id="vocabStage">
+    <div class="stage-badge badge-vocab">Vocabulary · From Your Videos</div>
+    <div class="stage-counter" id="vocabCounter">0 / 0</div>
+    <div class="word-big" id="vocabWord" onclick="speakVocab()">—</div>
+    <div class="word-sub" id="vocabSub">Add a transcript to begin</div>
+    <div class="word-en" id="vocabTranslation" style="display:none;"></div>
+    <div class="ts-bar" id="vocabTsBar"></div>
+    <div class="sr-badge" id="vocabSrBadge" style="display:none;"></div>
+  </div>
+  <div class="feedback" id="vocabFeedback"></div>
+  <div class="action-row">
+    <button class="btn btn-gold" onclick="speakVocab()">🔊 Hear</button>
+    <button class="btn btn-ghost" id="revealBtn" onclick="revealMeaning()" style="display:none;">👁 Reveal</button>
+  </div>
+  <div class="choices" id="vocabChoices"></div>
+
+  <div class="panel" style="margin-top:8px;">
+    <div class="panel-title">Add Custom Word</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
+      <div style="flex:1;min-width:120px;">
+        <label>Arabic</label>
+        <input class="field field-ar" id="addAr" placeholder="كلمة" style="font-size:20px;padding:8px 12px;">
+      </div>
+      <div style="flex:2;min-width:140px;">
+        <label>English</label>
+        <input class="field" id="addEn" placeholder="meaning">
+      </div>
+      <button class="btn btn-teal" onclick="addCustomWord()" style="align-self:flex-end;">+ Add</button>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:4px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div class="panel-title" style="margin-bottom:0;">Word Bank (<span id="vocabBankCount">0</span>)</div>
+      <button class="btn btn-ghost" style="padding:5px 10px;font-size:8px;" onclick="resetVocabMastery()">↺ Reset</button>
+    </div>
+    <div class="vocab-chips" id="vocabChips"></div>
+  </div>
+</div>
+
+<!-- ══ GRAMMAR ══ -->
+<div class="tab-pane" id="tab-grammar">
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('conj',this)">⚡ Conjugation</button>
+    <button class="sub-tab" onclick="switchSub('poss',this)">🏷️ Possessives</button>
+    <button class="sub-tab" onclick="switchSub('tense',this)">⏱ Tenses</button>
+  </div>
+
+  <!-- CONJUGATION -->
+  <div class="sub-pane active" id="sub-conj">
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="setConjMode('form',this)" style="font-size:8px;">Pronoun → Form</button>
+      <button class="mode-btn" onclick="setConjMode('identify',this)" style="font-size:8px;">Form → Pronoun</button>
+    </div>
+    <div class="stage" id="conjStage">
+      <div class="stage-badge badge-conj">Conjugation · From Your Videos</div>
+      <div class="stage-counter" id="conjCounter">0 correct</div>
+      <div id="conjPrompt" style="width:100%;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;" id="conjVerbEn"></div>
+        <div style="font-family:var(--font-ar);font-size:48px;color:var(--sand);direction:rtl;margin-bottom:6px;" id="conjVerbAr"></div>
+        <div style="font-size:12px;color:var(--teal-light);margin-bottom:4px;" id="conjTenseLabel"></div>
+        <div style="font-size:14px;color:var(--gold);" id="conjPronoun"></div>
+      </div>
+      <div class="ts-bar" id="conjTsBar"></div>
+      <div class="sr-badge" id="conjSrBadge" style="display:none;"></div>
+    </div>
+    <div class="feedback" id="conjFeedback"></div>
+    <div class="action-row">
+      <button class="btn btn-gold" onclick="speakConj()">🔊 Hear Verb</button>
+      <button class="btn btn-ghost" onclick="nextConj()">→ Skip</button>
+      <button class="toggle-table-btn" onclick="toggleConjTable()">📋 Reference Table</button>
+    </div>
+    <div class="choices" id="conjChoices"></div>
+    <div id="conjTableWrap" style="display:none;">
+      <div class="conj-table-wrap">
+        <table class="conj-table">
+          <thead><tr><th>Pronoun</th><th>Arabic</th><th>ماضي Past</th><th>مضارع Present</th></tr></thead>
+          <tbody id="conjTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- POSSESSIVES -->
+  <div class="sub-pane" id="sub-poss">
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="setPossMode('ar2en',this)" style="font-size:8px;">Arabic → Person</button>
+      <button class="mode-btn" onclick="setPossMode('en2ar',this)" style="font-size:8px;">Person → Arabic</button>
+    </div>
+    <div class="stage" id="possStage">
+      <div class="stage-badge badge-poss">Possessives · From Your Videos</div>
+      <div class="stage-counter" id="possCounter">0 correct</div>
+      <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;" id="possBaseEn"></div>
+      <div class="word-big" id="possWord" style="font-size:60px;" onclick="speakPoss()">—</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px;" id="possHint"></div>
+      <div class="ts-bar" id="possTsBar"></div>
+      <div class="sr-badge" id="possSrBadge" style="display:none;"></div>
+    </div>
+    <div class="feedback" id="possFeedback"></div>
+    <div class="action-row">
+      <button class="btn btn-gold" onclick="speakPoss()">🔊 Hear</button>
+      <button class="btn btn-ghost" onclick="nextPoss()">→ Skip</button>
+    </div>
+    <div class="choices" id="possChoices"></div>
+    <div class="panel" style="margin-top:4px;">
+      <div class="panel-title">Possessive Suffix Reference</div>
+      <div class="suffix-ref" id="suffixRef"></div>
+    </div>
+  </div>
+
+  <!-- TENSES -->
+  <div class="sub-pane" id="sub-tense">
+    <div class="stage" id="tenseStage">
+      <div class="stage-badge badge-tense">Tenses · From Your Videos</div>
+      <div class="stage-counter" id="tenseCounter">0 correct</div>
+      <div class="sentence-ar" id="tenseSentence">—</div>
+      <div class="sentence-en" id="tenseTranslation" style="display:none;"></div>
+      <div id="tenseTip" style="font-size:10px;color:var(--text-dim);margin-top:2px;"></div>
+      <div class="ts-bar" id="tenseTsBar"></div>
+      <div class="sr-badge" id="tenseSrBadge" style="display:none;"></div>
+    </div>
+    <div class="feedback" id="tenseFeedback"></div>
+    <div class="action-row">
+      <button class="btn btn-gold" onclick="speakTense()">🔊 Hear</button>
+      <button class="btn btn-ghost" onclick="nextTense()">→ Skip</button>
+    </div>
+    <div class="choices" id="tenseChoices"></div>
+    <div class="panel" style="margin-top:4px;">
+      <div class="panel-title">Tense Markers Reference</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:11px;line-height:2;">
+        <div><span class="tense-badge tense-past" style="margin-right:6px;">ماضي Past</span>Ends in تُ تَ نَا وا — e.g. <span style="font-family:var(--font-ar);font-size:16px;color:var(--sand)">ذَهَبَ</span></div>
+        <div><span class="tense-badge tense-present" style="margin-right:6px;">مضارع Present</span>Starts يَـ تَـ نَـ أَـ — e.g. <span style="font-family:var(--font-ar);font-size:16px;color:var(--sand)">يَذْهَبُ</span></div>
+        <div><span class="tense-badge tense-future" style="margin-right:6px;">مستقبل Future</span>Prefix سَـ or سَوْفَ — e.g. <span style="font-family:var(--font-ar);font-size:16px;color:var(--sand)">سَيَذْهَبُ</span></div>
+        <div><span class="tense-badge tense-command" style="margin-right:6px;">أمر Command</span>Short form, no pronoun prefix — e.g. <span style="font-family:var(--font-ar);font-size:16px;color:var(--sand)">اذْهَبْ</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROGRESS ══ -->
+<div class="tab-pane" id="tab-progress">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num" id="pTotalVocab">0</div><div class="stat-lbl">Total Vocab</div></div>
+    <div class="stat-card"><div class="stat-num" id="pMastered">0</div><div class="stat-lbl">Mastered</div></div>
+    <div class="stat-card"><div class="stat-num" id="pVideos">0</div><div class="stat-lbl">Videos Loaded</div></div>
+  </div>
+  <div class="mode-stats">
+    <div class="mstat"><div class="mstat-top"><span class="mstat-name">Vocabulary</span><span class="mstat-pct" id="ms-vocab">0%</span></div><div class="mstat-bg"><div class="mstat-fill" id="mf-vocab" style="width:0%;background:var(--gold);"></div></div></div>
+    <div class="mstat"><div class="mstat-top"><span class="mstat-name">Conjugation</span><span class="mstat-pct" id="ms-conj">0%</span></div><div class="mstat-bg"><div class="mstat-fill" id="mf-conj" style="width:0%;background:var(--teal-light);"></div></div></div>
+    <div class="mstat"><div class="mstat-top"><span class="mstat-name">Possessives</span><span class="mstat-pct" id="ms-poss">0%</span></div><div class="mstat-bg"><div class="mstat-fill" id="mf-poss" style="width:0%;background:#A98AEA;"></div></div></div>
+    <div class="mstat"><div class="mstat-top"><span class="mstat-name">Tenses</span><span class="mstat-pct" id="ms-tense">0%</span></div><div class="mstat-bg"><div class="mstat-fill" id="mf-tense" style="width:0%;background:#E8886A;"></div></div></div>
+  </div>
+  <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;">Daily Activity</div>
+  <div id="logRows"></div>
+</div>
+</div><!-- /wrap -->
+
+<!-- WORD PANEL -->
+<div class="word-panel" id="wordPanel">
+  <button class="wp-close" onclick="closeWordPanel()">✕</button>
+  <div class="wp-word" id="wpWord"></div>
+  <div class="wp-info">
+    <div class="wp-en" id="wpEn"></div>
+    <div class="wp-hint" id="wpHint"></div>
+    <div class="wp-add-row">
+      <input class="wp-input" id="wpInput" placeholder="Type English meaning..." style="display:none;">
+      <button class="btn btn-teal" style="padding:6px 12px;font-size:9px;" onclick="speakPanel()">🔊 Hear</button>
+      <button class="btn btn-gold" style="padding:6px 12px;font-size:9px;" id="wpAddBtn" onclick="addFromPanel()">+ Vocab</button>
+    </div>
+    <div id="wpTsBar" class="ts-bar" style="margin-top:8px;justify-content:flex-start;"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  VERB BANK (used for matching only — drills use YOUR verbs)
+// ═══════════════════════════════════════════════════════════
+const VERB_BANK = [
+  {root:"كَتَبَ",rp:"كتب",en:"to write",
+   past:{ana:"كَتَبْتُ",anta:"كَتَبْتَ",anti:"كَتَبْتِ",huwa:"كَتَبَ",hiya:"كَتَبَتْ",nahnu:"كَتَبْنَا",antum:"كَتَبْتُمْ",hum:"كَتَبُوا"},
+   present:{ana:"أَكْتُبُ",anta:"تَكْتُبُ",anti:"تَكْتُبِينَ",huwa:"يَكْتُبُ",hiya:"تَكْتُبُ",nahnu:"نَكْتُبُ",antum:"تَكْتُبُونَ",hum:"يَكْتُبُونَ"}},
+  {root:"ذَهَبَ",rp:"ذهب",en:"to go",
+   past:{ana:"ذَهَبْتُ",anta:"ذَهَبْتَ",anti:"ذَهَبْتِ",huwa:"ذَهَبَ",hiya:"ذَهَبَتْ",nahnu:"ذَهَبْنَا",antum:"ذَهَبْتُمْ",hum:"ذَهَبُوا"},
+   present:{ana:"أَذْهَبُ",anta:"تَذْهَبُ",anti:"تَذْهَبِينَ",huwa:"يَذْهَبُ",hiya:"تَذْهَبُ",nahnu:"نَذْهَبُ",antum:"تَذْهَبُونَ",hum:"يَذْهَبُونَ"}},
+  {root:"قَالَ",rp:"قال",en:"to say",
+   past:{ana:"قُلْتُ",anta:"قُلْتَ",anti:"قُلْتِ",huwa:"قَالَ",hiya:"قَالَتْ",nahnu:"قُلْنَا",antum:"قُلْتُمْ",hum:"قَالُوا"},
+   present:{ana:"أَقُولُ",anta:"تَقُولُ",anti:"تَقُولِينَ",huwa:"يَقُولُ",hiya:"تَقُولُ",nahnu:"نَقُولُ",antum:"تَقُولُونَ",hum:"يَقُولُونَ"}},
+  {root:"رَأَى",rp:"رأى",en:"to see",
+   past:{ana:"رَأَيْتُ",anta:"رَأَيْتَ",anti:"رَأَيْتِ",huwa:"رَأَى",hiya:"رَأَتْ",nahnu:"رَأَيْنَا",antum:"رَأَيْتُمْ",hum:"رَأَوْا"},
+   present:{ana:"أَرَى",anta:"تَرَى",anti:"تَرَيْنَ",huwa:"يَرَى",hiya:"تَرَى",nahnu:"نَرَى",antum:"تَرَوْنَ",hum:"يَرَوْنَ"}},
+  {root:"أَكَلَ",rp:"أكل",en:"to eat",
+   past:{ana:"أَكَلْتُ",anta:"أَكَلْتَ",anti:"أَكَلْتِ",huwa:"أَكَلَ",hiya:"أَكَلَتْ",nahnu:"أَكَلْنَا",antum:"أَكَلْتُمْ",hum:"أَكَلُوا"},
+   present:{ana:"آكُلُ",anta:"تَأْكُلُ",anti:"تَأْكُلِينَ",huwa:"يَأْكُلُ",hiya:"تَأْكُلُ",nahnu:"نَأْكُلُ",antum:"تَأْكُلُونَ",hum:"يَأْكُلُونَ"}},
+  {root:"كَانَ",rp:"كان",en:"to be / was",
+   past:{ana:"كُنْتُ",anta:"كُنْتَ",anti:"كُنْتِ",huwa:"كَانَ",hiya:"كَانَتْ",nahnu:"كُنَّا",antum:"كُنْتُمْ",hum:"كَانُوا"},
+   present:{ana:"أَكُونُ",anta:"تَكُونُ",anti:"تَكُونِينَ",huwa:"يَكُونُ",hiya:"تَكُونُ",nahnu:"نَكُونُ",antum:"تَكُونُونَ",hum:"يَكُونُونَ"}},
+  {root:"جَاءَ",rp:"جاء",en:"to come",
+   past:{ana:"جِئْتُ",anta:"جِئْتَ",anti:"جِئْتِ",huwa:"جَاءَ",hiya:"جَاءَتْ",nahnu:"جِئْنَا",antum:"جِئْتُمْ",hum:"جَاؤُوا"},
+   present:{ana:"أَجِيءُ",anta:"تَجِيءُ",anti:"تَجِيئِينَ",huwa:"يَجِيءُ",hiya:"تَجِيءُ",nahnu:"نَجِيءُ",antum:"تَجِيئُونَ",hum:"يَجِيئُونَ"}},
+  {root:"عَمِلَ",rp:"عمل",en:"to work",
+   past:{ana:"عَمِلْتُ",anta:"عَمِلْتَ",anti:"عَمِلْتِ",huwa:"عَمِلَ",hiya:"عَمِلَتْ",nahnu:"عَمِلْنَا",antum:"عَمِلْتُمْ",hum:"عَمِلُوا"},
+   present:{ana:"أَعْمَلُ",anta:"تَعْمَلُ",anti:"تَعْمَلِينَ",huwa:"يَعْمَلُ",hiya:"تَعْمَلُ",nahnu:"نَعْمَلُ",antum:"تَعْمَلُونَ",hum:"يَعْمَلُونَ"}},
+  {root:"قَرَأَ",rp:"قرأ",en:"to read",
+   past:{ana:"قَرَأْتُ",anta:"قَرَأْتَ",anti:"قَرَأْتِ",huwa:"قَرَأَ",hiya:"قَرَأَتْ",nahnu:"قَرَأْنَا",antum:"قَرَأْتُمْ",hum:"قَرَأُوا"},
+   present:{ana:"أَقْرَأُ",anta:"تَقْرَأُ",anti:"تَقْرَئِينَ",huwa:"يَقْرَأُ",hiya:"تَقْرَأُ",nahnu:"نَقْرَأُ",antum:"تَقْرَأُونَ",hum:"يَقْرَأُونَ"}},
+  {root:"فَهِمَ",rp:"فهم",en:"to understand",
+   past:{ana:"فَهِمْتُ",anta:"فَهِمْتَ",anti:"فَهِمْتِ",huwa:"فَهِمَ",hiya:"فَهِمَتْ",nahnu:"فَهِمْنَا",antum:"فَهِمْتُمْ",hum:"فَهِمُوا"},
+   present:{ana:"أَفْهَمُ",anta:"تَفْهَمُ",anti:"تَفْهَمِينَ",huwa:"يَفْهَمُ",hiya:"تَفْهَمُ",nahnu:"نَفْهَمُ",antum:"تَفْهَمُونَ",hum:"يَفْهَمُونَ"}},
+  {root:"سَمِعَ",rp:"سمع",en:"to hear",
+   past:{ana:"سَمِعْتُ",anta:"سَمِعْتَ",anti:"سَمِعْتِ",huwa:"سَمِعَ",hiya:"سَمِعَتْ",nahnu:"سَمِعْنَا",antum:"سَمِعْتُمْ",hum:"سَمِعُوا"},
+   present:{ana:"أَسْمَعُ",anta:"تَسْمَعُ",anti:"تَسْمَعِينَ",huwa:"يَسْمَعُ",hiya:"تَسْمَعُ",nahnu:"نَسْمَعُ",antum:"تَسْمَعُونَ",hum:"يَسْمَعُونَ"}},
+  {root:"دَرَسَ",rp:"درس",en:"to study",
+   past:{ana:"دَرَسْتُ",anta:"دَرَسْتَ",anti:"دَرَسْتِ",huwa:"دَرَسَ",hiya:"دَرَسَتْ",nahnu:"دَرَسْنَا",antum:"دَرَسْتُمْ",hum:"دَرَسُوا"},
+   present:{ana:"أَدْرُسُ",anta:"تَدْرُسُ",anti:"تَدْرُسِينَ",huwa:"يَدْرُسُ",hiya:"تَدْرُسُ",nahnu:"نَدْرُسُ",antum:"تَدْرُسُونَ",hum:"يَدْرُسُونَ"}},
+  {root:"أَعْلَنَ",rp:"أعلن",en:"to announce",
+   past:{ana:"أَعْلَنْتُ",anta:"أَعْلَنْتَ",anti:"أَعْلَنْتِ",huwa:"أَعْلَنَ",hiya:"أَعْلَنَتْ",nahnu:"أَعْلَنَّا",antum:"أَعْلَنْتُمْ",hum:"أَعْلَنُوا"},
+   present:{ana:"أُعْلِنُ",anta:"تُعْلِنُ",anti:"تُعْلِنِينَ",huwa:"يُعْلِنُ",hiya:"تُعْلِنُ",nahnu:"نُعْلِنُ",antum:"تُعْلِنُونَ",hum:"يُعْلِنُونَ"}},
+  {root:"تَحَدَّثَ",rp:"تحدث",en:"to speak / talk",
+   past:{ana:"تَحَدَّثْتُ",anta:"تَحَدَّثْتَ",anti:"تَحَدَّثْتِ",huwa:"تَحَدَّثَ",hiya:"تَحَدَّثَتْ",nahnu:"تَحَدَّثْنَا",antum:"تَحَدَّثْتُمْ",hum:"تَحَدَّثُوا"},
+   present:{ana:"أَتَحَدَّثُ",anta:"تَتَحَدَّثُ",anti:"تَتَحَدَّثِينَ",huwa:"يَتَحَدَّثُ",hiya:"تَتَحَدَّثُ",nahnu:"نَتَحَدَّثُ",antum:"تَتَحَدَّثُونَ",hum:"يَتَحَدَّثُونَ"}},
+  {root:"أَكَّدَ",rp:"أكد",en:"to confirm",
+   past:{ana:"أَكَّدْتُ",anta:"أَكَّدْتَ",anti:"أَكَّدْتِ",huwa:"أَكَّدَ",hiya:"أَكَّدَتْ",nahnu:"أَكَّدْنَا",antum:"أَكَّدْتُمْ",hum:"أَكَّدُوا"},
+   present:{ana:"أُؤَكِّدُ",anta:"تُؤَكِّدُ",anti:"تُؤَكِّدِينَ",huwa:"يُؤَكِّدُ",hiya:"تُؤَكِّدُ",nahnu:"نُؤَكِّدُ",antum:"تُؤَكِّدُونَ",hum:"يُؤَكِّدُونَ"}},
+  {root:"قَرَّرَ",rp:"قرر",en:"to decide",
+   past:{ana:"قَرَّرْتُ",anta:"قَرَّرْتَ",anti:"قَرَّرْتِ",huwa:"قَرَّرَ",hiya:"قَرَّرَتْ",nahnu:"قَرَّرْنَا",antum:"قَرَّرْتُمْ",hum:"قَرَّرُوا"},
+   present:{ana:"أُقَرِّرُ",anta:"تُقَرِّرُ",anti:"تُقَرِّرِينَ",huwa:"يُقَرِّرُ",hiya:"تُقَرِّرُ",nahnu:"نُقَرِّرُ",antum:"تُقَرِّرُونَ",hum:"يُقَرِّرُونَ"}},
+  {root:"وَصَلَ",rp:"وصل",en:"to arrive",
+   past:{ana:"وَصَلْتُ",anta:"وَصَلْتَ",anti:"وَصَلْتِ",huwa:"وَصَلَ",hiya:"وَصَلَتْ",nahnu:"وَصَلْنَا",antum:"وَصَلْتُمْ",hum:"وَصَلُوا"},
+   present:{ana:"أَصِلُ",anta:"تَصِلُ",anti:"تَصِلِينَ",huwa:"يَصِلُ",hiya:"تَصِلُ",nahnu:"نَصِلُ",antum:"تَصِلُونَ",hum:"يَصِلُونَ"}},
+];
+
+// Build form→verb lookup
+const VERB_FORM_MAP = {};
+VERB_BANK.forEach(v=>{
+  VERB_FORM_MAP[v.rp] = v;
+  ['past','present'].forEach(t=>{
+    Object.values(v[t]).forEach(f=>{ VERB_FORM_MAP[strip(f)] = v; });
+  });
+});
+
+const PRONOUNS=[
+  {ar:"أَنَا",  en:"I (1st sing)",  key:"ana"},
+  {ar:"أَنْتَ", en:"You — masc",    key:"anta"},
+  {ar:"أَنْتِ", en:"You — fem",     key:"anti"},
+  {ar:"هُوَ",  en:"He",             key:"huwa"},
+  {ar:"هِيَ",  en:"She",            key:"hiya"},
+  {ar:"نَحْنُ",en:"We",             key:"nahnu"},
+  {ar:"أَنْتُمْ",en:"You — plural", key:"antum"},
+  {ar:"هُمْ",  en:"They",           key:"hum"},
+];
+
+const POSS_SUFFIXES=[
+  {suffix:"ـِي",  en:"my",        key:"ana",   vowel:"i"},
+  {suffix:"ـكَ",  en:"your (m)",  key:"anta",  vowel:"u"},
+  {suffix:"ـكِ",  en:"your (f)",  key:"anti",  vowel:"u"},
+  {suffix:"ـهُ",  en:"his",       key:"huwa",  vowel:"u"},
+  {suffix:"ـهَا", en:"her",       key:"hiya",  vowel:"u"},
+  {suffix:"ـنَا", en:"our",       key:"nahnu", vowel:"u"},
+  {suffix:"ـكُمْ",en:"your (pl)", key:"antum", vowel:"u"},
+  {suffix:"ـهُمْ",en:"their",     key:"hum",   vowel:"u"},
+];
+
+const TENSE_LABELS={
+  past:   {ar:"ماضي",   en:"Past",    cls:"tense-past"},
+  present:{ar:"مضارع", en:"Present", cls:"tense-present"},
+  future: {ar:"مستقبل",en:"Future",  cls:"tense-future"},
+  command:{ar:"أمر",   en:"Command", cls:"tense-command"},
+};
+
+const DICT={
+  // Places & geography
+  "بيت":"House","منزل":"Home","شقة":"Apartment","سيارة":"Car","باب":"Door",
+  "نافذة":"Window","مدينة":"City","قرية":"Village","شارع":"Street","طريق":"Road",
+  "مطار":"Airport","ميناء":"Port","محطة":"Station","مدرسة":"School","جامعة":"University",
+  "مكتب":"Office","مطعم":"Restaurant","مقهى":"Café","فندق":"Hotel","مستشفى":"Hospital",
+  "صيدلية":"Pharmacy","بنك":"Bank","حديقة":"Park","سفارة":"Embassy","قصر":"Palace",
+  "برلمان":"Parliament","مقر":"Headquarters","سجن":"Prison","مخيم":"Camp",
+  "بحر":"Sea","محيط":"Ocean","جبل":"Mountain","صحراء":"Desert","نهر":"River",
+  "شاطئ":"Beach","جزيرة":"Island","غابة":"Forest","سهل":"Plain","وادي":"Valley",
+  "حدود":"Borders","منطقة":"Region","محافظة":"Province","ولاية":"State",
+  "عاصمة":"Capital","شمال":"North","جنوب":"South","شرق":"East","غرب":"West",
+  // People & roles
+  "رجل":"Man","امرأة":"Woman","طفل":"Child","شاب":"Youth","مواطن":"Citizen",
+  "رئيس":"President","وزير":"Minister","ملك":"King","أمير":"Prince","حاكم":"Ruler",
+  "مسؤول":"Official","مدير":"Director","سفير":"Ambassador","وفد":"Delegation",
+  "ناطق":"Spokesman","قائد":"Leader","متحدث":"Spokesperson","ناشط":"Activist",
+  "معلم":"Teacher","طالب":"Student","طبيب":"Doctor","ممرضة":"Nurse",
+  "محامي":"Lawyer","قاضي":"Judge","صحفي":"Journalist","محلل":"Analyst",
+  "جندي":"Soldier","ضابط":"Officer","شرطي":"Police officer","معارض":"Opposition figure",
+  "لاجئ":"Refugee","مهاجر":"Migrant","ضحية":"Victim","عامل":"Worker",
+  "صديق":"Friend","عائلة":"Family","أب":"Father","أم":"Mother","ابن":"Son",
+  "بنت":"Daughter","أخ":"Brother","أخت":"Sister","زوج":"Husband","زوجة":"Wife",
+  // News & politics
+  "اخبار":"News","خبر":"News item","تقرير":"Report","بيان":"Statement",
+  "إعلان":"Announcement","تصريح":"Declaration","مؤتمر":"Conference",
+  "اجتماع":"Meeting","محادثات":"Talks","مفاوضات":"Negotiations",
+  "قرار":"Decision","اتفاق":"Agreement","اتفاقية":"Treaty","معاهدة":"Treaty",
+  "قانون":"Law","لائحة":"Regulation","دستور":"Constitution","إصلاح":"Reform",
+  "انتخابات":"Elections","تصويت":"Vote","استفتاء":"Referendum","حكومة":"Government",
+  "دولة":"Country","سلطة":"Authority","نظام":"System","سياسة":"Politics",
+  "برنامج":"Program","خطة":"Plan","استراتيجية":"Strategy","مبادرة":"Initiative",
+  "مقترح":"Proposal","مطالب":"Demands","شروط":"Conditions","موقف":"Position",
+  "أزمة":"Crisis","صراع":"Conflict","نزاع":"Dispute","خلاف":"Disagreement",
+  "حرب":"War","معركة":"Battle","هجوم":"Attack","دفاع":"Defense","غارة":"Raid",
+  "سلام":"Peace","هدنة":"Truce","تهديد":"Threat","عقوبات":"Sanctions","ضغط":"Pressure",
+  "تحالف":"Alliance","شراكة":"Partnership","تعاون":"Cooperation","دعم":"Support",
+  "مجلس":"Council","لجنة":"Committee","هيئة":"Commission","منظمة":"Organization",
+  "مؤسسة":"Institution","حزب":"Party","حركة":"Movement","جماعة":"Group",
+  "معارضة":"Opposition","أغلبية":"Majority","أقلية":"Minority",
+  "ديمقراطية":"Democracy","حرية":"Freedom","حقوق":"Rights","عدالة":"Justice",
+  "أمن":"Security","استقرار":"Stability","سيادة":"Sovereignty","استقلال":"Independence",
+  "وزارة":"Ministry","قضية":"Case/Issue","ملف":"File/Dossier","أزمة":"Crisis",
+  // Economy
+  "اقتصاد":"Economy","مال":"Money","ميزانية":"Budget","استثمار":"Investment",
+  "تجارة":"Trade","صادرات":"Exports","واردات":"Imports","نمو":"Growth",
+  "تنمية":"Development","بطالة":"Unemployment","تضخم":"Inflation","ديون":"Debts",
+  "شركة":"Company","سوق":"Market","نفط":"Oil","غاز":"Gas","طاقة":"Energy",
+  "مشروع":"Project","عقد":"Contract","صفقة":"Deal","إيرادات":"Revenues",
+  "زراعة":"Agriculture","صناعة":"Industry","تكنولوجيا":"Technology",
+  // Society & culture
+  "شعب":"People","مجتمع":"Society","ثقافة":"Culture","تعليم":"Education",
+  "صحة":"Health","بيئة":"Environment","مناخ":"Climate","دين":"Religion",
+  "إسلام":"Islam","مسجد":"Mosque","تراث":"Heritage","هوية":"Identity",
+  "احتجاج":"Protest","مظاهرة":"Demonstration","ثورة":"Revolution",
+  "إرهاب":"Terrorism","جريمة":"Crime","فساد":"Corruption","عنف":"Violence",
+  "مساعدات":"Aid","إغاثة":"Relief","إنسانية":"Humanity",
+  // Media
+  "تلفزيون":"Television","إذاعة":"Radio","صحيفة":"Newspaper","وسائل الإعلام":"Media",
+  "منصة":"Platform","شبكة":"Network","رسالة":"Message","خطاب":"Speech",
+  "مقابلة":"Interview","تغطية":"Coverage","موقع":"Website",
+  // Time
+  "وقت":"Time","يوم":"Day","أسبوع":"Week","شهر":"Month","سنة":"Year","عام":"Year",
+  "صباح":"Morning","مساء":"Evening","ليل":"Night","اليوم":"Today",
+  "أمس":"Yesterday","غد":"Tomorrow","الآن":"Now","فترة":"Period","مرحلة":"Phase",
+  "ساعة":"Hour","لحظة":"Moment","أخيرا":"Recently","قريبا":"Soon",
+  // Common nouns in news  
+  "عدد":"Number","نسبة":"Percentage","مستوى":"Level","حجم":"Size",
+  "عملية":"Operation","حادث":"Incident","كارثة":"Disaster","وضع":"Situation",
+  "هدف":"Goal","نتيجة":"Result","حل":"Solution","خطر":"Danger",
+  "تحدي":"Challenge","فرصة":"Opportunity","حاجة":"Need","مصدر":"Source",
+  "معلومات":"Information","بيانات":"Data","موارد":"Resources","قدرة":"Capacity",
+  "علاقات":"Relations","زيارة":"Visit","لقاء":"Meeting","قمة":"Summit",
+  "تطورات":"Developments","أحداث":"Events","ظروف":"Circumstances",
+  "فشل":"Failure","نجاح":"Success","تقدم":"Progress","تراجع":"Decline",
+  "موافقة":"Approval","رفض":"Rejection","تأثير":"Impact","عواقب":"Consequences",
+  "حياة":"Life","عالم":"World","مشكلة":"Problem","موضوع":"Topic",
+  // Adjectives
+  "كبير":"Major","صغير":"Small","جديد":"New","قديم":"Old","أول":"First",
+  "أخير":"Last","رئيسي":"Main","دولي":"International","محلي":"Local",
+  "إقليمي":"Regional","عالمي":"Global","وطني":"National","سياسي":"Political",
+  "اقتصادي":"Economic","عسكري":"Military","أمني":"Security-related",
+  "إنساني":"Humanitarian","اجتماعي":"Social","ثقافي":"Cultural","ديني":"Religious",
+  "رسمي":"Official","عام":"General","خاص":"Private","مهم":"Important",
+  "خطير":"Serious","عاجل":"Urgent","إيجابي":"Positive","سلبي":"Negative",
+  "مشترك":"Joint","ثنائي":"Bilateral","مستمر":"Ongoing","مؤقت":"Temporary",
+  "دائم":"Permanent","فوري":"Immediate","جميل":"Beautiful","سريع":"Fast",
+  // Basic vocab
+  "كلمة":"Word","جملة":"Sentence","درس":"Lesson","معنى":"Meaning",
+  "سؤال":"Question","جواب":"Answer","مثال":"Example","شرح":"Explanation",
+  "كتاب":"Book","قلم":"Pen","هاتف":"Phone","كمبيوتر":"Computer",
+  "صورة":"Photo","فيديو":"Video","صوت":"Sound","اسم":"Name","بلد":"Country",
+  "رأي":"Opinion","ماء":"Water","خبز":"Bread","لحم":"Meat","سمك":"Fish",
+  "دجاج":"Chicken","قهوة":"Coffee","شاي":"Tea","طعام":"Food",
+};
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let vocabList    = [];  // {ar,en,mastered,practiceCount,source,timestamps[],sr}
+let userVerbDB   = [];  // {verbEntry,sources[],timestamps[],sr}
+let userNounDB   = [];  // {base,en,forms{},sources[],timestamps[],sr}
+let userSentDB   = [];  // {ar,en,tense,tip,source,timestamp,sr}
+let dailyLog     = [];
+let streak       = 0;
+let videoCount   = 0;
+let scores       = {vocab:{c:0,t:0},conj:{c:0,t:0},poss:{c:0,t:0},tense:{c:0,t:0}};
+let segments     = [];  // [{start_sec, text}] parsed from transcript
+let wordTimestamps= {}; // stripped_word → [seconds]
+let currentVideoId= '';
+
+// Game state
+let vocabMode='visual', conjMode='form', possMode='ar2en';
+let vocabQueue=[], vocabIdx=0;
+let conjCurrent=null, conjLocked=false;
+let possCurrent=null, possLocked=false;
+let tenseCurrent=null, tenseLocked=false;
+let conjTableOpen=false;
+let panelWord='';
+
+// ═══════════════════════════════════════════════════════════
+//  SPACED REPETITION — SM-2
+// ═══════════════════════════════════════════════════════════
+function srInit(){ return {ef:2.5,reps:0,interval:0,nextReview:null}; }
+
+function srReview(item, correct){
+  const sr = item.sr || srInit();
+  if(correct){
+    sr.reps=(sr.reps||0)+1;
+    sr.interval = sr.reps===1?1 : sr.reps===2?4 : Math.round((sr.interval||4)*sr.ef);
+    sr.ef = Math.max(1.3,(sr.ef||2.5)+0.1);
+  } else {
+    sr.reps=0; sr.interval=1;
+    sr.ef = Math.max(1.3,(sr.ef||2.5)-0.2);
+  }
+  const next=new Date(); next.setDate(next.getDate()+sr.interval);
+  sr.nextReview=next.toISOString().slice(0,10);
+  item.sr=sr;
+}
+
+function srIsDue(item){ return !item.sr?.nextReview || item.sr.nextReview<=todayStr(); }
+function srLabel(item){
+  if(!item.sr?.nextReview) return {cls:'sr-new',txt:'NEW'};
+  if(item.sr.nextReview<=todayStr()) return {cls:'sr-due',txt:'DUE ▸'};
+  return {cls:'sr-review',txt:`In ${item.sr.interval}d`};
+}
+function srSort(arr){
+  const today=todayStr();
+  return [...arr.filter(i=>!i.sr?.nextReview||i.sr.nextReview<=today),...arr.filter(i=>i.sr?.nextReview&&i.sr.nextReview>today)];
+}
+function countDue(){
+  return [...vocabList,...userVerbDB,...userNounDB,...userSentDB].filter(srIsDue).length;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════════════════
+function saveAll(){
+  try{
+    localStorage.setItem('avt3_vocab',  JSON.stringify(vocabList));
+    localStorage.setItem('avt3_verbs',  JSON.stringify(userVerbDB));
+    localStorage.setItem('avt3_nouns',  JSON.stringify(userNounDB));
+    localStorage.setItem('avt3_sents',  JSON.stringify(userSentDB));
+    localStorage.setItem('avt3_log',    JSON.stringify(dailyLog));
+    localStorage.setItem('avt3_streak', String(streak));
+    localStorage.setItem('avt3_videos', String(videoCount));
+    localStorage.setItem('avt3_scores', JSON.stringify(scores));
+    localStorage.setItem('avt3_segs',   JSON.stringify(segments));
+    localStorage.setItem('avt3_wts',    JSON.stringify(wordTimestamps));
+    localStorage.setItem('avt3_vid',    currentVideoId);
+  }catch(e){ console.warn('save failed',e); }
+}
+
+function loadAll(){
+  try{
+    const d=(k,def)=>{ const v=localStorage.getItem(k); return v?JSON.parse(v):def; };
+    vocabList      = d('avt3_vocab',[]);
+    userVerbDB     = d('avt3_verbs',[]);
+    userNounDB     = d('avt3_nouns',[]);
+    userSentDB     = d('avt3_sents',[]);
+    dailyLog       = d('avt3_log',[]);
+    streak         = parseInt(localStorage.getItem('avt3_streak')||'0');
+    videoCount     = parseInt(localStorage.getItem('avt3_videos')||'0');
+    scores         = d('avt3_scores',{vocab:{c:0,t:0},conj:{c:0,t:0},poss:{c:0,t:0},tense:{c:0,t:0}});
+    segments       = d('avt3_segs',[]);
+    wordTimestamps = d('avt3_wts',{});
+    currentVideoId = localStorage.getItem('avt3_vid')||'';
+  }catch(e){ /* fresh */ }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ARABIC UTILS
+// ═══════════════════════════════════════════════════════════
+function strip(w){ return w.replace(/[\u064B-\u065F\u0670\u0640]/g,''); }
+function normalizeAr(w){
+  return strip(w).replace(/[إأآ]/g,'ا').replace(/ة$|ه$/,'').replace(/ى$/,'ي').replace(/^ال/,'');
+}
+function lookupDict(w){
+  const s=strip(w), na=s.startsWith('ال')?s.slice(2):s, norm=normalizeAr(s);
+  return DICT[s]||DICT[na]||Object.entries(DICT).find(([k])=>normalizeAr(k)===norm)?.[1]||null;
+}
+function matchVerb(s){
+  // Exact form match first (covers all conjugated forms)
+  if(VERB_FORM_MAP[s]) return VERB_FORM_MAP[s];
+  // Exact root match
+  const found = VERB_BANK.find(v => s === v.rp);
+  if(found) return found;
+  // Strip present-tense prefix يـ تـ نـ أـ and try root match only
+  if(s.length >= 3 && /^[يتنأ]/.test(s)){
+    const noP = s.slice(1);
+    const byRoot = VERB_BANK.find(v => noP === v.rp);
+    if(byRoot) return byRoot;
+  }
+  return null;
+}
+function isStopWord(s){
+  const stops=new Set(['من','في','على','إلى','أن','لا','ما','هو','هي','قد','لم','أو','نحن','هم','أنا','أنت','كما','إن','حتى','عن','مع','بعد','قبل','هذا','هذه','ذلك','التي','الذي','وهو','وهي','وقد','فإن','كان','إذا','ولا','وإن','إنه','بأن','لأن','كل','غير','أي','هل','لكن','بل','ثم','أم','أو','لو','كي','عند','منذ','دون','خلال','أما','حيث','إذ','لذلك','وذلك','فقد','فهو','ومن','وفي','وعلى']);
+  return stops.has(s)||s.length<=2;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  POSSESSIVE FORMS — generated dynamically from any noun
+// ═══════════════════════════════════════════════════════════
+function makePossessiveForms(ar, en){
+  const s = strip(ar).trim();
+  // If ends in تاء مربوطة (ة) replace with ت before adding suffix
+  // Otherwise just append suffix directly to the base
+  const endsTaa = s.endsWith('ة');
+  const stem    = endsTaa ? s.slice(0,-1)+'ت' : s;
+
+  return {
+    base: ar, en, sources:[], timestamps:[], sr:srInit(),
+    forms:{
+      ana:   stem+'ي',
+      anta:  stem+'كَ',
+      anti:  stem+'كِ',
+      huwa:  stem+'هُ',
+      hiya:  stem+'هَا',
+      nahnu: stem+'نَا',
+      antum: stem+'كُمْ',
+      hum:   stem+'هُمْ',
+    }
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TIMESTAMP PARSING
+// ═══════════════════════════════════════════════════════════
+function parseTimeToSec(ts){
+  // Handles: 0:05, 00:05, 1:23:45, 00:01:23,000 → 00:01:26,500
+  ts = ts.replace(',','.');
+  const parts = ts.split(':').map(Number);
+  if(parts.length===3) return parts[0]*3600+parts[1]*60+parts[2];
+  if(parts.length===2) return parts[0]*60+parts[1];
+  return Number(ts)||0;
+}
+
+function secToMs(sec){
+  const m=Math.floor(sec/60), s=Math.floor(sec%60);
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function parseTranscript(rawText){
+  segments = [];
+
+  // ── HELPER: is a line a YouTube duration label? ──
+  // Matches: "7 seconds", "1 minute, 6 seconds", "2 minutes, 7 seconds", "59 seconds"
+  function isYTDurationLabel(line){
+    return /^\d+\s+(second|seconds|minute|minutes)(,\s*\d+\s+(second|seconds))?$/.test(line.trim());
+  }
+
+  // ── HELPER: clean a segment text line ──
+  // Removes non-Arabic content: English words, bare numbers, punctuation runs
+  function cleanSegText(t){
+    // Remove lines/tokens that are purely non-Arabic (English, numbers)
+    // Keep Arabic characters, spaces between them, and Arabic punctuation
+    t = t.replace(/[A-Za-z]+/g, ' ');       // remove English letters
+    t = t.replace(/\b\d+\b/g, ' ');         // remove bare numbers
+    t = t.replace(/\s{2,}/g, ' ');            // collapse spaces
+    return t.trim();
+  }
+
+  // ── SRT FORMAT (00:00:01,000 --> 00:00:04,000) ──
+  const srtBlock = /(\d+)\r?\n(\d{2}:\d{2}:\d{2}[,\.]\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2}[,\.]\d{3})\r?\n([\s\S]*?)(?=\n\n|\n?\d+\n\d{2}:\d{2}|\z)/gm;
+  const srtBlocks=[];
+  let srtMatch;
+  while((srtMatch=srtBlock.exec(rawText))!==null){
+    const start=parseTimeToSec(srtMatch[2]);
+    const text=cleanSegText(srtMatch[4].replace(/\r?\n/g,' '));
+    if(text) srtBlocks.push({start,text});
+  }
+  if(srtBlocks.length>0){ segments=srtBlocks; return; }
+
+  // ── YOUTUBE AUTO-GENERATED FORMAT ──
+  // Pattern: timestamp line (M:SS or MM:SS) alone on its own line,
+  //          optionally followed by a duration label line ("7 seconds", "1 minute, 6 seconds"),
+  //          then Arabic text lines until the next timestamp.
+  // The timestamp itself may also appear as "M:SS\nArabic" (first segment has no label).
+  const lines = rawText.split('\n');
+  let i = 0;
+  let currentSeg = null;
+
+  while(i < lines.length){
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Check if this line is a standalone timestamp (nothing after the time digits)
+    const soloTS = trimmed.match(/^(\d{1,2}:\d{2}(?::\d{2})?)$/);
+
+    // Check if this line is a timestamp with text inline: "0:05 Arabic..."
+    const inlineTS = trimmed.match(/^(\d{1,2}:\d{2}(?::\d{2})?)\s+(.+)/);
+
+    if(soloTS){
+      // Save previous segment
+      if(currentSeg && currentSeg.text.trim()) segments.push(currentSeg);
+      const sec = parseTimeToSec(soloTS[1]);
+      currentSeg = {start: sec, text: ''};
+      i++;
+      // Skip the duration label line that follows (YouTube puts it right after the timestamp)
+      if(i < lines.length && isYTDurationLabel(lines[i])){
+        i++; // skip "7 seconds" / "1 minute, 6 seconds" etc.
+      }
+      continue;
+    }
+
+    if(inlineTS){
+      // Timestamp with text on the same line (e.g. "[0:05] Arabic text")
+      if(currentSeg && currentSeg.text.trim()) segments.push(currentSeg);
+      const sec = parseTimeToSec(inlineTS[1]);
+      const txt = cleanSegText(inlineTS[2]);
+      currentSeg = {start: sec, text: txt};
+      i++;
+      continue;
+    }
+
+    // Regular text line — skip if it's a duration label, number-only, or pure English
+    if(isYTDurationLabel(trimmed)){
+      i++; continue;
+    }
+    if(/^[\d\s]+$/.test(trimmed)){
+      i++; continue; // pure numbers line
+    }
+    if(trimmed && !/[\u0600-\u06FF]/.test(trimmed)){
+      i++; continue; // no Arabic at all (English filler like "Yeah.")
+    }
+
+    // Arabic content line
+    if(trimmed && /[\u0600-\u06FF]/.test(trimmed)){
+      const cleaned = cleanSegText(trimmed);
+      if(cleaned){
+        if(currentSeg){
+          currentSeg.text = (currentSeg.text + ' ' + cleaned).trim();
+        } else {
+          // Arabic text before any timestamp
+          currentSeg = {start: null, text: cleaned};
+        }
+      }
+    }
+    i++;
+  }
+  if(currentSeg && currentSeg.text.trim()) segments.push(currentSeg);
+
+  // ── PLAIN TEXT (no timestamps at all) ──
+  if(segments.length===0){
+    rawText.split(/[.،؟!؛\n]+/).forEach(s=>{
+      const t=cleanSegText(s);
+      if(t.length>3 && /[\u0600-\u06FF]/.test(t)) segments.push({start:null,text:t});
+    });
+  }
+}
+
+function buildWordTimestampMap(){
+  wordTimestamps={};
+  segments.forEach(seg=>{
+    if(seg.start===null) return;
+    const words=(seg.text.match(/[\u0600-\u06FF\u064B-\u065F]+/g)||[]);
+    words.forEach(w=>{
+      const s=strip(w), norm=normalizeAr(s);
+      if(!wordTimestamps[norm]) wordTimestamps[norm]=[];
+      if(!wordTimestamps[norm].includes(seg.start)) wordTimestamps[norm].push(seg.start);
+    });
+  });
+}
+
+function getTimestamps(ar){
+  const norm=normalizeAr(strip(ar));
+  return wordTimestamps[norm]||[];
+}
+
+// ═══════════════════════════════════════════════════════════
+//  YOUTUBE IFRAME PLAYER API — embedded in page, seekTo() on HTTPS
+// ═══════════════════════════════════════════════════════════
+let ytPlayer     = null;
+let ytReady      = false;
+let ytPendingSec = null;
+let ytLoadedId   = '';   // tracks which video ID is currently in the player
+
+// YouTube calls this automatically once iframe_api script loads
+window.onYouTubeIframeAPIReady = function(){
+  if(currentVideoId) initYTPlayer(currentVideoId, 0);
+};
+
+function initYTPlayer(videoId, startSec){
+  ytReady = false;
+  // Clear placeholder
+  const ph = document.getElementById('ytPlayerPlaceholder');
+  if(ph) ph.style.display = 'none';
+  // Destroy old player if exists
+  if(ytPlayer){ try{ ytPlayer.destroy(); }catch(e){} ytPlayer = null; }
+
+  ytLoadedId = videoId;
+  ytPlayer = new YT.Player('ytPlayer', {
+    videoId: videoId,
+    playerVars: {
+      start:         Math.max(0, Math.floor(startSec||0)),
+      autoplay:      0,
+      rel:           0,
+      modestbranding:1,
+      origin:        window.location.origin || window.location.href,
+    },
+    events: {
+      onReady: function(e){
+        ytReady = true;
+        updatePlayerStatus();
+        if(ytPendingSec !== null){
+          e.target.seekTo(ytPendingSec, true);
+          e.target.playVideo();
+          ytPendingSec = null;
+        }
+      },
+      onError: function(e){
+        // Error 101/150 = owner blocked embedding. Show direct link.
+        const st = document.getElementById('ytPlayerStatus');
+        if(st) st.innerHTML =
+          'This video blocks embedding. ' +
+          '<a href="https://www.youtube.com/watch?v='+videoId+'" target="_blank" ' +
+          'style="color:var(--gold);text-decoration:none;font-weight:bold;">Open on YouTube ↗</a>';
+      }
+    }
+  });
+}
+
+function jumpTo(sec){
+  if(!currentVideoId){ toast('Load a video in Setup first'); return; }
+  const before = Math.max(0, sec - 5);
+  if(ytPlayer && ytReady){
+    ytPlayer.seekTo(before, true);
+    ytPlayer.playVideo();
+    // Switch to Watch tab so user sees the seek happen
+    const wb = document.querySelector('.tab-btn[onclick*="watch"]');
+    if(wb && !document.getElementById('tab-watch').classList.contains('active')){
+      switchTab('watch', wb);
+    }
+  } else {
+    // Player not ready yet — queue the seek
+    ytPendingSec = before;
+    const wb = document.querySelector('.tab-btn[onclick*="watch"]');
+    if(wb) switchTab('watch', wb);
+    if(currentVideoId && typeof YT !== 'undefined' && YT.Player){
+      initYTPlayer(currentVideoId, before);
+    }
+  }
+  toast('📍 ' + secToMs(before) + ' — 5s before');
+}
+
+function renderTsBar(elId, timestamps){
+  const bar = document.getElementById(elId);
+  if(!bar) return;
+  if(!timestamps || timestamps.length === 0){ bar.innerHTML = ''; return; }
+  bar.innerHTML = '<span class="ts-label">📍 In video:</span>' +
+    timestamps.slice(0,5).map(sec =>
+      `<button class="ts-chip" onclick="jumpTo(${sec})">${secToMs(sec)}</button>`
+    ).join('');
+}
+
+function updatePlayerStatus(){
+  const el = document.getElementById('ytPlayerStatus');
+  if(!el) return;
+  if(!currentVideoId){ el.textContent = 'No video loaded — go to Setup tab'; return; }
+  el.textContent = ytReady ? 'Click any 📍 timestamp to seek the video instantly' : 'Loading player…';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  YOUTUBE VIDEO SETUP
+// ═══════════════════════════════════════════════════════════
+//  YOUTUBE VIDEO SETUP
+// ═══════════════════════════════════════════════════════════
+function extractYouTubeId(url){
+  const pats=[/youtube\.com\/watch\?v=([^&\s]+)/,/youtu\.be\/([^?\s]+)/,/youtube\.com\/embed\/([^?\s]+)/,/youtube\.com\/shorts\/([^?\s]+)/,/youtube\.com\/live\/([^?\s]+)/];
+  for(const p of pats){ const m=url.match(p); if(m) return m[1].split('&')[0]; }
+  return null;
+}
+
+function loadVideo(){
+  const url=document.getElementById('videoUrl').value.trim();
+  if(!url){ toast('Please paste a YouTube URL'); return; }
+  const id=extractYouTubeId(url);
+  if(!id){ toast('Could not read YouTube video ID'); return; }
+  currentVideoId=id;
+  videoCount++;
+  saveAll();
+  updateHeaderStats();
+  updateWatchPanel();
+  toast('✓ Video loaded — go to Watch tab to play');
+}
+
+function updateWatchPanel(){
+  if(!currentVideoId) return;
+
+  if(typeof YT !== 'undefined' && YT.Player){
+    if(!ytPlayer){
+      // First time: create the player
+      initYTPlayer(currentVideoId, 0);
+    } else if(ytLoadedId !== currentVideoId){
+      // New video: load it into the existing player (no page refresh needed)
+      ytLoadedId = currentVideoId;
+      ytReady    = false;
+      try{
+        ytPlayer.loadVideoById({ videoId: currentVideoId, startSeconds: 0 });
+        ytReady = true;
+      } catch(e){
+        // Player not ready — recreate
+        initYTPlayer(currentVideoId, 0);
+      }
+    }
+  }
+  updatePlayerStatus();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  EXTRACT TRANSCRIPT
+// ═══════════════════════════════════════════════════════════
+function extractTranscript(){
+  const text=document.getElementById('transcriptInput').value.trim();
+  if(!text){ toast('Please paste a transcript'); return; }
+  const source=document.getElementById('sourceLabel').value.trim()||
+               (currentVideoId?`Video ${currentVideoId}`:`Video ${videoCount}`);
+
+  parseTranscript(text);
+  buildWordTimestampMap();
+
+  const rawWords=text.match(/[\u0600-\u06FF\u064B-\u065F]+/g)||[];
+  let vocabAdded=0, verbsAdded=0, nounsAdded=0, sentAdded=0;
+  const hasTS=segments.some(s=>s.start!==null);
+
+  // ── SENTENCES ──
+  segments.forEach(seg=>{
+    const t=seg.text.trim();
+    if(t.length<5||!/[\u0600-\u06FF]{3,}/.test(t)) return;
+    const plain=strip(t);
+    if(userSentDB.some(e=>strip(e.ar)===plain)) return;
+    const tense=heuristicTense(t);
+    userSentDB.push({ar:t,en:'(from your video)',tense,tip:tensTip(t,tense),source,timestamp:seg.start,sr:srInit()});
+    sentAdded++;
+  });
+
+  // ── VERBS ──
+  const seenV=new Set();
+  rawWords.forEach(w=>{
+    const s=strip(w); const entry=matchVerb(s);
+    if(!entry||seenV.has(entry.rp)) return;
+    seenV.add(entry.rp);
+    const ts=getTimestamps(s);
+    const existing=userVerbDB.find(e=>e.verbEntry.rp===entry.rp);
+    if(existing){ if(!existing.sources.includes(source)) existing.sources.push(source); ts.forEach(t=>{ if(!existing.timestamps.includes(t)) existing.timestamps.push(t); }); }
+    else{ userVerbDB.push({verbEntry:entry,sources:[source],timestamps:ts,sr:srInit()}); verbsAdded++; }
+  });
+
+  // ── NOUNS (dynamically generated possessives) ──
+  const seenN=new Set();
+  rawWords.forEach(w=>{
+    const s=strip(w);
+    if(seenN.has(normalizeAr(s))||isStopWord(s)||matchVerb(s)) return;
+    const en=lookupDict(s);
+    if(!en) return;
+    const norm=normalizeAr(s);
+    seenN.add(norm);
+    const ts=getTimestamps(s);
+    const existing=userNounDB.find(e=>normalizeAr(strip(e.base))===norm);
+    if(existing){ if(!existing.sources.includes(source)) existing.sources.push(source); ts.forEach(t=>{ if(!existing.timestamps.includes(t)) existing.timestamps.push(t); }); }
+    else{ const entry=makePossessiveForms(s,en); entry.sources=[source]; entry.timestamps=ts; userNounDB.push(entry); nounsAdded++; }
+  });
+
+  // ── VOCAB ──
+  const seenVoc=new Set();
+  rawWords.forEach(w=>{
+    if(w.length<2) return;
+    const s=strip(w), norm=normalizeAr(s);
+    if(seenVoc.has(norm)) return; seenVoc.add(norm);
+    const en=lookupDict(s);
+    if(!en) return;
+    const ts=getTimestamps(s);
+    if(vocabList.some(v=>normalizeAr(v.ar)===norm)) return;
+    vocabList.push({ar:w,en,mastered:false,practiceCount:0,source,timestamps:ts,sr:srInit()});
+    vocabAdded++;
+  });
+
+  document.getElementById('exWords').textContent=rawWords.length;
+  document.getElementById('exVocab').textContent=vocabAdded;
+  document.getElementById('exVerbs').textContent=verbsAdded;
+  document.getElementById('exSent').textContent=sentAdded+(hasTS?` (${Object.keys(wordTimestamps).length} timestamped)`:'');
+  document.getElementById('extractGrid').classList.add('show');
+
+  renderTranscript();
+  buildVocabQueue();
+  renderVocabChips();
+  updateHeaderStats();
+  saveAll();
+  toast(`✓ ${vocabAdded} vocab · ${verbsAdded} verbs · ${nounsAdded} nouns · ${sentAdded} sentences${hasTS?' · timestamps mapped':''}`);
+}
+
+function clearSetup(){
+  document.getElementById('transcriptInput').value='';
+  document.getElementById('sourceLabel').value='';
+  document.getElementById('extractGrid').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WATCH — CLICKABLE TRANSCRIPT
+// ═══════════════════════════════════════════════════════════
+function renderTranscript(){
+  const text=document.getElementById('transcriptInput').value.trim();
+  const container=document.getElementById('transcriptDisplay');
+  if(!text){ return; }
+
+  const vocabSet=new Set(vocabList.map(v=>normalizeAr(v.ar)));
+
+  // Re-parse to render with timestamps
+  let html='';
+  segments.forEach(seg=>{
+    if(seg.start!==null){
+      const safe=seg.start;
+      html+=`<span class="t-stamp" onclick="jumpTo(${safe})" title="Jump to ${secToMs(safe)}">[${secToMs(safe)}]</span> `;
+    }
+    const words=(seg.text||'').split(/([\s،؟!؛.]+)/);
+    words.forEach(tok=>{
+      if(!tok) return;
+      if(!(/[\u0600-\u06FF]/.test(tok))){ html+=`<span style="font-family:var(--font-ui);font-size:13px;color:var(--text-dim);">${tok}</span>`; return; }
+      const s=strip(tok), norm=normalizeAr(s);
+      const inV=vocabSet.has(norm);
+      const isVb=!inV&&!!matchVerb(s);
+      const hasT=!!wordTimestamps[norm]?.length;
+      const cls=['t-word',inV?'vocab-word':'',isVb?'verb-word':'',hasT?'has-ts':''].filter(Boolean).join(' ');
+      const safe2=tok.replace(/'/g,"\\'");
+      html+=`<span class="${cls}" onclick="showWordPanel('${safe2}')">${tok}</span>`;
+    });
+    html+=' ';
+  });
+  container.innerHTML=html||'<span style="color:var(--text-dim);font-family:var(--font-ui);font-size:12px;direction:ltr;">No transcript loaded.</span>';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WORD PANEL
+// ═══════════════════════════════════════════════════════════
+function showWordPanel(word){
+  panelWord=word;
+  const en=lookupDict(word);
+  const already=vocabList.some(v=>normalizeAr(v.ar)===normalizeAr(word));
+  const verbM=matchVerb(strip(word));
+  const ts=getTimestamps(word);
+
+  document.getElementById('wpWord').textContent=word;
+  const enEl=document.getElementById('wpEn'), hintEl=document.getElementById('wpHint');
+  const inputEl=document.getElementById('wpInput'), addBtn=document.getElementById('wpAddBtn');
+  let hints=[]; if(verbM) hints.push(`Verb: ${verbM.root} — ${verbM.en}`);
+
+  if(en){ enEl.textContent=en; enEl.style.display='block'; hintEl.textContent=(hints.join(' · ')||'')+(already?' · ✓ In vocab list':' · Tap + Vocab to add'); inputEl.style.display='none'; addBtn.disabled=already; }
+  else{ enEl.style.display='none'; hintEl.textContent=hints.join(' · ')||'Unknown — type meaning:'; inputEl.style.display='block'; inputEl.value=''; addBtn.disabled=false; }
+
+  renderTsBar('wpTsBar',ts);
+  document.getElementById('wordPanel').classList.add('show');
+  document.querySelectorAll('.t-word').forEach(el=>el.classList.toggle('highlighted',el.textContent===word));
+  speak(word);
+}
+
+function closeWordPanel(){
+  document.getElementById('wordPanel').classList.remove('show');
+  document.querySelectorAll('.t-word.highlighted').forEach(el=>el.classList.remove('highlighted'));
+}
+function speakPanel(){ speak(panelWord); }
+function addFromPanel(){
+  const en=lookupDict(panelWord)||document.getElementById('wpInput').value.trim();
+  if(!en){ toast('Please enter a meaning'); return; }
+  if(vocabList.some(v=>normalizeAr(v.ar)===normalizeAr(panelWord))){ toast('Already in vocab!'); return; }
+  const ts=getTimestamps(panelWord);
+  vocabList.push({ar:panelWord,en,mastered:false,practiceCount:0,source:'manual',timestamps:ts,sr:srInit()});
+  saveAll(); buildVocabQueue(); renderVocabChips(); updateHeaderStats(); renderTranscript();
+  toast(`✓ Added: ${panelWord} = ${en}`);
+  closeWordPanel();
+}
+document.addEventListener('click',e=>{
+  const p=document.getElementById('wordPanel');
+  if(p.classList.contains('show')&&!p.contains(e.target)&&!e.target.classList.contains('t-word')&&!e.target.classList.contains('ts-chip')) closeWordPanel();
+});
+
+// ═══════════════════════════════════════════════════════════
+//  VOCAB GAME
+// ═══════════════════════════════════════════════════════════
+function buildVocabQueue(){ vocabQueue=srSort([...vocabList]); vocabIdx=0; renderVocabQ(); }
+function setVocabMode(m,btn){ vocabMode=m; document.querySelectorAll('.mode-toggle .mode-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); buildVocabQueue(); }
+
+function renderVocabQ(){
+  const fb=document.getElementById('vocabFeedback');
+  fb.className='feedback';
+  document.getElementById('vocabTranslation').style.display='none';
+  document.getElementById('revealBtn').style.display='none';
+
+  if(!vocabList.length){
+    document.getElementById('vocabWord').textContent='—';
+    document.getElementById('vocabWord').style.fontSize='';
+    document.getElementById('vocabSub').textContent='Add a transcript to begin';
+    document.getElementById('vocabChoices').innerHTML='';
+    document.getElementById('vocabCounter').textContent='0 / 0';
+    document.getElementById('vocabSrBadge').style.display='none';
+    renderTsBar('vocabTsBar',[]);
+    updateVocabProgress(); return;
+  }
+  if(vocabIdx>=vocabQueue.length) vocabIdx=0;
+  const cur=vocabQueue[vocabIdx];
+  document.getElementById('vocabCounter').textContent=`${vocabIdx+1} / ${vocabQueue.length}`;
+  const lbl=srLabel(cur);
+  const badge=document.getElementById('vocabSrBadge');
+  badge.className=`sr-badge ${lbl.cls}`; badge.textContent=lbl.txt; badge.style.display='block';
+
+  renderTsBar('vocabTsBar',cur.timestamps||[]);
+
+  if(vocabMode==='visual'){
+    document.getElementById('vocabWord').textContent=cur.ar;
+    document.getElementById('vocabWord').style.fontSize='';
+    document.getElementById('vocabSub').textContent='Click or 🔊 to hear · choose meaning below';
+    genVocabChoices(cur,'en');
+  } else if(vocabMode==='listen'){
+    document.getElementById('vocabWord').textContent='👂';
+    document.getElementById('vocabWord').style.fontSize='48px';
+    document.getElementById('vocabSub').textContent='Listen and identify the word';
+    document.getElementById('revealBtn').style.display='inline-flex';
+    setTimeout(()=>speak(cur.ar),400);
+    genVocabChoices(cur,'en');
+  } else {
+    document.getElementById('vocabWord').textContent=cur.en;
+    document.getElementById('vocabWord').style.fontSize='28px';
+    document.getElementById('vocabSub').textContent='Pick the Arabic word';
+    genVocabChoices(cur,'ar');
+  }
+  updateVocabProgress();
+}
+
+function genVocabChoices(cur, field){
+  const div=document.getElementById('vocabChoices'); div.innerHTML='';
+  let pool=vocabList.filter(w=>w.ar!==cur.ar);
+  if(pool.length<3){ const extras=Object.entries(DICT).map(([ar,en])=>({ar,en})).filter(e=>e.ar!==strip(cur.ar)); pool=[...pool,...shuffle(extras)]; }
+  let opts=shuffle(pool).slice(0,3); opts.push(cur); opts=shuffle(opts);
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='choice'+(field==='ar'?' choice-ar':'');
+    btn.textContent=field==='ar'?opt.ar:opt.en;
+    btn.onclick=()=>handleVocabAns(opt,btn,cur,field);
+    div.appendChild(btn);
+  });
+}
+
+function handleVocabAns(opt,btn,cur,field){
+  const ok=field==='ar'?opt.ar===cur.ar:opt.en===cur.en;
+  document.querySelectorAll('#vocabChoices .choice').forEach(b=>b.disabled=true);
+  srReview(cur,ok); scores.vocab.t++;
+  if(ok){
+    btn.classList.add('correct'); scores.vocab.c++;
+    const e=vocabList.find(v=>v.ar===cur.ar);
+    if(e){ e.practiceCount++; if(e.practiceCount>=3) e.mastered=true; }
+    showFb('vocabFeedback',true,`✓ ${cur.ar} = ${cur.en}`);
+    logActivity('vocab');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('#vocabChoices .choice').forEach(b=>{ if(b.textContent===(field==='ar'?cur.ar:cur.en)) b.classList.add('correct'); });
+    showFb('vocabFeedback',false,`✗ ${cur.ar} = ${cur.en}`);
+    speak(cur.ar);
+  }
+  saveAll(); updateHeaderStats(); vocabIdx++;
+  setTimeout(renderVocabQ,1100);
+}
+
+function speakVocab(){ if(vocabQueue.length){ const c=vocabQueue[Math.min(vocabIdx,vocabQueue.length-1)]; if(c) speak(c.ar); } }
+function revealMeaning(){ const c=vocabQueue[Math.min(vocabIdx,vocabQueue.length-1)]; if(c){ const el=document.getElementById('vocabTranslation'); el.textContent=c.en; el.style.display='block'; } }
+function updateVocabProgress(){
+  const tot=vocabList.length||1, m=vocabList.filter(v=>v.mastered).length, pct=Math.round((m/tot)*100);
+  document.getElementById('vocabProgLabel').textContent=`${m} / ${vocabList.length} mastered`;
+  document.getElementById('vocabProgPct').textContent=pct+'%';
+  document.getElementById('vocabProgFill').style.width=pct+'%';
+}
+
+function addCustomWord(){
+  const ar=document.getElementById('addAr').value.trim(), en=document.getElementById('addEn').value.trim();
+  if(!ar||!en){ toast('Both Arabic and English required'); return; }
+  if(vocabList.some(v=>normalizeAr(v.ar)===normalizeAr(ar))){ toast('Already in list'); return; }
+  vocabList.push({ar,en,mastered:false,practiceCount:0,source:'manual',timestamps:getTimestamps(ar),sr:srInit()});
+  document.getElementById('addAr').value=''; document.getElementById('addEn').value='';
+  saveAll(); buildVocabQueue(); renderVocabChips(); updateHeaderStats();
+  toast(`✓ Added: ${ar} = ${en}`);
+}
+
+function renderVocabChips(){
+  const div=document.getElementById('vocabChips');
+  document.getElementById('vocabBankCount').textContent=vocabList.length;
+  div.innerHTML=vocabList.length?vocabList.map(v=>`<div class="vocab-chip${v.mastered?' mastered':''}" onclick="speak('${v.ar.replace(/'/g,"\\'")}')">
+    ${v.ar}${v.mastered?'<span class="chip-check">✓</span>':''}</div>`).join('')
+    :'<span style="font-size:10px;color:var(--text-dim);font-family:var(--font-ui);">No words yet.</span>';
+}
+
+function resetVocabMastery(){ vocabList.forEach(v=>{v.mastered=false;v.practiceCount=0;v.sr=srInit();}); saveAll(); renderVocabChips(); buildVocabQueue(); updateHeaderStats(); toast('↺ Reset'); }
+
+// ═══════════════════════════════════════════════════════════
+//  CONJUGATION
+// ═══════════════════════════════════════════════════════════
+function setConjMode(m,btn){ conjMode=m; document.querySelectorAll('#sub-conj .mode-toggle .mode-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); nextConj(); }
+
+function nextConj(){
+  conjLocked=false;
+  document.getElementById('conjFeedback').className='feedback';
+  document.getElementById('conjChoices').innerHTML='';
+  renderTsBar('conjTsBar',[]);
+  if(!userVerbDB.length){
+    showEmpty('conjStage'); document.getElementById('conjVerbEn').textContent='';
+    document.getElementById('conjVerbAr').textContent=''; document.getElementById('conjPronoun').textContent='';
+    document.getElementById('conjSrBadge').style.display='none'; return;
+  }
+  const q=srSort([...userVerbDB]);
+  const vi=q[0]; const verb=vi.verbEntry;
+  const pron=PRONOUNS[Math.floor(Math.random()*PRONOUNS.length)];
+  const tk=Math.random()<0.5?'past':'present';
+  conjCurrent={vi,verb,pron,tk};
+
+  const lbl=srLabel(vi); const badge=document.getElementById('conjSrBadge');
+  badge.className=`sr-badge ${lbl.cls}`; badge.textContent=lbl.txt; badge.style.display='block';
+  renderTsBar('conjTsBar',vi.timestamps||[]);
+
+  document.getElementById('conjVerbEn').textContent=verb.en;
+  document.getElementById('conjVerbAr').textContent=verb.root;
+  document.getElementById('conjTenseLabel').textContent=tk==='past'?'ماضي (Past)':'مضارع (Present)';
+  document.getElementById('conjCounter').textContent=`${scores.conj.c} correct`;
+
+  if(conjMode==='form'){
+    document.getElementById('conjPronoun').textContent=`${pron.ar} — ${pron.en}`;
+    genConjForm(verb,pron,tk);
+  } else {
+    document.getElementById('conjPronoun').textContent=verb[tk][pron.key];
+    document.getElementById('conjVerbEn').textContent=`Which pronoun uses this ${tk==='past'?'ماضي':'مضارع'} form?`;
+    genConjIdentify(verb,pron,tk);
+  }
+  renderConjTable(verb);
+  // Rotate so next call picks different verb
+  const i=userVerbDB.findIndex(e=>e.verbEntry.rp===verb.rp);
+  if(i>-1){ const removed=userVerbDB.splice(i,1)[0]; userVerbDB.push(removed); }
+}
+
+function genConjForm(verb,pron,tk){
+  const correct=verb[tk][pron.key];
+  let opts=shuffle(Object.values(verb[tk]).filter(f=>f!==correct)).slice(0,3);
+  if(opts.length<3){ const ex=userVerbDB.flatMap(e=>Object.values(e.verbEntry[tk])).filter(f=>f!==correct&&!opts.includes(f)); opts=[...opts,...shuffle(ex)].slice(0,3); }
+  opts.push(correct); opts=shuffle(opts);
+  const div=document.getElementById('conjChoices'); div.innerHTML='';
+  opts.forEach(f=>{ const btn=document.createElement('button'); btn.className='choice choice-ar'; btn.textContent=f; btn.onclick=()=>handleGrammar('conj',f===correct,btn,correct); div.appendChild(btn); });
+}
+
+function genConjIdentify(verb,cp,tk){
+  let opts=shuffle(PRONOUNS.filter(p=>p.key!==cp.key)).slice(0,3); opts.push(cp); opts=shuffle(opts);
+  const correct=`${cp.ar} — ${cp.en}`;
+  const div=document.getElementById('conjChoices'); div.innerHTML='';
+  opts.forEach(p=>{ const btn=document.createElement('button'); btn.className='choice'; btn.textContent=`${p.ar} — ${p.en}`; btn.onclick=()=>handleGrammar('conj',p.key===cp.key,btn,correct); div.appendChild(btn); });
+}
+
+function speakConj(){ if(conjCurrent) speak(conjCurrent.verb.root); }
+function toggleConjTable(){ conjTableOpen=!conjTableOpen; document.getElementById('conjTableWrap').style.display=conjTableOpen?'block':'none'; }
+function renderConjTable(verb){
+  if(!verb){ document.getElementById('conjTableBody').innerHTML=''; return; }
+  document.getElementById('conjTableBody').innerHTML=PRONOUNS.map(p=>`
+    <tr><td class="td-pronoun">${p.ar} <span style="color:var(--text-dim);font-size:10px;">${p.en}</span></td>
+    <td class="td-ar td-past">${verb.past[p.key]}</td>
+    <td class="td-ar td-present">${verb.present[p.key]}</td></tr>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  POSSESSIVES — dynamically generated from userNounDB
+// ═══════════════════════════════════════════════════════════
+function setPossMode(m,btn){ possMode=m; document.querySelectorAll('#sub-poss .mode-toggle .mode-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); nextPoss(); }
+
+function nextPoss(){
+  possLocked=false;
+  document.getElementById('possFeedback').className='feedback';
+  document.getElementById('possChoices').innerHTML='';
+  renderTsBar('possTsBar',[]);
+  if(!userNounDB.length){
+    showEmpty('possStage');
+    document.getElementById('possWord').textContent='—';
+    document.getElementById('possBaseEn').textContent='';
+    document.getElementById('possHint').textContent='';
+    document.getElementById('possSrBadge').style.display='none'; return;
+  }
+  const q=srSort([...userNounDB]);
+  const ni=q[0]; const noun=ni;
+  const pron=PRONOUNS[Math.floor(Math.random()*PRONOUNS.length)];
+  possCurrent={ni,noun,pron};
+
+  const lbl=srLabel(ni); const badge=document.getElementById('possSrBadge');
+  badge.className=`sr-badge ${lbl.cls}`; badge.textContent=lbl.txt; badge.style.display='block';
+  renderTsBar('possTsBar',ni.timestamps||[]);
+
+  document.getElementById('possBaseEn').textContent=`"${noun.en}" — possessive form`;
+  document.getElementById('possCounter').textContent=`${scores.poss.c} correct`;
+
+  if(possMode==='ar2en'){
+    document.getElementById('possWord').textContent=noun.forms[pron.key];
+    document.getElementById('possHint').textContent='Whose is it?';
+    genPossAr2En(noun,pron);
+  } else {
+    document.getElementById('possWord').textContent=`${pron.ar} + ${noun.base}`;
+    document.getElementById('possHint').textContent='Pick the correct Arabic possessive form';
+    genPossEn2Ar(noun,pron);
+  }
+  speak(noun.forms[pron.key]);
+  const idx=userNounDB.findIndex(e=>normalizeAr(e.base)===normalizeAr(noun.base));
+  if(idx>-1){ const rem=userNounDB.splice(idx,1)[0]; userNounDB.push(rem); }
+}
+
+function genPossAr2En(noun,cp){
+  let opts=shuffle(PRONOUNS.filter(p=>p.key!==cp.key)).slice(0,3); opts.push(cp); opts=shuffle(opts);
+  const sf=s=>POSS_SUFFIXES.find(x=>x.key===s);
+  const correct=`${sf(cp.key)?.en||''} (${cp.ar})`;
+  const div=document.getElementById('possChoices'); div.innerHTML='';
+  opts.forEach(p=>{ const label=`${sf(p.key)?.en||''} (${p.ar})`; const btn=document.createElement('button'); btn.className='choice'; btn.textContent=label; btn.onclick=()=>handleGrammar('poss',p.key===cp.key,btn,correct); div.appendChild(btn); });
+}
+
+function genPossEn2Ar(noun,cp){
+  const correct=noun.forms[cp.key];
+  let opts=shuffle(PRONOUNS.filter(p=>p.key!==cp.key)).slice(0,3).map(p=>noun.forms[p.key]);
+  // pad from other nouns
+  if(opts.length<3){ const ex=userNounDB.flatMap(n=>Object.values(n.forms)).filter(f=>f!==correct&&!opts.includes(f)); opts=[...opts,...shuffle(ex)].slice(0,3); }
+  opts.push(correct); opts=shuffle([...new Set(opts)]);
+  const div=document.getElementById('possChoices'); div.innerHTML='';
+  opts.forEach(f=>{ const btn=document.createElement('button'); btn.className='choice choice-ar'; btn.textContent=f; btn.onclick=()=>handleGrammar('poss',f===correct,btn,correct); div.appendChild(btn); });
+}
+
+function speakPoss(){ if(possCurrent) speak(possCurrent.noun.forms[possCurrent.pron.key]); }
+
+// ═══════════════════════════════════════════════════════════
+//  TENSES
+// ═══════════════════════════════════════════════════════════
+function nextTense(){
+  tenseLocked=false;
+  document.getElementById('tenseFeedback').className='feedback';
+  document.getElementById('tenseChoices').innerHTML='';
+  document.getElementById('tenseTranslation').style.display='none';
+  document.getElementById('tenseTip').textContent='';
+  renderTsBar('tenseTsBar',[]);
+  if(!userSentDB.length){ showEmpty('tenseStage'); document.getElementById('tenseSentence').textContent='—'; document.getElementById('tenseSrBadge').style.display='none'; return; }
+  const q=srSort([...userSentDB]); const sent=q[0];
+  tenseCurrent=sent;
+  const lbl=srLabel(sent); const badge=document.getElementById('tenseSrBadge');
+  badge.className=`sr-badge ${lbl.cls}`; badge.textContent=lbl.txt; badge.style.display='block';
+  document.getElementById('tenseSentence').textContent=sent.ar;
+  document.getElementById('tenseCounter').textContent=`${scores.tense.c} correct`;
+  if(sent.timestamp!==null&&sent.timestamp!==undefined) renderTsBar('tenseTsBar',[sent.timestamp]);
+  const div=document.getElementById('tenseChoices'); div.innerHTML='';
+  ['past','present','future','command'].forEach(t=>{
+    const l=TENSE_LABELS[t]; const btn=document.createElement('button');
+    btn.className='choice';
+    btn.innerHTML=`<span class="tense-badge ${l.cls}" style="margin-right:6px;">${l.ar}</span>${l.en}`;
+    btn.onclick=()=>handleTenseChoice(t,btn); div.appendChild(btn);
+  });
+  speak(sent.ar,0.7);
+  const idx=userSentDB.findIndex(e=>e.ar===sent.ar);
+  if(idx>-1){ const rem=userSentDB.splice(idx,1)[0]; userSentDB.push(rem); }
+}
+
+function handleTenseChoice(tk,btn){
+  if(tenseLocked) return; tenseLocked=true;
+  const ok=tk===tenseCurrent.tense;
+  document.querySelectorAll('#tenseChoices .choice').forEach(b=>b.disabled=true);
+  srReview(tenseCurrent,ok); scores.tense.t++;
+  if(ok){ btn.classList.add('correct'); scores.tense.c++; showFb('tenseFeedback',true,`✓ ${TENSE_LABELS[tk].ar}`); logActivity('tense'); }
+  else{ btn.classList.add('wrong'); const cl=TENSE_LABELS[tenseCurrent.tense]; document.querySelectorAll('#tenseChoices .choice').forEach(b=>{ if(b.innerHTML.includes(cl.ar)) b.classList.add('correct'); }); showFb('tenseFeedback',false,`✗ ${cl.ar} (${cl.en})`); }
+  const t=document.getElementById('tenseTranslation'); t.textContent=tenseCurrent.en; t.style.display='block';
+  if(tenseCurrent.tip) document.getElementById('tenseTip').textContent='💡 '+tenseCurrent.tip;
+  document.getElementById('tenseCounter').textContent=`${scores.tense.c} correct`;
+  saveAll(); updateHeaderStats(); setTimeout(nextTense,2000);
+}
+
+function speakTense(){ if(tenseCurrent) speak(tenseCurrent.ar,0.7); }
+
+// ═══════════════════════════════════════════════════════════
+//  SHARED GRAMMAR ANSWER
+// ═══════════════════════════════════════════════════════════
+function handleGrammar(game,ok,btn,correctDisplay){
+  if(game==='conj'&&conjLocked) return; if(game==='poss'&&possLocked) return;
+  if(game==='conj') conjLocked=true; if(game==='poss') possLocked=true;
+  document.querySelectorAll(`#${game}Choices .choice`).forEach(b=>b.disabled=true);
+  const item=game==='conj'?conjCurrent?.vi:possCurrent?.ni;
+  if(item) srReview(item,ok);
+  scores[game].t++;
+  if(ok){ btn.classList.add('correct'); scores[game].c++; showFb(`${game}Feedback`,true,'✓ Correct!'); logActivity(game); }
+  else{ btn.classList.add('wrong'); document.querySelectorAll(`#${game}Choices .choice`).forEach(b=>{ if(b.textContent===correctDisplay||b.innerHTML.includes(correctDisplay)) b.classList.add('correct'); }); showFb(`${game}Feedback`,false,`✗ ${correctDisplay}`); }
+  document.getElementById(`${game}Counter`).textContent=`${scores[game].c} correct`;
+  saveAll(); updateHeaderStats();
+  setTimeout(game==='conj'?nextConj:nextPoss,1100);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GRAMMAR UTILS
+// ═══════════════════════════════════════════════════════════
+function heuristicTense(s){
+  const p=strip(s).trim(), fw=(p.split(/\s/)[0]||'');
+  if(/سوف/.test(p)||/^س[يتنا]/.test(fw)) return 'future';
+  if(/^[يتنأ][^\s]{2,}/.test(fw)) return 'present';
+  if(/^[اإأ][^\s]{2,}/.test(fw)&&/[ْ]$/.test(fw)) return 'command';
+  return 'past';
+}
+function tensTip(s,tense){
+  const fw=strip(s).split(/\s/)[0]||'';
+  if(tense==='past') return `"${fw}" — past (no يَـ تَـ نَـ أَـ prefix)`;
+  if(tense==='present') return `"${fw}" — starts with يَـ تَـ نَـ أَـ`;
+  if(tense==='future') return 'Prefix سَـ or سَوْفَ = future';
+  return 'Short imperative form (no pronoun prefix)';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PROGRESS TAB
+// ═══════════════════════════════════════════════════════════
+function renderProgress(){
+  document.getElementById('pTotalVocab').textContent=vocabList.length;
+  document.getElementById('pMastered').textContent=vocabList.filter(v=>v.mastered).length;
+  document.getElementById('pVideos').textContent=videoCount;
+  const sp=(id,fi,c,t)=>{ const p=t>0?Math.round((c/t)*100):0; document.getElementById(id).textContent=p+'%'; document.getElementById(fi).style.width=p+'%'; };
+  sp('ms-vocab','mf-vocab',scores.vocab.c,scores.vocab.t||1);
+  sp('ms-conj','mf-conj',scores.conj.c,scores.conj.t||1);
+  sp('ms-poss','mf-poss',scores.poss.c,scores.poss.t||1);
+  sp('ms-tense','mf-tense',scores.tense.c,scores.tense.t||1);
+  const d=document.getElementById('logRows');
+  if(!dailyLog.length){ d.innerHTML='<div style="text-align:center;padding:24px;color:var(--text-dim);font-size:10px;">No activity yet.</div>'; return; }
+  const mx=Math.max(1,...dailyLog.map(e=>Object.values(e.actions||{}).reduce((a,b)=>a+b,0)));
+  d.innerHTML=dailyLog.slice(0,14).map(e=>{ const tot=Object.values(e.actions||{}).reduce((a,b)=>a+b,0); const pct=Math.round((tot/mx)*100); const tags=Object.entries(e.actions||{}).map(([k,v])=>`${k}:${v}`).join(' · ');
+    return `<div class="log-row"><div class="log-date">${e.date}</div><div class="log-activity">${tot} actions</div><div class="log-bar-bg"><div class="log-bar-fill" style="width:${pct}%"></div></div><div style="font-size:8px;color:var(--teal-light);white-space:nowrap;">${tags}</div></div>`; }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SUFFIX REFERENCE
+// ═══════════════════════════════════════════════════════════
+function renderSuffixRef(){
+  document.getElementById('suffixRef').innerHTML=POSS_SUFFIXES.map(s=>`
+    <div class="suffix-card"><div class="suffix-ar">${s.suffix}</div><div class="suffix-en">${s.en}</div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SHARED HELPERS
+// ═══════════════════════════════════════════════════════════
+function showEmpty(stageId){
+  const s=document.getElementById(stageId); const ex=s.querySelector('.empty-stage'); if(ex) ex.remove();
+  const d=document.createElement('div'); d.className='empty-stage';
+  d.innerHTML='<div class="e-icon">📹</div><div class="e-msg">Add a video transcript<br>to unlock this drill</div>';
+  s.appendChild(d);
+}
+function showFb(id,ok,msg){
+  const el=document.getElementById(id);
+  el.className=`feedback show ${ok?'ok':'bad'}`;
+  el.innerHTML=msg;
+}
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function logActivity(type){
+  const today=todayStr(); let e=dailyLog.find(x=>x.date===today);
+  if(!e){ e={date:today,actions:{}}; dailyLog.unshift(e); if(dailyLog.length>60) dailyLog.pop(); }
+  e.actions[type]=(e.actions[type]||0)+1; updateStreak();
+}
+function updateStreak(){
+  let s=0; let d=new Date();
+  for(let i=0;i<60;i++){ const ds=d.toISOString().slice(0,10); if(dailyLog.find(e=>e.date===ds)){ s++; d.setDate(d.getDate()-1); } else break; }
+  streak=s; document.getElementById('hStreak').textContent=streak;
+}
+function updateHeaderStats(){
+  document.getElementById('hVocab').textContent=vocabList.length;
+  document.getElementById('hVerbs').textContent=userVerbDB.length;
+  document.getElementById('hMastered').textContent=vocabList.filter(v=>v.mastered).length;
+  document.getElementById('hDue').textContent=countDue();
+  document.getElementById('hStreak').textContent=streak;
+}
+
+function speak(text,rate=0.75){
+  if(!window.speechSynthesis){ toast('TTS not available'); return; }
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text); u.lang='ar-SA'; u.rate=rate; u.pitch=1;
+  const voices=window.speechSynthesis.getVoices(); const arV=voices.find(v=>v.lang.startsWith('ar'));
+  if(arV) u.voice=arV; window.speechSynthesis.speak(u);
+}
+
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+let toastTimer;
+function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2600); }
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active'); btn.classList.add('active');
+  if(name==='watch'){ renderTranscript(); updateWatchPanel(); updatePlayerStatus(); }
+  if(name==='vocab'){ buildVocabQueue(); renderVocabChips(); updateVocabProgress(); }
+  if(name==='grammar'){ nextConj(); nextPoss(); nextTense(); }
+  if(name==='progress') renderProgress();
+}
+
+function switchSub(name,btn){
+  document.querySelectorAll('.sub-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sub-'+name).classList.add('active'); btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+function init(){
+  loadAll();
+  updateHeaderStats(); updateStreak();
+  renderSuffixRef(); renderVocabChips(); updateVocabProgress();
+  buildVocabQueue(); nextConj(); nextPoss(); nextTense();
+  if(currentVideoId) updateWatchPanel();
+  if(window.speechSynthesis){ window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices(); }
+}
+init();
+</script>
+</body>
+</html>
