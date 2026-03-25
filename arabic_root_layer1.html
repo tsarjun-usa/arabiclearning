@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arabic Root Explorer | مُسْتَكْشِفُ الجُذُور</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:         #0E0D0B;
+    --surface:    #19180F;
+    --card:       #201F14;
+    --border:     #2E2C1A;
+    --gold:       #C8973A;
+    --gold-light: #E8B84B;
+    --teal:       #2A7B6A;
+    --teal-light: #3AA98E;
+    --sand:       #E2CDA0;
+    --sand-dim:   #9E8B72;
+    --text:       #EDE0C4;
+    --text-dim:   #7A6E58;
+    --green:      #3A8A5A;
+    --green-light:#4AAD72;
+    --red:        #C04A3A;
+    --red-light:  #E05A48;
+    --font-ar:    'Noto Naskh Arabic', 'Traditional Arabic', serif;
+    --font-ui:    'IBM Plex Mono', monospace;
+    --r:          10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 24px 16px 80px;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(200,151,58,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 80%,  rgba(42,123,106,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 760px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .logo-ar {
+    font-family: var(--font-ar);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold);
+    direction: rtl;
+    line-height: 1.1;
+  }
+
+  .logo-en {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  .score-box {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .score-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 8px 14px;
+    text-align: center;
+  }
+
+  .score-chip .num { font-size: 22px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .score-chip .lbl { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .search-icon { color: var(--text-dim); font-size: 14px; }
+
+  #searchBox {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 14px;
+    caret-color: var(--gold);
+  }
+
+  #searchBox::placeholder { color: var(--text-dim); }
+
+  /* ── DIFFICULTY TABS ── */
+  .tabs-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 7px 14px;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .tab-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .tab-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+
+  /* ── ROOT GRID ── */
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    padding-left: 2px;
+  }
+
+  .root-section { margin-bottom: 28px; }
+
+  #rootGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  .root-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px 10px 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .root-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(200,151,58,0.04) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.18s;
+  }
+
+  .root-btn:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200,151,58,0.1); }
+  .root-btn:hover::after { opacity: 1; }
+  .root-btn.mastered { border-color: var(--teal); }
+  .root-btn.mastered .root-letters { color: var(--teal-light); }
+
+  .root-letters {
+    font-family: var(--font-ar);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--sand);
+    direction: rtl;
+    line-height: 1.3;
+    letter-spacing: 2px;
+  }
+
+  .root-topic {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .root-stars {
+    font-size: 8px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  /* ── DERIVATIVE SCREEN ── */
+  #derivativeScreen { display: none; }
+
+  .root-hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    position: relative;
+  }
+
+  .root-hero-letters {
+    font-family: var(--font-ar);
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--gold);
+    direction: rtl;
+    line-height: 1.2;
+    letter-spacing: 6px;
+    text-shadow: 0 0 40px rgba(200,151,58,0.25);
+  }
+
+  .root-hero-topic {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal-light);
+    margin-top: 6px;
+  }
+
+  .root-hero-level {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+  }
+
+  .hear-root-btn {
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: var(--r);
+    padding: 10px 22px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-top: 16px;
+  }
+
+  .hear-root-btn:hover { background: var(--teal-light); transform: translateY(-1px); }
+
+  /* ── DERIVATIVES LIST ── */
+  .derivs-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .derivs-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .deriv-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .deriv-row:last-child { border-bottom: none; }
+  .deriv-row:hover { background: var(--card); }
+
+  .deriv-arabic {
+    font-family: var(--font-ar);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--sand);
+    direction: rtl;
+    min-width: 120px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .deriv-arrow { color: var(--text-dim); font-size: 12px; flex-shrink: 0; }
+
+  .deriv-meaning {
+    color: var(--sand-dim);
+    font-size: 14px;
+    flex: 1;
+    font-style: italic;
+  }
+
+  .speak-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--gold);
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .speak-btn:hover { background: var(--surface); border-color: var(--gold); transform: scale(1.05); }
+
+  /* ── CONJUGATION TABLE ── */
+  .conj-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .conj-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .conj-title {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .conj-toggle {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: var(--font-ui);
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .conj-toggle:hover { background: var(--surface); }
+
+  .conj-body { display: block; }
+
+  .conj-table-wrap { overflow-x: auto; padding: 16px 20px 20px; }
+
+  table.conj-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  table.conj-table th {
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 8px 12px;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  table.conj-table th.col-pronoun { text-align: left; }
+
+  table.conj-table td {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  table.conj-table tr:hover td { background: rgba(200,151,58,0.04); }
+
+  .td-pronoun {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: left !important;
+    white-space: nowrap;
+  }
+
+  .td-pronoun .ar-pro {
+    font-family: var(--font-ar);
+    font-size: 18px;
+    color: var(--sand-dim);
+    display: block;
+    direction: rtl;
+    text-align: right;
+  }
+
+  .td-past {
+    font-family: var(--font-ar);
+    font-size: 24px;
+    color: var(--red-light);
+    direction: rtl;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .td-present {
+    font-family: var(--font-ar);
+    font-size: 24px;
+    color: var(--gold);
+    direction: rtl;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .td-future {
+    font-family: var(--font-ar);
+    font-size: 24px;
+    color: var(--teal-light);
+    direction: rtl;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .td-past:hover, .td-present:hover, .td-future:hover { opacity: 0.75; }
+
+  .tense-legend {
+    display: flex;
+    gap: 16px;
+    padding: 10px 20px 14px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .progress-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
+  .progress-bar-bg { flex: 1; height: 6px; background: var(--card); border-radius: 3px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--gold)); border-radius: 3px; transition: width 0.4s ease; }
+  .progress-frac { font-size: 11px; color: var(--gold); font-weight: 700; white-space: nowrap; }
+
+  /* ── QUIZ ── */
+  .quiz-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .quiz-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .quiz-title { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+
+  .quiz-score {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .quiz-body { padding: 28px 24px 24px; text-align: center; }
+
+  .quiz-arabic {
+    font-family: var(--font-ar);
+    font-size: 80px;
+    font-weight: 700;
+    color: var(--sand);
+    direction: rtl;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .quiz-arabic:hover { color: var(--gold-light); }
+
+  .quiz-instruction {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .hear-quiz-btn {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--r);
+    padding: 10px 20px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-bottom: 24px;
+    display: inline-block;
+  }
+
+  .hear-quiz-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ── CHOICES ── */
+  .choices-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .choice-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 18px 14px;
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--sand);
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(200,151,58,0.12);
+  }
+
+  .choice-btn.correct {
+    background: rgba(58,138,90,0.2);
+    border-color: var(--green);
+    color: var(--green-light);
+  }
+
+  .choice-btn.wrong {
+    background: rgba(192,74,58,0.15);
+    border-color: var(--red);
+    color: var(--red-light);
+  }
+
+  .choice-btn:disabled { cursor: default; opacity: 0.85; }
+
+  /* ── FEEDBACK BANNER ── */
+  .feedback-banner {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: all 0.25s;
+    margin: 0 24px 24px;
+  }
+
+  .feedback-banner.show { opacity: 1; transform: translateY(0); }
+  .feedback-banner.correct-fb { color: var(--green-light); border-color: var(--green); }
+  .feedback-banner.wrong-fb   { color: var(--red-light); border-color: var(--red); }
+  .feedback-banner strong { font-family: var(--font-ar); font-size: 20px; }
+
+  /* ── BACK BTN ── */
+  .back-row {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .back-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 10px 18px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .back-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── ROUND OVERLAY ── */
+  .round-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(14,13,11,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+  }
+
+  .round-overlay.show { display: flex; }
+
+  .round-card {
+    background: var(--surface);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 40px 36px;
+    text-align: center;
+    max-width: 380px;
+    width: 90%;
+    box-shadow: 0 0 60px rgba(200,151,58,0.15);
+  }
+
+  .round-emoji { font-size: 48px; margin-bottom: 16px; }
+  .round-msg { font-size: 15px; color: var(--sand); line-height: 1.6; margin-bottom: 24px; }
+
+  .round-btn {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--r);
+    padding: 14px 28px;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .round-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 10px 20px;
+    font-size: 12px;
+    color: var(--text);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 200;
+    white-space: nowrap;
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── REVIEW BADGE ── */
+  .review-badge {
+    display: none;
+    background: var(--teal);
+    color: #fff;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div>
+      <div class="logo-ar">مُسْتَكْشِفُ الجُذُور</div>
+      <div class="logo-en">Arabic Root Explorer</div>
+    </div>
+    <div class="score-box">
+      <div class="score-chip">
+        <div class="num" id="totalCorrect">0</div>
+        <div class="lbl">Correct</div>
+      </div>
+      <div class="score-chip">
+        <div class="num" id="totalRoots">0</div>
+        <div class="lbl">Mastered</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ROOT SCREEN -->
+  <div id="rootScreen">
+
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input id="searchBox" type="text" placeholder="Search roots or topics…" oninput="filterRoots(this.value)">
+    </div>
+
+    <div class="tabs-wrap">
+      <button class="tab-btn active" onclick="filterLevel('all', this)">All Roots</button>
+      <button class="tab-btn" onclick="filterLevel('beginner', this)">⬤ Beginner</button>
+      <button class="tab-btn" onclick="filterLevel('intermediate', this)">⬤ Intermediate</button>
+      <button class="tab-btn" onclick="filterLevel('advanced', this)">⬤ Advanced</button>
+    </div>
+
+    <div id="rootGrid"></div>
+
+  </div>
+
+  <!-- DERIVATIVE / QUIZ SCREEN -->
+  <div id="derivativeScreen">
+
+    <div class="back-row">
+      <button class="back-btn" onclick="goBack()">← Back to Roots</button>
+      <span class="review-badge" id="reviewBadge">Review Mode</span>
+    </div>
+
+    <!-- Root hero -->
+    <div class="root-hero">
+      <div class="root-hero-level" id="heroLevel"></div>
+      <div class="root-hero-letters" id="heroLetters"></div>
+      <div class="root-hero-topic" id="heroTopic"></div>
+      <br>
+      <button class="hear-root-btn" onclick="speakWord(currentRoot.derivatives[0].word)">🔊 Hear Root Word</button>
+    </div>
+
+    <!-- Derivatives list -->
+    <div class="derivs-section">
+      <div class="derivs-header">Derived Words from this Root</div>
+      <div id="derivativesList"></div>
+    </div>
+
+    <!-- Conjugation table -->
+    <div class="conj-section">
+      <div class="conj-header">
+        <div class="conj-title">⟳ Verb Conjugation Table — Past · Present · Future</div>
+        <button class="conj-toggle" onclick="toggleConj()">Hide</button>
+      </div>
+      <div class="conj-body" id="conjBody">
+        <div class="conj-table-wrap">
+          <table class="conj-table" id="conjTable"></table>
+        </div>
+        <div class="tense-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--red-light)"></div>Past (ماضي)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Present (مضارع)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--teal-light)"></div>Future (مستقبل — سَـ + present)</div>
+          <div class="legend-item" style="font-size:8px; color: var(--text-dim); margin-top:4px; width:100%">Tap any form to hear it pronounced</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz section -->
+    <div class="quiz-wrap">
+      <div class="quiz-header">
+        <div class="quiz-title">🧠 Quiz — What does this word mean?</div>
+        <div class="quiz-score" id="quizScoreLabel">Score: 0 / 0</div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-wrap" style="margin: 12px 20px 0; border:none; padding: 0;">
+        <div class="progress-label">Progress</div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="progress-frac" id="progressFrac">0 / 5</div>
+      </div>
+
+      <div class="quiz-body">
+        <div class="quiz-arabic" id="quizWord" onclick="speakQuizWord()"></div>
+        <div class="quiz-instruction">Tap the word above to hear it · or use the button</div>
+        <button class="hear-quiz-btn" onclick="speakQuizWord()">🔊 Hear Word</button>
+        <div class="choices-grid" id="choicesGrid"></div>
+      </div>
+
+      <div class="feedback-banner" id="feedbackBanner"></div>
+
+    </div>
+
+    <!-- Round complete overlay -->
+    <div class="round-overlay" id="roundOverlay">
+      <div class="round-card">
+        <div class="round-emoji" id="roundEmoji"></div>
+        <div class="round-msg" id="roundMsg"></div>
+        <button class="round-btn" onclick="restartQuiz()">Try Again ↺</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  ROOT DATA — ordered by difficulty: beginner → advanced
+//  Each root has: root, topic, level, derivatives[], conjugation{}
+//  conjugation has: past{}, present{} (future = سَـ + present)
+// ══════════════════════════════════════════════════════════
+
+const rootsData = [
+
+// ───────────────────── BEGINNER ─────────────────────
+{
+  root: "ك ت ب", topic: "writing", level: "beginner",
+  derivatives: [
+    { word: "كَتَبَ",    meaning: "he wrote" },
+    { word: "يَكْتُبُ",  meaning: "he writes / is writing" },
+    { word: "كِتَابٌ",   meaning: "book" },
+    { word: "مَكْتَبٌ",  meaning: "office / desk" },
+    { word: "كَاتِبٌ",  meaning: "writer / author" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":           { ar: "أَنَا", form: "كَتَبْتُ" },
+      "أنت (You m.)":      { ar: "أَنْتَ", form: "كَتَبْتَ" },
+      "أنتِ (You f.)":     { ar: "أَنْتِ", form: "كَتَبْتِ" },
+      "هو (He)":           { ar: "هُوَ", form: "كَتَبَ" },
+      "هي (She)":          { ar: "هِيَ", form: "كَتَبَتْ" },
+      "نحن (We)":          { ar: "نَحْنُ", form: "كَتَبْنَا" },
+      "أنتم (You pl.)":    { ar: "أَنْتُمْ", form: "كَتَبْتُمْ" },
+      "هم (They)":         { ar: "هُمْ", form: "كَتَبُوا" }
+    },
+    present: {
+      "أنا (I)":           { ar: "أَنَا", form: "أَكْتُبُ" },
+      "أنت (You m.)":      { ar: "أَنْتَ", form: "تَكْتُبُ" },
+      "أنتِ (You f.)":     { ar: "أَنْتِ", form: "تَكْتُبِينَ" },
+      "هو (He)":           { ar: "هُوَ", form: "يَكْتُبُ" },
+      "هي (She)":          { ar: "هِيَ", form: "تَكْتُبُ" },
+      "نحن (We)":          { ar: "نَحْنُ", form: "نَكْتُبُ" },
+      "أنتم (You pl.)":    { ar: "أَنْتُمْ", form: "تَكْتُبُونَ" },
+      "هم (They)":         { ar: "هُمْ", form: "يَكْتُبُونَ" }
+    }
+  }
+},
+{
+  root: "ذ ه ب", topic: "going", level: "beginner",
+  derivatives: [
+    { word: "ذَهَبَ",   meaning: "he went" },
+    { word: "يَذْهَبُ", meaning: "he goes / is going" },
+    { word: "ذَهَابٌ",  meaning: "going / departure" },
+    { word: "مَذْهَبٌ", meaning: "school of thought / doctrine" },
+    { word: "ذَهَبٌ",   meaning: "gold" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "ذَهَبْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "ذَهَبْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "ذَهَبْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "ذَهَبَ" },
+      "هي (She)":        { ar: "هِيَ", form: "ذَهَبَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "ذَهَبْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "ذَهَبْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "ذَهَبُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَذْهَبُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَذْهَبُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَذْهَبِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَذْهَبُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَذْهَبُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَذْهَبُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَذْهَبُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَذْهَبُونَ" }
+    }
+  }
+},
+{
+  root: "أ ك ل", topic: "eating", level: "beginner",
+  derivatives: [
+    { word: "أَكَلَ",   meaning: "he ate" },
+    { word: "يَأْكُلُ", meaning: "he eats" },
+    { word: "أَكْلٌ",   meaning: "eating / food" },
+    { word: "أَكَّالٌ", meaning: "glutton / big eater" },
+    { word: "مَأْكَلٌ", meaning: "food / something edible" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَكَلْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "أَكَلْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "أَكَلْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "أَكَلَ" },
+      "هي (She)":        { ar: "هِيَ", form: "أَكَلَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "أَكَلْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "أَكَلْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "أَكَلُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "آكُلُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَأْكُلُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَأْكُلِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَأْكُلُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَأْكُلُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَأْكُلُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَأْكُلُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَأْكُلُونَ" }
+    }
+  }
+},
+{
+  root: "ش ر ب", topic: "drinking", level: "beginner",
+  derivatives: [
+    { word: "شَرِبَ",   meaning: "he drank" },
+    { word: "يَشْرَبُ", meaning: "he drinks" },
+    { word: "شَرَابٌ",  meaning: "drink / beverage" },
+    { word: "مَشْرُوبٌ",meaning: "a drink / drinkable beverage" },
+    { word: "شَارِبٌ",  meaning: "drinker / moustache" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "شَرِبْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "شَرِبْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "شَرِبْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "شَرِبَ" },
+      "هي (She)":        { ar: "هِيَ", form: "شَرِبَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "شَرِبْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "شَرِبْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "شَرِبُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَشْرَبُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَشْرَبُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَشْرَبِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَشْرَبُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَشْرَبُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَشْرَبُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَشْرَبُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَشْرَبُونَ" }
+    }
+  }
+},
+{
+  root: "ق و ل", topic: "speaking", level: "beginner",
+  derivatives: [
+    { word: "قَالَ",   meaning: "he said" },
+    { word: "يَقُولُ", meaning: "he says / is saying" },
+    { word: "قَوْلٌ",  meaning: "saying / statement" },
+    { word: "مَقَالٌ", meaning: "article / essay" },
+    { word: "قَائِلٌ", meaning: "the one who speaks / speaker" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "قُلْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "قُلْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "قُلْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "قَالَ" },
+      "هي (She)":        { ar: "هِيَ", form: "قَالَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "قُلْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "قُلْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "قَالُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَقُولُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَقُولُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَقُولِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَقُولُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَقُولُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَقُولُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَقُولُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَقُولُونَ" }
+    }
+  }
+},
+{
+  root: "س م ع", topic: "hearing", level: "beginner",
+  derivatives: [
+    { word: "سَمِعَ",   meaning: "he heard" },
+    { word: "يَسْمَعُ", meaning: "he hears / listens" },
+    { word: "سَمَاعٌ",  meaning: "listening / hearing" },
+    { word: "سَامِعٌ",  meaning: "listener / hearer" },
+    { word: "مَسْمُوعٌ",meaning: "heard / audible" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "سَمِعْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "سَمِعْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "سَمِعْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "سَمِعَ" },
+      "هي (She)":        { ar: "هِيَ", form: "سَمِعَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "سَمِعْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "سَمِعْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "سَمِعُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَسْمَعُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَسْمَعُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَسْمَعِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَسْمَعُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَسْمَعُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَسْمَعُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَسْمَعُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَسْمَعُونَ" }
+    }
+  }
+},
+{
+  root: "ن ظ ر", topic: "looking", level: "beginner",
+  derivatives: [
+    { word: "نَظَرَ",    meaning: "he looked / gazed" },
+    { word: "يَنْظُرُ",  meaning: "he looks / watches" },
+    { word: "نَظْرَةٌ",  meaning: "a glance / a look" },
+    { word: "مَنْظَرٌ",  meaning: "view / scenery" },
+    { word: "نَظَّارَةٌ",meaning: "eyeglasses / spectacles" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "نَظَرْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "نَظَرْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "نَظَرْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "نَظَرَ" },
+      "هي (She)":        { ar: "هِيَ", form: "نَظَرَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَظَرْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "نَظَرْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "نَظَرُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَنْظُرُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَنْظُرُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَنْظُرِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَنْظُرُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَنْظُرُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَنْظُرُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَنْظُرُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَنْظُرُونَ" }
+    }
+  }
+},
+{
+  root: "د ر س", topic: "studying", level: "beginner",
+  derivatives: [
+    { word: "دَرَسَ",    meaning: "he studied" },
+    { word: "يَدْرُسُ",  meaning: "he studies" },
+    { word: "دَرْسٌ",    meaning: "lesson / class" },
+    { word: "مَدْرَسَةٌ",meaning: "school" },
+    { word: "مُدَرِّسٌ", meaning: "teacher" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "دَرَسْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "دَرَسْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "دَرَسْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "دَرَسَ" },
+      "هي (She)":        { ar: "هِيَ", form: "دَرَسَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "دَرَسْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "دَرَسْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "دَرَسُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَدْرُسُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَدْرُسُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَدْرُسِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَدْرُسُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَدْرُسُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَدْرُسُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَدْرُسُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَدْرُسُونَ" }
+    }
+  }
+},
+{
+  root: "ع م ل", topic: "working", level: "beginner",
+  derivatives: [
+    { word: "عَمِلَ",  meaning: "he worked" },
+    { word: "يَعْمَلُ",meaning: "he works" },
+    { word: "عَمَلٌ",  meaning: "work / job / deed" },
+    { word: "عَامِلٌ", meaning: "worker / laborer" },
+    { word: "مَعْمَلٌ",meaning: "laboratory / factory" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "عَمِلْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "عَمِلْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "عَمِلْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "عَمِلَ" },
+      "هي (She)":        { ar: "هِيَ", form: "عَمِلَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "عَمِلْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "عَمِلْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "عَمِلُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَعْمَلُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَعْمَلُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَعْمَلِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَعْمَلُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَعْمَلُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَعْمَلُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَعْمَلُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَعْمَلُونَ" }
+    }
+  }
+},
+{
+  root: "ح ب ب", topic: "love", level: "beginner",
+  derivatives: [
+    { word: "أَحَبَّ",   meaning: "he loved" },
+    { word: "يُحِبُّ",   meaning: "he loves" },
+    { word: "حُبٌّ",     meaning: "love / affection" },
+    { word: "حَبِيبٌ",   meaning: "beloved / dear one" },
+    { word: "مَحْبُوبٌ", meaning: "loved / popular" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَحْبَبْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "أَحْبَبْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "أَحْبَبْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "أَحَبَّ" },
+      "هي (She)":        { ar: "هِيَ", form: "أَحَبَّتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "أَحْبَبْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "أَحْبَبْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "أَحَبُّوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أُحِبُّ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تُحِبُّ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تُحِبِّينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يُحِبُّ" },
+      "هي (She)":        { ar: "هِيَ", form: "تُحِبُّ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نُحِبُّ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تُحِبُّونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يُحِبُّونَ" }
+    }
+  }
+},
+
+// ───────────────────── INTERMEDIATE ─────────────────────
+{
+  root: "ع ل م", topic: "knowledge", level: "intermediate",
+  derivatives: [
+    { word: "عَلِمَ",    meaning: "he knew / learned" },
+    { word: "يَعْلَمُ",  meaning: "he knows" },
+    { word: "عِلْمٌ",    meaning: "knowledge / science" },
+    { word: "عَالِمٌ",   meaning: "scholar / scientist" },
+    { word: "مَعْلُومٌ", meaning: "well-known / known fact" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "عَلِمْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "عَلِمْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "عَلِمْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "عَلِمَ" },
+      "هي (She)":        { ar: "هِيَ", form: "عَلِمَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "عَلِمْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "عَلِمْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "عَلِمُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَعْلَمُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَعْلَمُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَعْلَمِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَعْلَمُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَعْلَمُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَعْلَمُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَعْلَمُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَعْلَمُونَ" }
+    }
+  }
+},
+{
+  root: "ف ع ل", topic: "doing/acting", level: "intermediate",
+  derivatives: [
+    { word: "فَعَلَ",   meaning: "he did / he acted" },
+    { word: "يَفْعَلُ", meaning: "he does / is doing" },
+    { word: "فِعْلٌ",   meaning: "action / verb" },
+    { word: "فَاعِلٌ",  meaning: "doer / active agent" },
+    { word: "مَفْعُولٌ",meaning: "done / object of action" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "فَعَلْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "فَعَلْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "فَعَلْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "فَعَلَ" },
+      "هي (She)":        { ar: "هِيَ", form: "فَعَلَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "فَعَلْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "فَعَلْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "فَعَلُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَفْعَلُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَفْعَلُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَفْعَلِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَفْعَلُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَفْعَلُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَفْعَلُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَفْعَلُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَفْعَلُونَ" }
+    }
+  }
+},
+{
+  root: "ر أ ي", topic: "seeing/opinion", level: "intermediate",
+  derivatives: [
+    { word: "رَأَى",    meaning: "he saw" },
+    { word: "يَرَى",    meaning: "he sees" },
+    { word: "رَأْيٌ",   meaning: "opinion / view" },
+    { word: "رُؤْيَةٌ", meaning: "vision / sight" },
+    { word: "مَرْئِيٌّ",meaning: "visible / seen" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "رَأَيْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "رَأَيْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "رَأَيْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "رَأَى" },
+      "هي (She)":        { ar: "هِيَ", form: "رَأَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "رَأَيْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "رَأَيْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "رَأَوْا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَرَى" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَرَى" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَرَيْنَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَرَى" },
+      "هي (She)":        { ar: "هِيَ", form: "تَرَى" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَرَى" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَرَوْنَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَرَوْنَ" }
+    }
+  }
+},
+{
+  root: "ج ا ء", topic: "coming", level: "intermediate",
+  derivatives: [
+    { word: "جَاءَ",    meaning: "he came" },
+    { word: "يَجِيءُ",  meaning: "he comes" },
+    { word: "مَجِيءٌ",  meaning: "arrival / coming" },
+    { word: "جَائِيٌ",  meaning: "one who comes / incoming" },
+    { word: "جِيءَ",    meaning: "it was brought / was summoned" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "جِئْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "جِئْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "جِئْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "جَاءَ" },
+      "هي (She)":        { ar: "هِيَ", form: "جَاءَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "جِئْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "جِئْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "جَاؤُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَجِيءُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَجِيءُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَجِيئِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَجِيءُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَجِيءُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَجِيءُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَجِيئُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَجِيئُونَ" }
+    }
+  }
+},
+{
+  root: "و ص ل", topic: "arriving/connecting", level: "intermediate",
+  derivatives: [
+    { word: "وَصَلَ",  meaning: "he arrived / reached" },
+    { word: "يَصِلُ",  meaning: "he arrives / reaches" },
+    { word: "وُصُولٌ", meaning: "arrival / reaching" },
+    { word: "وَاصِلٌ", meaning: "one who arrives / connector" },
+    { word: "مَوْصِلٌ",meaning: "connector / junction" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "وَصَلْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "وَصَلْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "وَصَلْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "وَصَلَ" },
+      "هي (She)":        { ar: "هِيَ", form: "وَصَلَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "وَصَلْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "وَصَلْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "وَصَلُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَصِلُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَصِلُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَصِلِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَصِلُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَصِلُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَصِلُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَصِلُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَصِلُونَ" }
+    }
+  }
+},
+{
+  root: "ف ت ح", topic: "opening", level: "intermediate",
+  derivatives: [
+    { word: "فَتَحَ",   meaning: "he opened" },
+    { word: "يَفْتَحُ", meaning: "he opens" },
+    { word: "فَتْحٌ",   meaning: "opening / conquest / victory" },
+    { word: "فَاتِحٌ",  meaning: "opener / conqueror" },
+    { word: "مِفْتَاحٌ",meaning: "key" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "فَتَحْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "فَتَحْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "فَتَحْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "فَتَحَ" },
+      "هي (She)":        { ar: "هِيَ", form: "فَتَحَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "فَتَحْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "فَتَحْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "فَتَحُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَفْتَحُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَفْتَحُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَفْتَحِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَفْتَحُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَفْتَحُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَفْتَحُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَفْتَحُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَفْتَحُونَ" }
+    }
+  }
+},
+{
+  root: "ن ج ح", topic: "succeeding", level: "intermediate",
+  derivatives: [
+    { word: "نَجَحَ",  meaning: "he succeeded / passed" },
+    { word: "يَنْجَحُ",meaning: "he succeeds" },
+    { word: "نَجَاحٌ", meaning: "success / achievement" },
+    { word: "نَاجِحٌ", meaning: "successful / passing" },
+    { word: "مَنْجَحٌ",meaning: "means of success" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "نَجَحْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "نَجَحْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "نَجَحْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "نَجَحَ" },
+      "هي (She)":        { ar: "هِيَ", form: "نَجَحَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَجَحْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "نَجَحْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "نَجَحُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَنْجَحُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَنْجَحُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَنْجَحِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَنْجَحُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَنْجَحُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَنْجَحُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَنْجَحُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَنْجَحُونَ" }
+    }
+  }
+},
+{
+  root: "ح ف ظ", topic: "memorizing/protecting", level: "intermediate",
+  derivatives: [
+    { word: "حَفِظَ",   meaning: "he memorized / preserved" },
+    { word: "يَحْفَظُ", meaning: "he memorizes / preserves" },
+    { word: "حِفْظٌ",   meaning: "memorization / preservation" },
+    { word: "حَافِظٌ",  meaning: "memorizer / guardian / preserver" },
+    { word: "مَحْفُوظٌ",meaning: "memorized / preserved / protected" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "حَفِظْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "حَفِظْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "حَفِظْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "حَفِظَ" },
+      "هي (She)":        { ar: "هِيَ", form: "حَفِظَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "حَفِظْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "حَفِظْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "حَفِظُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَحْفَظُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَحْفَظُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَحْفَظِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَحْفَظُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَحْفَظُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَحْفَظُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَحْفَظُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَحْفَظُونَ" }
+    }
+  }
+},
+{
+  root: "ق د ر", topic: "ability/power", level: "intermediate",
+  derivatives: [
+    { word: "قَدَرَ",    meaning: "he was able / he decreed" },
+    { word: "يَقْدِرُ",  meaning: "he is able / can" },
+    { word: "قُدْرَةٌ",  meaning: "ability / power / capability" },
+    { word: "قَدِيرٌ",   meaning: "capable / powerful" },
+    { word: "مُقَدَّرٌ", meaning: "estimated / destined / valued" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "قَدَرْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "قَدَرْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "قَدَرْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "قَدَرَ" },
+      "هي (She)":        { ar: "هِيَ", form: "قَدَرَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "قَدَرْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "قَدَرْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "قَدَرُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَقْدِرُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَقْدِرُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَقْدِرِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَقْدِرُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَقْدِرُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَقْدِرُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَقْدِرُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَقْدِرُونَ" }
+    }
+  }
+},
+{
+  root: "س أ ل", topic: "asking", level: "intermediate",
+  derivatives: [
+    { word: "سَأَلَ",   meaning: "he asked" },
+    { word: "يَسْأَلُ", meaning: "he asks" },
+    { word: "سُؤَالٌ",  meaning: "question / inquiry" },
+    { word: "مَسْأَلَةٌ",meaning: "issue / question / problem" },
+    { word: "سَائِلٌ",  meaning: "questioner / asker" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "سَأَلْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "سَأَلْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "سَأَلْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "سَأَلَ" },
+      "هي (She)":        { ar: "هِيَ", form: "سَأَلَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "سَأَلْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "سَأَلْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "سَأَلُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَسْأَلُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَسْأَلُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَسْأَلِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَسْأَلُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَسْأَلُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَسْأَلُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَسْأَلُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَسْأَلُونَ" }
+    }
+  }
+},
+
+// ───────────────────── ADVANCED ─────────────────────
+{
+  root: "ح ق ق", topic: "achieving/verifying", level: "advanced",
+  derivatives: [
+    { word: "حَقَّقَ",   meaning: "he achieved / verified / investigated" },
+    { word: "يُحَقِّقُ", meaning: "he achieves / verifies" },
+    { word: "تَحْقِيقٌ", meaning: "investigation / achievement / verification" },
+    { word: "حَقِيقَةٌ", meaning: "truth / reality / fact" },
+    { word: "حَقٌّ",     meaning: "right / truth / due" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "حَقَّقْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "حَقَّقْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "حَقَّقْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "حَقَّقَ" },
+      "هي (She)":        { ar: "هِيَ", form: "حَقَّقَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "حَقَّقْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "حَقَّقْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "حَقَّقُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أُحَقِّقُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تُحَقِّقُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تُحَقِّقِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يُحَقِّقُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تُحَقِّقُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نُحَقِّقُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تُحَقِّقُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يُحَقِّقُونَ" }
+    }
+  }
+},
+{
+  root: "ر س ل", topic: "sending/messaging", level: "advanced",
+  derivatives: [
+    { word: "أَرْسَلَ",  meaning: "he sent / dispatched" },
+    { word: "يُرْسِلُ",  meaning: "he sends / dispatches" },
+    { word: "رِسَالَةٌ", meaning: "message / letter / mission / thesis" },
+    { word: "رَسُولٌ",   meaning: "messenger / prophet / envoy" },
+    { word: "مُرْسَلٌ",  meaning: "sent / dispatched / messenger" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَرْسَلْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "أَرْسَلْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "أَرْسَلْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "أَرْسَلَ" },
+      "هي (She)":        { ar: "هِيَ", form: "أَرْسَلَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "أَرْسَلْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "أَرْسَلْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "أَرْسَلُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أُرْسِلُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تُرْسِلُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تُرْسِلِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يُرْسِلُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تُرْسِلُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نُرْسِلُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تُرْسِلُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يُرْسِلُونَ" }
+    }
+  }
+},
+{
+  root: "ذ ك ر", topic: "remembering/mentioning", level: "advanced",
+  derivatives: [
+    { word: "ذَكَرَ",   meaning: "he remembered / mentioned" },
+    { word: "يَذْكُرُ", meaning: "he remembers / mentions" },
+    { word: "ذِكْرٌ",   meaning: "remembrance / mention / praise of God" },
+    { word: "ذَاكِرَةٌ",meaning: "memory / remembrance" },
+    { word: "تَذْكِيرٌ",meaning: "reminder / reminding" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "ذَكَرْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "ذَكَرْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "ذَكَرْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "ذَكَرَ" },
+      "هي (She)":        { ar: "هِيَ", form: "ذَكَرَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "ذَكَرْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "ذَكَرْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "ذَكَرُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَذْكُرُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَذْكُرُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَذْكُرِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَذْكُرُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَذْكُرُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَذْكُرُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَذْكُرُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَذْكُرُونَ" }
+    }
+  }
+},
+{
+  root: "غ ي ر", topic: "changing/altering", level: "advanced",
+  derivatives: [
+    { word: "غَيَّرَ",    meaning: "he changed / altered" },
+    { word: "يُغَيِّرُ",  meaning: "he changes / alters" },
+    { word: "تَغْيِيرٌ",  meaning: "change / alteration" },
+    { word: "غَيْرٌ",     meaning: "other than / non- / different" },
+    { word: "مُتَغَيِّرٌ",meaning: "changed / variable / altered" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "غَيَّرْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "غَيَّرْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "غَيَّرْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "غَيَّرَ" },
+      "هي (She)":        { ar: "هِيَ", form: "غَيَّرَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "غَيَّرْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "غَيَّرْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "غَيَّرُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أُغَيِّرُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تُغَيِّرُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تُغَيِّرِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يُغَيِّرُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تُغَيِّرُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نُغَيِّرُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تُغَيِّرُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يُغَيِّرُونَ" }
+    }
+  }
+},
+{
+  root: "ط و ر", topic: "developing/evolving", level: "advanced",
+  derivatives: [
+    { word: "طَوَّرَ",    meaning: "he developed / improved" },
+    { word: "يُطَوِّرُ",  meaning: "he develops / improves" },
+    { word: "طَوْرٌ",     meaning: "phase / stage / era" },
+    { word: "تَطْوِيرٌ",  meaning: "development / improvement" },
+    { word: "مُتَطَوِّرٌ",meaning: "advanced / developed / evolved" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "طَوَّرْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "طَوَّرْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "طَوَّرْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "طَوَّرَ" },
+      "هي (She)":        { ar: "هِيَ", form: "طَوَّرَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "طَوَّرْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "طَوَّرْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "طَوَّرُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أُطَوِّرُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تُطَوِّرُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تُطَوِّرِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يُطَوِّرُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تُطَوِّرُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نُطَوِّرُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تُطَوِّرُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يُطَوِّرُونَ" }
+    }
+  }
+},
+{
+  root: "ق و م", topic: "standing/rising/people", level: "advanced",
+  derivatives: [
+    { word: "قَامَ",     meaning: "he stood up / performed / rose" },
+    { word: "يَقُومُ",   meaning: "he stands / performs / rises" },
+    { word: "قَوْمٌ",    meaning: "people / nation / folk" },
+    { word: "قَوْمِيٌّ", meaning: "national / nationalist" },
+    { word: "قِيَامَةٌ", meaning: "resurrection / Day of Judgment" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "قُمْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "قُمْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "قُمْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "قَامَ" },
+      "هي (She)":        { ar: "هِيَ", form: "قَامَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "قُمْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "قُمْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "قَامُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أَقُومُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تَقُومُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تَقُومِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يَقُومُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تَقُومُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نَقُومُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تَقُومُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يَقُومُونَ" }
+    }
+  }
+},
+{
+  root: "ح ل ل", topic: "analyzing/solving", level: "advanced",
+  derivatives: [
+    { word: "حَلَّلَ",   meaning: "he analyzed / broke down / dissolved" },
+    { word: "يُحَلِّلُ", meaning: "he analyzes / breaks down" },
+    { word: "تَحْلِيلٌ", meaning: "analysis / breakdown / dissolution" },
+    { word: "مُحَلِّلٌ", meaning: "analyst / one who analyzes" },
+    { word: "مَحْلُولٌ", meaning: "solution / dissolved / solved" }
+  ],
+  conjugation: {
+    past: {
+      "أنا (I)":         { ar: "أَنَا", form: "حَلَّلْتُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "حَلَّلْتَ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "حَلَّلْتِ" },
+      "هو (He)":         { ar: "هُوَ", form: "حَلَّلَ" },
+      "هي (She)":        { ar: "هِيَ", form: "حَلَّلَتْ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "حَلَّلْنَا" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "حَلَّلْتُمْ" },
+      "هم (They)":       { ar: "هُمْ", form: "حَلَّلُوا" }
+    },
+    present: {
+      "أنا (I)":         { ar: "أَنَا", form: "أُحَلِّلُ" },
+      "أنت (You m.)":    { ar: "أَنْتَ", form: "تُحَلِّلُ" },
+      "أنتِ (You f.)":   { ar: "أَنْتِ", form: "تُحَلِّلِينَ" },
+      "هو (He)":         { ar: "هُوَ", form: "يُحَلِّلُ" },
+      "هي (She)":        { ar: "هِيَ", form: "تُحَلِّلُ" },
+      "نحن (We)":        { ar: "نَحْنُ", form: "نُحَلِّلُ" },
+      "أنتم (You pl.)":  { ar: "أَنْتُمْ", form: "تُحَلِّلُونَ" },
+      "هم (They)":       { ar: "هُمْ", form: "يُحَلِّلُونَ" }
+    }
+  }
+}
+
+]; // end rootsData
+
+// ══════════════════════════════════════════════════════════
+//  GLOBALS
+// ══════════════════════════════════════════════════════════
+let currentRoot    = null;
+let quizQueue      = [];
+let wrongWords     = [];
+let quizIndex      = 0;
+let quizScore      = { correct: 0, total: 0 };
+let quizCurrent    = null;
+let quizLocked     = false;
+let isReviewMode   = false;
+let totalCorrect   = 0;
+let masteredRoots  = new Set();
+let currentLevel   = 'all';
+
+// ══════════════════════════════════════════════════════════
+//  WEB SPEECH API — FIXED (no blocked URLs)
+// ══════════════════════════════════════════════════════════
+let ttsReady = false;
+
+function initTTS() {
+  if (!window.speechSynthesis) return;
+  // Pre-load voices
+  const load = () => {
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) ttsReady = true;
+  };
+  load();
+  window.speechSynthesis.onvoiceschanged = load;
+}
+
+function speakWord(text) {
+  if (!window.speechSynthesis) { toast('TTS not available in this browser'); return; }
+  window.speechSynthesis.cancel();
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang  = 'ar-SA';
+  utter.rate  = 0.72;
+  utter.pitch = 1.0;
+  utter.volume= 1.0;
+
+  // Try to find an Arabic voice; fall back gracefully
+  const voices = window.speechSynthesis.getVoices();
+  const arVoice = voices.find(v => v.lang === 'ar-SA')
+                || voices.find(v => v.lang.startsWith('ar'));
+  if (arVoice) utter.voice = arVoice;
+
+  window.speechSynthesis.speak(utter);
+}
+
+function speakQuizWord() {
+  if (quizCurrent) speakWord(quizCurrent.word);
+}
+
+// ══════════════════════════════════════════════════════════
+//  ROOT GRID
+// ══════════════════════════════════════════════════════════
+const levelColors = {
+  beginner:     '#3AA98E',
+  intermediate: '#C8973A',
+  advanced:     '#C04A3A'
+};
+const levelDots = {
+  beginner:     '⬤ Beginner',
+  intermediate: '⬤ Intermediate',
+  advanced:     '⬤ Advanced'
+};
+
+function buildRootGrid() {
+  const grid = document.getElementById('rootGrid');
+  grid.innerHTML = '';
+
+  let filtered = rootsData;
+  if (currentLevel !== 'all') filtered = rootsData.filter(r => r.level === currentLevel);
+
+  const query = document.getElementById('searchBox').value.toLowerCase();
+  if (query) filtered = filtered.filter(r =>
+    r.root.includes(query) || r.topic.toLowerCase().includes(query)
+  );
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="color:var(--text-dim);font-size:12px;padding:20px;grid-column:1/-1;text-align:center">No roots found</div>`;
+    return;
+  }
+
+  filtered.forEach(root => {
+    const btn = document.createElement('button');
+    btn.className = 'root-btn' + (masteredRoots.has(root.root) ? ' mastered' : '');
+    btn.dataset.root = root.root;
+
+    const color = levelColors[root.level];
+    const isMastered = masteredRoots.has(root.root);
+
+    btn.innerHTML = `
+      <div class="root-letters">${root.root}</div>
+      <div class="root-topic">${root.topic}</div>
+      <div class="root-stars" style="color:${color}">${isMastered ? '★★★' : levelDots[root.level]}</div>
+    `;
+    btn.onclick = () => openRoot(root);
+    grid.appendChild(btn);
+  });
+}
+
+function filterRoots(q) { buildRootGrid(); }
+
+function filterLevel(level, btn) {
+  currentLevel = level;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildRootGrid();
+}
+
+// ══════════════════════════════════════════════════════════
+//  OPEN ROOT
+// ══════════════════════════════════════════════════════════
+function openRoot(root) {
+  currentRoot = root;
+  quizScore = { correct: 0, total: 0 };
+  wrongWords = [];
+  quizIndex = 0;
+  isReviewMode = false;
+
+  // Switch screens
+  document.getElementById('rootScreen').style.display = 'none';
+  document.getElementById('derivativeScreen').style.display = 'block';
+  document.getElementById('roundOverlay').classList.remove('show');
+  document.getElementById('reviewBadge').style.display = 'none';
+
+  // Hero
+  document.getElementById('heroLetters').textContent = root.root;
+  document.getElementById('heroTopic').textContent   = root.topic.toUpperCase();
+  document.getElementById('heroLevel').textContent   = root.level.toUpperCase();
+
+  // Derivatives list
+  buildDerivativesList(root);
+
+  // Conjugation table
+  buildConjTable(root);
+
+  // Build quiz queue (all derivatives × 2 shuffled)
+  quizQueue = shuffle([...root.derivatives, ...root.derivatives]);
+
+  // Start quiz
+  nextQuizQuestion();
+
+  // Auto-speak root word after a moment
+  setTimeout(() => speakWord(root.derivatives[0].word), 700);
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildDerivativesList(root) {
+  const list = document.getElementById('derivativesList');
+  list.innerHTML = '';
+  root.derivatives.forEach(d => {
+    const row = document.createElement('div');
+    row.className = 'deriv-row';
+    row.innerHTML = `
+      <div class="deriv-arabic">${d.word}</div>
+      <div class="deriv-arrow">→</div>
+      <div class="deriv-meaning">${d.meaning}</div>
+      <button class="speak-btn" onclick="speakWord('${d.word.replace(/'/g,"\\'")}')">🔊</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function buildConjTable(root) {
+  const table = document.getElementById('conjTable');
+  const conj  = root.conjugation;
+  const pronouns = Object.keys(conj.past);
+
+  // Future = سَـ + present form
+  let html = `
+    <thead>
+      <tr>
+        <th class="col-pronoun">Pronoun</th>
+        <th>Past (ماضي)</th>
+        <th>Present (مضارع)</th>
+        <th>Future (مستقبل)</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
+
+  pronouns.forEach(pro => {
+    const past    = conj.past[pro];
+    const present = conj.present[pro];
+    const future  = 'سَـ' + conj.present[pro].form;
+
+    html += `
+      <tr>
+        <td class="td-pronoun">
+          <span class="ar-pro">${past.ar}</span>
+          ${pro.replace(/\(.*?\)/,'').trim()}
+        </td>
+        <td class="td-past"    onclick="speakWord('${past.form}')"    title="Click to hear">${past.form}</td>
+        <td class="td-present" onclick="speakWord('${present.form}')"  title="Click to hear">${present.form}</td>
+        <td class="td-future"  onclick="speakWord('${future}')"        title="Click to hear">${future}</td>
+      </tr>
+    `;
+  });
+
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+function toggleConj() {
+  const body = document.getElementById('conjBody');
+  const btn  = document.querySelector('.conj-toggle');
+  if (body.style.display === 'none') {
+    body.style.display = 'block';
+    btn.textContent = 'Hide';
+  } else {
+    body.style.display = 'none';
+    btn.textContent = 'Show';
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════
+function nextQuizQuestion() {
+  document.getElementById('roundOverlay').classList.remove('show');
+  document.getElementById('feedbackBanner').className = 'feedback-banner';
+
+  if (quizIndex >= quizQueue.length) {
+    if (wrongWords.length > 0 && !isReviewMode) {
+      quizQueue  = shuffle([...wrongWords]);
+      wrongWords = [];
+      quizIndex  = 0;
+      isReviewMode = true;
+      document.getElementById('reviewBadge').style.display = 'inline-block';
+    } else {
+      showRoundComplete();
+      return;
+    }
+  }
+
+  quizLocked   = false;
+  quizCurrent  = quizQueue[quizIndex];
+
+  updateProgress();
+  document.getElementById('quizScoreLabel').textContent = `Score: ${quizScore.correct} / ${quizScore.total}`;
+  document.getElementById('quizWord').textContent = quizCurrent.word;
+  generateChoices();
+
+  // Auto-play after short delay
+  setTimeout(() => speakWord(quizCurrent.word), 500);
+}
+
+function generateChoices() {
+  const grid = document.getElementById('choicesGrid');
+  grid.innerHTML = '';
+
+  // 3 wrong options from the same root's derivatives
+  const pool   = currentRoot.derivatives.filter(d => d.meaning !== quizCurrent.meaning);
+  let options  = shuffle(pool).slice(0, 3);
+  options.push(quizCurrent);
+  options = shuffle(options);
+
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className   = 'choice-btn';
+    btn.textContent = opt.meaning;
+    btn.onclick     = () => handleChoice(opt, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function handleChoice(opt, btn) {
+  if (quizLocked) return;
+  quizLocked = true;
+  quizScore.total++;
+
+  document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedbackBanner');
+
+  if (opt.meaning === quizCurrent.meaning) {
+    btn.classList.add('correct');
+    quizScore.correct++;
+    totalCorrect++;
+    document.getElementById('totalCorrect').textContent = totalCorrect;
+    fb.className = 'feedback-banner correct-fb show';
+    fb.innerHTML = `✓ Correct! &nbsp;<strong>${quizCurrent.word}</strong>&nbsp; = ${quizCurrent.meaning}`;
+  } else {
+    btn.classList.add('wrong');
+    // Highlight correct
+    document.querySelectorAll('.choice-btn').forEach(b => {
+      if (b.textContent === quizCurrent.meaning) b.classList.add('correct');
+    });
+    wrongWords.push(quizCurrent);
+    fb.className = 'feedback-banner wrong-fb show';
+    fb.innerHTML = `✗ That was &nbsp;<strong>${quizCurrent.word}</strong>&nbsp; = ${quizCurrent.meaning}`;
+    setTimeout(() => speakWord(quizCurrent.word), 250);
+  }
+
+  document.getElementById('quizScoreLabel').textContent = `Score: ${quizScore.correct} / ${quizScore.total}`;
+  quizIndex++;
+  setTimeout(nextQuizQuestion, 1200);
+}
+
+function updateProgress() {
+  const total = quizQueue.length;
+  const pct   = Math.round((quizIndex / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressFrac').textContent = `${quizIndex} / ${total}`;
+}
+
+function showRoundComplete() {
+  const pct   = quizScore.total > 0 ? Math.round((quizScore.correct / quizScore.total) * 100) : 0;
+  const emoji = pct >= 90 ? '🏆' : pct >= 70 ? '⭐' : pct >= 50 ? '💪' : '📚';
+  const msg   = pct >= 90
+    ? `Outstanding! You mastered <strong style="color:var(--gold)">${currentRoot.root}</strong> perfectly!`
+    : pct >= 70
+    ? `Great work on <strong style="color:var(--gold)">${currentRoot.root}</strong>! Keep building!`
+    : pct >= 50
+    ? `Good effort. Review the conjugation table and try again!`
+    : `Keep going — every attempt strengthens your memory!`;
+
+  document.getElementById('roundEmoji').textContent = emoji;
+  document.getElementById('roundMsg').innerHTML = `You scored <strong style="color:var(--gold)">${quizScore.correct} / ${quizScore.total}</strong> (${pct}%)<br><br>${msg}`;
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('roundOverlay').classList.add('show');
+
+  // Mark as mastered if high score
+  if (pct >= 80) {
+    masteredRoots.add(currentRoot.root);
+    document.getElementById('totalRoots').textContent = masteredRoots.size;
+  }
+}
+
+function restartQuiz() {
+  quizScore    = { correct: 0, total: 0 };
+  wrongWords   = [];
+  quizIndex    = 0;
+  isReviewMode = false;
+  document.getElementById('reviewBadge').style.display = 'none';
+  document.getElementById('roundOverlay').classList.remove('show');
+  quizQueue = shuffle([...currentRoot.derivatives, ...currentRoot.derivatives]);
+  nextQuizQuestion();
+}
+
+function goBack() {
+  document.getElementById('derivativeScreen').style.display = 'none';
+  document.getElementById('rootScreen').style.display       = 'block';
+  buildRootGrid(); // refresh to show mastered status
+}
+
+// ══════════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+// ══════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════
+initTTS();
+buildRootGrid();
+</script>
+</body>
+</html>
