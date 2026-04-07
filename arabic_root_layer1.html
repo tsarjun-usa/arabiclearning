@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gulf Arabic Root Explorer | مُسْتَكْشِفُ الجُذُور</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0E0D0B;--surface:#19180F;--card:#201F14;--border:#2E2C1A;--gold:#C8973A;--gold-light:#E8B84B;--teal:#2A7B6A;--teal-light:#3AA98E;--sand:#E2CDA0;--sand-dim:#9E8B72;--text:#EDE0C4;--text-dim:#7A6E58;--green:#3A8A5A;--green-light:#4AAD72;--red:#C04A3A;--red-light:#E05A48;--font-ar:'Noto Naskh Arabic','Traditional Arabic',serif;--font-ui:'IBM Plex Mono',monospace;--r:10px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 80px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(200,151,58,.08) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(42,123,106,.05) 0%,transparent 60%);pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;width:100%;max-width:760px}
+header{display:flex;align-items:center;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:24px}
+.logo-ar{font-family:var(--font-ar);font-size:28px;font-weight:700;color:var(--gold);direction:rtl;line-height:1.1}
+.logo-en{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:3px}
+.score-box{display:flex;gap:12px;align-items:center}
+.score-chip{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;text-align:center}
+.score-chip .num{font-size:22px;font-weight:700;color:var(--gold);line-height:1}
+.score-chip .lbl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-top:2px}
+.search-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.search-icon{color:var(--text-dim);font-size:14px}
+#searchBox{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:var(--font-ui);font-size:14px;caret-color:var(--gold)}
+#searchBox::placeholder{color:var(--text-dim)}
+.tabs-wrap{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:7px 14px;font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;transition:all .18s}
+.tab-btn:hover{border-color:var(--gold);color:var(--gold)}
+.tab-btn.active{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+#rootGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.root-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 10px 12px;cursor:pointer;transition:all .18s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;overflow:hidden}
+.root-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,151,58,.04) 0%,transparent 60%);opacity:0;transition:opacity .18s}
+.root-btn:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,151,58,.1)}
+.root-btn:hover::after{opacity:1}
+.root-btn.mastered{border-color:var(--teal)}
+.root-btn.mastered .root-letters{color:var(--teal-light)}
+.root-letters{font-family:var(--font-ar);font-size:28px;font-weight:700;color:var(--sand);direction:rtl;line-height:1.3}
+.root-topic{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim)}
+.root-stars{font-size:8px;color:var(--gold);letter-spacing:1px}
+#derivativeScreen{display:none}
+.root-hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px 24px;margin-bottom:20px;text-align:center;position:relative}
+.root-hero-letters{font-family:var(--font-ar);font-size:72px;font-weight:700;color:var(--gold);direction:rtl;line-height:1.2;letter-spacing:6px;text-shadow:0 0 40px rgba(200,151,58,.25)}
+.root-hero-topic{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--teal-light);margin-top:6px}
+.root-hero-level{position:absolute;top:16px;right:16px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 8px}
+.hear-root-btn{background:var(--teal);color:#fff;border:none;border-radius:var(--r);padding:10px 22px;font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .18s;margin-top:16px}
+.hear-root-btn:hover{background:var(--teal-light);transform:translateY(-1px)}
+.derivs-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.derivs-header{padding:14px 20px;border-bottom:1px solid var(--border);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+.deriv-row{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border);transition:background .15s}
+.deriv-row:last-child{border-bottom:none}
+.deriv-row:hover{background:var(--card)}
+.deriv-arabic{font-family:var(--font-ar);font-size:32px;font-weight:700;color:var(--sand);direction:rtl;min-width:120px;text-align:right;flex-shrink:0}
+.deriv-arrow{color:var(--text-dim);font-size:12px;flex-shrink:0}
+.deriv-meaning{color:var(--sand-dim);font-size:14px;flex:1;font-style:italic}
+.speak-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;color:var(--gold);transition:all .15s;flex-shrink:0}
+.speak-btn:hover{background:var(--surface);border-color:var(--gold);transform:scale(1.05)}
+.conj-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.conj-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.conj-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+.conj-toggle{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:var(--font-ui);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all .15s}
+.conj-toggle:hover{background:var(--surface)}
+.conj-body{display:block}
+.conj-table-wrap{overflow-x:auto;padding:16px 20px 20px}
+table.conj-table{width:100%;border-collapse:collapse;font-size:13px}
+table.conj-table th{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:8px 12px;text-align:center;background:var(--card);border:1px solid var(--border);white-space:nowrap}
+table.conj-table th.col-pronoun{text-align:left}
+table.conj-table td{padding:10px 12px;border:1px solid var(--border);text-align:center;vertical-align:middle}
+table.conj-table tr:hover td{background:rgba(200,151,58,.04)}
+.td-pronoun{font-size:12px;color:var(--text-dim);text-align:left!important;white-space:nowrap}
+.td-pronoun .ar-pro{font-family:var(--font-ar);font-size:18px;color:var(--sand-dim);display:block;direction:rtl;text-align:right}
+.td-past{font-family:var(--font-ar);font-size:22px;color:var(--red-light);direction:rtl;font-weight:600;cursor:pointer;transition:color .15s}
+.td-present{font-family:var(--font-ar);font-size:22px;color:var(--gold);direction:rtl;font-weight:600;cursor:pointer;transition:color .15s}
+.td-future{font-family:var(--font-ar);font-size:22px;color:var(--teal-light);direction:rtl;font-weight:600;cursor:pointer;transition:color .15s}
+.td-past:hover,.td-present:hover,.td-future:hover{opacity:.75}
+.tense-legend{display:flex;gap:16px;padding:10px 20px 14px;border-top:1px solid var(--border);flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.progress-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.progress-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+.progress-bar-bg{flex:1;height:6px;background:var(--card);border-radius:3px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:3px;transition:width .4s ease}
+.progress-frac{font-size:11px;color:var(--gold);font-weight:700;white-space:nowrap}
+.quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.quiz-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+.quiz-score{font-size:11px;font-weight:700;color:var(--gold)}
+.quiz-body{padding:28px 24px 24px;text-align:center}
+.quiz-arabic{font-family:var(--font-ar);font-size:80px;font-weight:700;color:var(--sand);direction:rtl;line-height:1.3;margin-bottom:8px;cursor:pointer;transition:color .15s}
+.quiz-arabic:hover{color:var(--gold-light)}
+.quiz-instruction{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:24px}
+.hear-quiz-btn{background:var(--gold);color:var(--bg);border:none;border-radius:var(--r);padding:10px 20px;font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .18s;margin-bottom:24px;display:inline-block}
+.hear-quiz-btn:hover{background:var(--gold-light);transform:translateY(-1px)}
+.choices-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:480px;margin:0 auto}
+.choice-btn{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 14px;font-family:var(--font-ui);font-size:14px;font-weight:600;color:var(--sand);cursor:pointer;transition:all .18s;text-align:center;line-height:1.4}
+.choice-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,151,58,.12)}
+.choice-btn.correct{background:rgba(58,138,90,.2);border-color:var(--green);color:var(--green-light)}
+.choice-btn.wrong{background:rgba(192,74,58,.15);border-color:var(--red);color:var(--red-light)}
+.choice-btn:disabled{cursor:default;opacity:.85}
+.feedback-banner{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;font-size:14px;font-weight:600;text-align:center;opacity:0;transform:translateY(6px);transition:all .25s;margin:0 24px 24px}
+.feedback-banner.show{opacity:1;transform:translateY(0)}
+.feedback-banner.correct-fb{color:var(--green-light);border-color:var(--green)}
+.feedback-banner.wrong-fb{color:var(--red-light);border-color:var(--red)}
+.feedback-banner strong{font-family:var(--font-ar);font-size:20px}
+.back-row{margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.back-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 18px;font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;transition:all .18s}
+.back-btn:hover{border-color:var(--gold);color:var(--gold)}
+.round-overlay{display:none;position:fixed;inset:0;background:rgba(14,13,11,.85);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.round-overlay.show{display:flex}
+.round-card{background:var(--surface);border:1px solid var(--gold);border-radius:20px;padding:40px 36px;text-align:center;max-width:380px;width:90%;box-shadow:0 0 60px rgba(200,151,58,.15)}
+.round-emoji{font-size:48px;margin-bottom:16px}
+.round-msg{font-size:15px;color:var(--sand);line-height:1.6;margin-bottom:24px}
+.round-btn{background:var(--gold);color:var(--bg);border:none;border-radius:var(--r);padding:14px 28px;font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .18s}
+.round-btn:hover{background:var(--gold-light);transform:translateY(-1px)}
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 20px;font-size:12px;color:var(--text);opacity:0;transition:all .3s;pointer-events:none;z-index:200;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.review-badge{display:none;background:var(--teal);color:#fff;border-radius:6px;padding:3px 10px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="logo-ar">مُسْتَكْشِفُ الجُذُور</div>
+    <div class="logo-en">Gulf Arabic Root Explorer — Najdi / Riyadh</div>
+  </div>
+  <div class="score-box">
+    <div class="score-chip"><div class="num" id="totalCorrect">0</div><div class="lbl">Correct</div></div>
+    <div class="score-chip"><div class="num" id="totalRoots">0</div><div class="lbl">Mastered</div></div>
+  </div>
+</header>
+<div id="rootScreen">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input id="searchBox" type="text" placeholder="Search roots or topics…" oninput="filterRoots(this.value)">
+  </div>
+  <div class="tabs-wrap">
+    <button class="tab-btn active" onclick="filterLevel('all',this)">All Roots</button>
+    <button class="tab-btn" onclick="filterLevel('easy',this)">⬤ Easy</button>
+    <button class="tab-btn" onclick="filterLevel('intermediate',this)">⬤ Intermediate</button>
+    <button class="tab-btn" onclick="filterLevel('hard',this)">⬤ Hard</button>
+  </div>
+  <div id="rootGrid"></div>
+</div>
+<div id="derivativeScreen">
+  <div class="back-row">
+    <button class="back-btn" onclick="goBack()">← Back to Roots</button>
+    <span class="review-badge" id="reviewBadge">Review Mode</span>
+  </div>
+  <div class="root-hero">
+    <div class="root-hero-level" id="heroLevel"></div>
+    <div class="root-hero-letters" id="heroLetters"></div>
+    <div class="root-hero-topic" id="heroTopic"></div>
+    <br>
+    <button class="hear-root-btn" onclick="speakWord(currentRoot.derivatives[0].word)">🔊 Hear Root Word</button>
+  </div>
+  <div class="derivs-section">
+    <div class="derivs-header">Derived Words from this Root</div>
+    <div id="derivativesList"></div>
+  </div>
+  <div class="conj-section">
+    <div class="conj-header">
+      <div class="conj-title">⟳ Verb Conjugation — Najdi Gulf Arabic (راح future)</div>
+      <button class="conj-toggle" onclick="toggleConj()">Hide</button>
+    </div>
+    <div class="conj-body" id="conjBody">
+      <div class="conj-table-wrap"><table class="conj-table" id="conjTable"></table></div>
+      <div class="tense-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red-light)"></div>Past (ماضي)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Present (مضارع)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--teal-light)"></div>Future — راح + present</div>
+        <div class="legend-item" style="font-size:8px;color:var(--text-dim);margin-top:4px;width:100%">Tap any form to hear · Najdi/Riyadh dialect</div>
+      </div>
+    </div>
+  </div>
+  <div class="quiz-wrap">
+    <div class="quiz-header">
+      <div class="quiz-title">🧠 Quiz — What does this word mean?</div>
+      <div class="quiz-score" id="quizScoreLabel">Score: 0 / 0</div>
+    </div>
+    <div class="progress-wrap" style="margin:12px 20px 0;border:none;padding:0;">
+      <div class="progress-label">Progress</div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-frac" id="progressFrac">0 / 5</div>
+    </div>
+    <div class="quiz-body">
+      <div class="quiz-arabic" id="quizWord" onclick="speakQuizWord()"></div>
+      <div class="quiz-instruction">Tap the word above to hear · or use the button</div>
+      <button class="hear-quiz-btn" onclick="speakQuizWord()">🔊 Hear Word</button>
+      <div class="choices-grid" id="choicesGrid"></div>
+    </div>
+    <div class="feedback-banner" id="feedbackBanner"></div>
+  </div>
+  <div class="round-overlay" id="roundOverlay">
+    <div class="round-card">
+      <div class="round-emoji" id="roundEmoji"></div>
+      <div class="round-msg" id="roundMsg"></div>
+      <button class="round-btn" onclick="restartQuiz()">Try Again ↺</button>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+// ROOT DATA — 100 Gulf Arabic roots, Najdi/Riyadh conjugations
+// Pronoun order: He · She · Them · I · You(m) · You(f) · You(pl) · Us
+// Future = راح + present form  |  Levels: easy · intermediate · hard
+const rootsData=[
+// ══════ EASY 1-33 ══════
+{root:"ك ت ب",topic:"writing",level:"easy",
+derivatives:[{word:"كِتَاب",meaning:"book"},{word:"مَكْتَب",meaning:"office / desk"},{word:"كَاتِب",meaning:"writer"},{word:"مَكْتُوب",meaning:"letter / written"},{word:"كِتَابَة",meaning:"handwriting"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"كَتَب"},"هي (She)":{ar:"هِيَ",form:"كَتَبَت"},"هم (Them)":{ar:"هُمْ",form:"كَتَبُوا"},"أنا (I)":{ar:"أَنَا",form:"كَتَبْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"كَتَبْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"كَتَبْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"كَتَبْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"كَتَبْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِكْتِب"},"هي (She)":{ar:"هِيَ",form:"تِكْتِب"},"هم (Them)":{ar:"هُمْ",form:"يِكْتِبُون"},"أنا (I)":{ar:"أَنَا",form:"أَكْتِب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِكْتِب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِكْتِبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِكْتِبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِكْتِب"}}}},
+{root:"ذ ه ب",topic:"going",level:"easy",
+derivatives:[{word:"ذَهَب",meaning:"gold (noun)"},{word:"ذَهَاب",meaning:"departure"},{word:"مَذْهَب",meaning:"school of thought"},{word:"ذَاهِب",meaning:"going / departing"},{word:"مَذْهُول",meaning:"stunned (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"ذَهَب"},"هي (She)":{ar:"هِيَ",form:"ذَهَبَت"},"هم (Them)":{ar:"هُمْ",form:"ذَهَبُوا"},"أنا (I)":{ar:"أَنَا",form:"ذَهَبْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"ذَهَبْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"ذَهَبْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"ذَهَبْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"ذَهَبْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِذْهَب"},"هي (She)":{ar:"هِيَ",form:"تِذْهَب"},"هم (Them)":{ar:"هُمْ",form:"يِذْهَبُون"},"أنا (I)":{ar:"أَنَا",form:"أَذْهَب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِذْهَب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِذْهَبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِذْهَبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِذْهَب"}}}},
+{root:"أ ك ل",topic:"eating",level:"easy",
+derivatives:[{word:"أَكْل",meaning:"food / eating"},{word:"مَأْكَل",meaning:"eatery / food"},{word:"آكِل",meaning:"eater"},{word:"مَأْكُول",meaning:"edible"},{word:"أَطْبَاق",meaning:"dishes"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"أَكَل"},"هي (She)":{ar:"هِيَ",form:"أَكَلَت"},"هم (Them)":{ar:"هُمْ",form:"أَكَلُوا"},"أنا (I)":{ar:"أَنَا",form:"أَكَلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"أَكَلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"أَكَلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"أَكَلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"أَكَلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يَاكِل"},"هي (She)":{ar:"هِيَ",form:"تَاكِل"},"هم (Them)":{ar:"هُمْ",form:"يَاكِلُون"},"أنا (I)":{ar:"أَنَا",form:"آكِل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَاكِل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَاكِلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَاكِلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نَاكِل"}}}},
+{root:"ش ر ب",topic:"drinking",level:"easy",
+derivatives:[{word:"شَرَاب",meaning:"drink / beverage"},{word:"مَشْرُوب",meaning:"a cold drink"},{word:"شَارِب",meaning:"drinker / moustache"},{word:"شِرْبَة",meaning:"a sip"},{word:"نِشْرَب",meaning:"we drink (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"شَرِب"},"هي (She)":{ar:"هِيَ",form:"شَرِبَت"},"هم (Them)":{ar:"هُمْ",form:"شَرِبُوا"},"أنا (I)":{ar:"أَنَا",form:"شَرِبْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"شَرِبْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"شَرِبْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"شَرِبْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"شَرِبْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِشْرَب"},"هي (She)":{ar:"هِيَ",form:"تِشْرَب"},"هم (Them)":{ar:"هُمْ",form:"يِشْرَبُون"},"أنا (I)":{ar:"أَنَا",form:"أَشْرَب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِشْرَب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِشْرَبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِشْرَبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِشْرَب"}}}},
+{root:"س م ع",topic:"hearing",level:"easy",
+derivatives:[{word:"سَمَاع",meaning:"hearing / listening"},{word:"سَامِع",meaning:"listener"},{word:"مَسْمُوع",meaning:"heard / reputable"},{word:"سَمَّاعَة",meaning:"headphones"},{word:"الاستماع",meaning:"listening (verbal noun)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"سَمِع"},"هي (She)":{ar:"هِيَ",form:"سَمِعَت"},"هم (Them)":{ar:"هُمْ",form:"سَمِعُوا"},"أنا (I)":{ar:"أَنَا",form:"سَمِعْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"سَمِعْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"سَمِعْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"سَمِعْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"سَمِعْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسْمَع"},"هي (She)":{ar:"هِيَ",form:"تِسْمَع"},"هم (Them)":{ar:"هُمْ",form:"يِسْمَعُون"},"أنا (I)":{ar:"أَنَا",form:"أَسْمَع"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسْمَع"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسْمَعِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسْمَعُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسْمَع"}}}},
+{root:"ن ظ ر",topic:"looking",level:"easy",
+derivatives:[{word:"نَظْرَة",meaning:"a glance"},{word:"مَنْظَر",meaning:"view / scenery"},{word:"نَظَّارَة",meaning:"eyeglasses"},{word:"نَاظِر",meaning:"one who looks"},{word:"مَنْظُور",meaning:"perspective"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"نَظَر"},"هي (She)":{ar:"هِيَ",form:"نَظَرَت"},"هم (Them)":{ar:"هُمْ",form:"نَظَرُوا"},"أنا (I)":{ar:"أَنَا",form:"نَظَرْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"نَظَرْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"نَظَرْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"نَظَرْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"نَظَرْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنْظُر"},"هي (She)":{ar:"هِيَ",form:"تِنْظُر"},"هم (Them)":{ar:"هُمْ",form:"يِنْظُرُون"},"أنا (I)":{ar:"أَنَا",form:"أَنْظُر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنْظُر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنْظُرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنْظُرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنْظُر"}}}},
+{root:"ج ل س",topic:"sitting",level:"easy",
+derivatives:[{word:"جُلُوس",meaning:"sitting"},{word:"مَجْلِس",meaning:"council / sitting room"},{word:"جَلْسَة",meaning:"a session"},{word:"جَالِس",meaning:"sitting (person)"},{word:"استريحوا",meaning:"you all have a seat (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"جَلَس"},"هي (She)":{ar:"هِيَ",form:"جَلَسَت"},"هم (Them)":{ar:"هُمْ",form:"جَلَسُوا"},"أنا (I)":{ar:"أَنَا",form:"جَلَسْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"جَلَسْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"جَلَسْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"جَلَسْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"جَلَسْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِجْلِس"},"هي (She)":{ar:"هِيَ",form:"تِجْلِس"},"هم (Them)":{ar:"هُمْ",form:"يِجْلِسُون"},"أنا (I)":{ar:"أَنَا",form:"أَجْلِس"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِجْلِس"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِجْلِسِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِجْلِسُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِجْلِس"}}}},
+{root:"ق ر أ",topic:"reading",level:"easy",
+derivatives:[{word:"قِرَاءَة",meaning:"reading"},{word:"قَارِئ",meaning:"reader"},{word:"مَقْرُوء",meaning:"what is read"},{word:"قُرْآن",meaning:"Quran (the recitation)"},{word:"الإملاء",meaning:"spelling / dictation"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"قَرَأ"},"هي (She)":{ar:"هِيَ",form:"قَرَأَت"},"هم (Them)":{ar:"هُمْ",form:"قَرَأُوا"},"أنا (I)":{ar:"أَنَا",form:"قَرَأْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"قَرَأْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"قَرَأْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"قَرَأْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"قَرَأْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِقْرَا"},"هي (She)":{ar:"هِيَ",form:"تِقْرَا"},"هم (Them)":{ar:"هُمْ",form:"يِقْرَأُون"},"أنا (I)":{ar:"أَنَا",form:"أَقْرَا"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِقْرَا"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِقْرَيْن"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِقْرَأُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِقْرَا"}}}},
+{root:"ع م ل",topic:"working",level:"easy",
+derivatives:[{word:"عَمَل",meaning:"work / job"},{word:"عَامِل",meaning:"worker"},{word:"مَعْمَل",meaning:"laboratory"},{word:"عَمِيل",meaning:"client / agent"},{word:"عَمَلِيَّة",meaning:"operation / process"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"عَمِل"},"هي (She)":{ar:"هِيَ",form:"عَمِلَت"},"هم (Them)":{ar:"هُمْ",form:"عَمِلُوا"},"أنا (I)":{ar:"أَنَا",form:"عَمِلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"عَمِلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"عَمِلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"عَمِلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"عَمِلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِعْمَل"},"هي (She)":{ar:"هِيَ",form:"تِعْمَل"},"هم (Them)":{ar:"هُمْ",form:"يِعْمَلُون"},"أنا (I)":{ar:"أَنَا",form:"أَعْمَل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِعْمَل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِعْمَلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِعْمَلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِعْمَل"}}}},
+{root:"ف ت ح",topic:"opening",level:"easy",
+derivatives:[{word:"فَتْح",meaning:"opening / conquest"},{word:"مِفْتَاح",meaning:"key"},{word:"فَاتِح",meaning:"opener"},{word:"مَفْتُوح",meaning:"open"},{word:"فَتْحَة",meaning:"gap / vowel mark"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"فَتَح"},"هي (She)":{ar:"هِيَ",form:"فَتَحَت"},"هم (Them)":{ar:"هُمْ",form:"فَتَحُوا"},"أنا (I)":{ar:"أَنَا",form:"فَتَحْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"فَتَحْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"فَتَحْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"فَتَحْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"فَتَحْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِفْتَح"},"هي (She)":{ar:"هِيَ",form:"تِفْتَح"},"هم (Them)":{ar:"هُمْ",form:"يِفْتَحُون"},"أنا (I)":{ar:"أَنَا",form:"أَفْتَح"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِفْتَح"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِفْتَحِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِفْتَحُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِفْتَح"}}}},
+{root:"خ ر ج",topic:"going out",level:"easy",
+derivatives:[{word:"خُرُوج",meaning:"exit / going out"},{word:"مَخْرَج",meaning:"exit / way out"},{word:"خَارِج",meaning:"outside"},{word:"خُرُوجِيَّة",meaning:"exit permit (Gulf)"},{word:"خَارِجِيَّة",meaning:"foreign affairs"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"خَرَج"},"هي (She)":{ar:"هِيَ",form:"خَرَجَت"},"هم (Them)":{ar:"هُمْ",form:"خَرَجُوا"},"أنا (I)":{ar:"أَنَا",form:"خَرَجْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"خَرَجْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"خَرَجْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"خَرَجْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"خَرَجْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِخْرَج"},"هي (She)":{ar:"هِيَ",form:"تِخْرَج"},"هم (Them)":{ar:"هُمْ",form:"يِخْرَجُون"},"أنا (I)":{ar:"أَنَا",form:"أَخْرَج"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِخْرَج"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِخْرَجِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِخْرَجُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِخْرَج"}}}},
+{root:"د خ ل",topic:"entering",level:"easy",
+derivatives:[{word:"دُخُول",meaning:"entry / admission"},{word:"مَدْخَل",meaning:"entrance"},{word:"دَاخِل",meaning:"inside"},{word:"دَخِيل",meaning:"intruder / loanword"},{word:"دُخُولِيَّة",meaning:"entry fee (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"دَخَل"},"هي (She)":{ar:"هِيَ",form:"دَخَلَت"},"هم (Them)":{ar:"هُمْ",form:"دَخَلُوا"},"أنا (I)":{ar:"أَنَا",form:"دَخَلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"دَخَلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"دَخَلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"دَخَلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"دَخَلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِدْخَل"},"هي (She)":{ar:"هِيَ",form:"تِدْخَل"},"هم (Them)":{ar:"هُمْ",form:"يِدْخَلُون"},"أنا (I)":{ar:"أَنَا",form:"أَدْخَل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِدْخَل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِدْخَلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِدْخَلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِدْخَل"}}}},
+{root:"ع ر ف",topic:"knowing",level:"easy",
+derivatives:[{word:"مَعْرِفَة",meaning:"knowledge / acquaintance"},{word:"عَارِف",meaning:"knowledgeable"},{word:"مَعْرُوف",meaning:"well-known / a favour"},{word:"تَعَارُف",meaning:"getting acquainted"},{word:"عِرْفَان",meaning:"gratitude"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"عَرَف"},"هي (She)":{ar:"هِيَ",form:"عَرَفَت"},"هم (Them)":{ar:"هُمْ",form:"عَرَفُوا"},"أنا (I)":{ar:"أَنَا",form:"عَرَفْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"عَرَفْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"عَرَفْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"عَرَفْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"عَرَفْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِعْرِف"},"هي (She)":{ar:"هِيَ",form:"تِعْرِف"},"هم (Them)":{ar:"هُمْ",form:"يِعْرِفُون"},"أنا (I)":{ar:"أَنَا",form:"أَعْرِف"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِعْرِف"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِعْرِفِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِعْرِفُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِعْرِف"}}}},
+{root:"ر ج ع",topic:"returning",level:"easy",
+derivatives:[{word:"رُجُوع",meaning:"return / going back"},{word:"مَرْجِع",meaning:"reference / authority"},{word:"رَاجِع",meaning:"returning / reviewing"},{word:"رَجْعَة",meaning:"a return trip"},{word:"تَرَاجُع",meaning:"retreat / decline"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"رَجَع"},"هي (She)":{ar:"هِيَ",form:"رَجَعَت"},"هم (Them)":{ar:"هُمْ",form:"رَجَعُوا"},"أنا (I)":{ar:"أَنَا",form:"رَجَعْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"رَجَعْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"رَجَعْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"رَجَعْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"رَجَعْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِرْجَع"},"هي (She)":{ar:"هِيَ",form:"تِرْجَع"},"هم (Them)":{ar:"هُمْ",form:"يِرْجَعُون"},"أنا (I)":{ar:"أَنَا",form:"أَرْجَع"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِرْجَع"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِرْجَعِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِرْجَعُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِرْجَع"}}}},
+{root:"ط ب خ",topic:"cooking",level:"easy",
+derivatives:[{word:"طَبِيخ",meaning:"cooked food / stew"},{word:"طَبَّاخ",meaning:"cook / chef"},{word:"مَطْبَخ",meaning:"kitchen"},{word:"طَبْخَة",meaning:"a dish (Gulf)"},{word:"مَطْبُوخ",meaning:"cooked"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"طَبَخ"},"هي (She)":{ar:"هِيَ",form:"طَبَخَت"},"هم (Them)":{ar:"هُمْ",form:"طَبَخُوا"},"أنا (I)":{ar:"أَنَا",form:"طَبَخْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"طَبَخْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"طَبَخْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"طَبَخْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"طَبَخْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِطْبُخ"},"هي (She)":{ar:"هِيَ",form:"تِطْبُخ"},"هم (Them)":{ar:"هُمْ",form:"يِطْبُخُون"},"أنا (I)":{ar:"أَنَا",form:"أَطْبُخ"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِطْبُخ"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِطْبُخِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِطْبُخُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِطْبُخ"}}}},
+{root:"غ س ل",topic:"washing",level:"easy",
+derivatives:[{word:"غَسِيل",meaning:"laundry / washing"},{word:"غَسَّالَة",meaning:"washing machine"},{word:"مَغْسَلَة",meaning:"laundry room / sink"},{word:"مَغْسُول",meaning:"washed"},{word:"غَسَّال",meaning:"launderer"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"غَسَل"},"هي (She)":{ar:"هِيَ",form:"غَسَلَت"},"هم (Them)":{ar:"هُمْ",form:"غَسَلُوا"},"أنا (I)":{ar:"أَنَا",form:"غَسَلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"غَسَلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"غَسَلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"غَسَلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"غَسَلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِغْسِل"},"هي (She)":{ar:"هِيَ",form:"تِغْسِل"},"هم (Them)":{ar:"هُمْ",form:"يِغْسِلُون"},"أنا (I)":{ar:"أَنَا",form:"أَغْسِل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِغْسِل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِغْسِلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِغْسِلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِغْسِل"}}}},
+{root:"ل ب س",topic:"wearing",level:"easy",
+derivatives:[{word:"لِبَاس",meaning:"clothing"},{word:"مَلْبَس",meaning:"clothing store"},{word:"لَابِس",meaning:"wearing"},{word:"لِبْسَة",meaning:"outfit (Gulf)"},{word:"مَلْبُوس",meaning:"second-hand clothes"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"لِبِس"},"هي (She)":{ar:"هِيَ",form:"لِبِسَت"},"هم (Them)":{ar:"هُمْ",form:"لِبِسُوا"},"أنا (I)":{ar:"أَنَا",form:"لِبِسْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"لِبِسْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"لِبِسْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"لِبِسْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"لِبِسْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِلْبَس"},"هي (She)":{ar:"هِيَ",form:"تِلْبَس"},"هم (Them)":{ar:"هُمْ",form:"يِلْبَسُون"},"أنا (I)":{ar:"أَنَا",form:"أَلْبَس"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِلْبَس"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِلْبَسِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِلْبَسُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِلْبَس"}}}},
+{root:"ف ه م",topic:"understanding",level:"easy",
+derivatives:[{word:"فَهْم",meaning:"understanding"},{word:"فَاهِم",meaning:"one who understands"},{word:"مَفْهُوم",meaning:"concept / understood"},{word:"تَفَاهُم",meaning:"mutual understanding"},{word:"فَهِيم",meaning:"sharp / insightful (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"فَهِم"},"هي (She)":{ar:"هِيَ",form:"فَهِمَت"},"هم (Them)":{ar:"هُمْ",form:"فَهِمُوا"},"أنا (I)":{ar:"أَنَا",form:"فَهِمْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"فَهِمْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"فَهِمْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"فَهِمْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"فَهِمْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِفْهَم"},"هي (She)":{ar:"هِيَ",form:"تِفْهَم"},"هم (Them)":{ar:"هُمْ",form:"يِفْهَمُون"},"أنا (I)":{ar:"أَنَا",form:"أَفْهَم"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِفْهَم"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِفْهَمِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِفْهَمُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِفْهَم"}}}},
+{root:"ن و م",topic:"sleeping",level:"easy",
+derivatives:[{word:"نَوْم",meaning:"sleep"},{word:"نَائِم",meaning:"sleeping / asleep"},{word:"مَنَام",meaning:"sleep / dream"},{word:"نَوْمَة",meaning:"a nap"},{word:"مَنَامَة",meaning:"bedroom"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"نَام"},"هي (She)":{ar:"هِيَ",form:"نَامَت"},"هم (Them)":{ar:"هُمْ",form:"نَامُوا"},"أنا (I)":{ar:"أَنَا",form:"نِمْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"نِمْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"نِمْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"نِمْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"نِمْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنَام"},"هي (She)":{ar:"هِيَ",form:"تِنَام"},"هم (Them)":{ar:"هُمْ",form:"يِنَامُون"},"أنا (I)":{ar:"أَنَا",form:"أَنَام"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنَام"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنَامِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنَامُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنَام"}}}},
+{root:"ش و ف",topic:"seeing (Gulf)",level:"easy",
+derivatives:[{word:"شُوف",meaning:"look / see (Gulf)"},{word:"شَايِف",meaning:"I see / seeing (Gulf)"},{word:"مَشُوف",meaning:"seen (Gulf)"},{word:"شُوفَة",meaning:"a look (Gulf)"},{word:"راح أشوفكم",meaning:"I will see you all (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"شَاف"},"هي (She)":{ar:"هِيَ",form:"شَافَت"},"هم (Them)":{ar:"هُمْ",form:"شَافُوا"},"أنا (I)":{ar:"أَنَا",form:"شُفْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"شُفْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"شُفْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"شُفْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"شُفْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِشُوف"},"هي (She)":{ar:"هِيَ",form:"تِشُوف"},"هم (Them)":{ar:"هُمْ",form:"يِشُوفُون"},"أنا (I)":{ar:"أَنَا",form:"أَشُوف"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِشُوف"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِشُوفِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِشُوفُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِشُوف"}}}},
+{root:"ب غ ي",topic:"wanting (Gulf)",level:"easy",
+derivatives:[{word:"أَبْغَى",meaning:"I want (Gulf m.)"},{word:"أَبِي",meaning:"I want (Gulf casual)"},{word:"يِبْغَى",meaning:"he wants (Gulf)"},{word:"بُغْيَة",meaning:"desire / purpose"},{word:"تِبْغِين",meaning:"you want (Gulf f.)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"بَغَى"},"هي (She)":{ar:"هِيَ",form:"بَغَت"},"هم (Them)":{ar:"هُمْ",form:"بَغَوْا"},"أنا (I)":{ar:"أَنَا",form:"بَغَيْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"بَغَيْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"بَغَيْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"بَغَيْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"بَغَيْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِبْغَى"},"هي (She)":{ar:"هِيَ",form:"تِبْغَى"},"هم (Them)":{ar:"هُمْ",form:"يِبْغُون"},"أنا (I)":{ar:"أَنَا",form:"أَبْغَى"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِبْغَى"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِبْغِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِبْغُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِبْغَى"}}}},
+{root:"و ص ل",topic:"arriving",level:"easy",
+derivatives:[{word:"وُصُول",meaning:"arrival"},{word:"وَاصِل",meaning:"arriving / connected"},{word:"مَوْصِل",meaning:"connector / junction"},{word:"وَصْلَة",meaning:"connection / joint"},{word:"نقطة الوصول",meaning:"destination (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"وِصِل"},"هي (She)":{ar:"هِيَ",form:"وِصِلَت"},"هم (Them)":{ar:"هُمْ",form:"وِصِلُوا"},"أنا (I)":{ar:"أَنَا",form:"وِصِلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"وِصِلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"وِصِلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"وِصِلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"وِصِلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يُوصَل"},"هي (She)":{ar:"هِيَ",form:"تُوصَل"},"هم (Them)":{ar:"هُمْ",form:"يُوصَلُون"},"أنا (I)":{ar:"أَنَا",form:"أُوصَل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تُوصَل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تُوصَلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تُوصَلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نُوصَل"}}}},
+{root:"ق و ل",topic:"saying",level:"easy",
+derivatives:[{word:"قَوْل",meaning:"saying / statement"},{word:"مَقَال",meaning:"article / essay"},{word:"قَائِل",meaning:"the one who says"},{word:"مَقُولَة",meaning:"a maxim"},{word:"قِيلَ",meaning:"it was said (passive)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"قَال"},"هي (She)":{ar:"هِيَ",form:"قَالَت"},"هم (Them)":{ar:"هُمْ",form:"قَالُوا"},"أنا (I)":{ar:"أَنَا",form:"قُلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"قُلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"قُلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"قُلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"قُلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِقُول"},"هي (She)":{ar:"هِيَ",form:"تِقُول"},"هم (Them)":{ar:"هُمْ",form:"يِقُولُون"},"أنا (I)":{ar:"أَنَا",form:"أَقُول"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِقُول"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِقُولِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِقُولُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِقُول"}}}},
+{root:"د ر س",topic:"studying",level:"easy",
+derivatives:[{word:"دَرْس",meaning:"lesson"},{word:"مَدْرَسَة",meaning:"school"},{word:"دِرَاسَة",meaning:"study"},{word:"مَدْرَسَة ثَانَوِيَّة",meaning:"high school"},{word:"دِرَاسَات",meaning:"academic studies"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"دَرَس"},"هي (She)":{ar:"هِيَ",form:"دَرَسَت"},"هم (Them)":{ar:"هُمْ",form:"دَرَسُوا"},"أنا (I)":{ar:"أَنَا",form:"دَرَسْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"دَرَسْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"دَرَسْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"دَرَسْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"دَرَسْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِدْرُس"},"هي (She)":{ar:"هِيَ",form:"تِدْرُس"},"هم (Them)":{ar:"هُمْ",form:"يِدْرُسُون"},"أنا (I)":{ar:"أَنَا",form:"أَدْرُس"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِدْرُس"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِدْرُسِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِدْرُسُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِدْرُس"}}}},
+{root:"ح ب ب",topic:"love",level:"easy",
+derivatives:[{word:"حُبّ",meaning:"love / affection"},{word:"حَبِيب",meaning:"beloved / dear"},{word:"مَحْبُوب",meaning:"loved / popular"},{word:"حَبَايِب",meaning:"loved ones (Gulf)"},{word:"حُبَّيْبِي",meaning:"my darling (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"حَبّ"},"هي (She)":{ar:"هِيَ",form:"حَبَّت"},"هم (Them)":{ar:"هُمْ",form:"حَبُّوا"},"أنا (I)":{ar:"أَنَا",form:"حَبَّيْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"حَبَّيْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"حَبَّيْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"حَبَّيْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"حَبَّيْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِحِبّ"},"هي (She)":{ar:"هِيَ",form:"تِحِبّ"},"هم (Them)":{ar:"هُمْ",form:"يِحِبُّون"},"أنا (I)":{ar:"أَنَا",form:"أَحِبّ"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِحِبّ"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِحِبِّين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِحِبُّون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِحِبّ"}}}},
+{root:"ل ع ب",topic:"playing",level:"easy",
+derivatives:[{word:"لُعْبَة",meaning:"game / toy"},{word:"لَاعِب",meaning:"player"},{word:"مَلْعَب",meaning:"stadium / playground"},{word:"أَلْعَاب",meaning:"games / fireworks"},{word:"لَعِب",meaning:"playing / mischief"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"لِعِب"},"هي (She)":{ar:"هِيَ",form:"لِعِبَت"},"هم (Them)":{ar:"هُمْ",form:"لِعِبُوا"},"أنا (I)":{ar:"أَنَا",form:"لِعِبْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"لِعِبْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"لِعِبْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"لِعِبْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"لِعِبْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِلْعَب"},"هي (She)":{ar:"هِيَ",form:"تِلْعَب"},"هم (Them)":{ar:"هُمْ",form:"يِلْعَبُون"},"أنا (I)":{ar:"أَنَا",form:"أَلْعَب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِلْعَب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِلْعَبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِلْعَبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِلْعَب"}}}},
+{root:"ح م ل",topic:"carrying",level:"easy",
+derivatives:[{word:"حَمِيل",meaning:"cargo / load (Gulf)"},{word:"مَحْمُول",meaning:"mobile phone / portable"},{word:"حَامِل",meaning:"carrier / pregnant"},{word:"حُمُولَة",meaning:"cargo load"},{word:"شَيِّل",meaning:"carry! (Gulf imperative)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"حَمَل"},"هي (She)":{ar:"هِيَ",form:"حَمَلَت"},"هم (Them)":{ar:"هُمْ",form:"حَمَلُوا"},"أنا (I)":{ar:"أَنَا",form:"حَمَلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"حَمَلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"حَمَلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"حَمَلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"حَمَلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِحْمِل"},"هي (She)":{ar:"هِيَ",form:"تِحْمِل"},"هم (Them)":{ar:"هُمْ",form:"يِحْمِلُون"},"أنا (I)":{ar:"أَنَا",form:"أَحْمِل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِحْمِل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِحْمِلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِحْمِلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِحْمِل"}}}},
+{root:"أ خ ذ",topic:"taking",level:"easy",
+derivatives:[{word:"أَخْذ",meaning:"taking / seizure"},{word:"آخِذ",meaning:"taker"},{word:"مَأْخُوذ",meaning:"taken / captivated"},{word:"مَأْخَذ",meaning:"source / point of criticism"},{word:"خُذْ",meaning:"take! (Gulf imperative)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"أَخَذ"},"هي (She)":{ar:"هِيَ",form:"أَخَذَت"},"هم (Them)":{ar:"هُمْ",form:"أَخَذُوا"},"أنا (I)":{ar:"أَنَا",form:"أَخَذْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"أَخَذْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"أَخَذْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"أَخَذْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"أَخَذْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يَاخِذ"},"هي (She)":{ar:"هِيَ",form:"تَاخِذ"},"هم (Them)":{ar:"هُمْ",form:"يَاخِذُون"},"أنا (I)":{ar:"أَنَا",form:"آخِذ"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَاخِذ"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَاخِذِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَاخِذُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نَاخِذ"}}}},
+{root:"ر ك ب",topic:"riding",level:"easy",
+derivatives:[{word:"رُكُوب",meaning:"riding / boarding"},{word:"رَاكِب",meaning:"rider / passenger"},{word:"مَرْكَب",meaning:"vehicle / vessel"},{word:"سَيَّارَة",meaning:"car (Gulf everyday)"},{word:"رَكْبَة",meaning:"knee"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"رَكَب"},"هي (She)":{ar:"هِيَ",form:"رَكَبَت"},"هم (Them)":{ar:"هُمْ",form:"رَكَبُوا"},"أنا (I)":{ar:"أَنَا",form:"رَكَبْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"رَكَبْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"رَكَبْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"رَكَبْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"رَكَبْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِرْكَب"},"هي (She)":{ar:"هِيَ",form:"تِرْكَب"},"هم (Them)":{ar:"هُمْ",form:"يِرْكَبُون"},"أنا (I)":{ar:"أَنَا",form:"أَرْكَب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِرْكَب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِرْكَبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِرْكَبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِرْكَب"}}}},
+{root:"ش غ ل",topic:"working (Gulf)",level:"easy",
+derivatives:[{word:"شُغُل",meaning:"work / job (Gulf)"},{word:"شَاغِل",meaning:"occupying / busy"},{word:"مَشْغُول",meaning:"busy / occupied"},{word:"شَغُول",meaning:"hardworking (Gulf)"},{word:"شُغْلِي",meaning:"my work (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اشتغل"},"هي (She)":{ar:"هِيَ",form:"اشتغلت"},"هم (Them)":{ar:"هُمْ",form:"اشتغلوا"},"أنا (I)":{ar:"أَنَا",form:"اشتغلت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اشتغلت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اشتغلتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اشتغلتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اشتغلنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِشْتَغِل"},"هي (She)":{ar:"هِيَ",form:"تِشْتَغِل"},"هم (Them)":{ar:"هُمْ",form:"يِشْتَغِلُون"},"أنا (I)":{ar:"أَنَا",form:"أَشْتَغِل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِشْتَغِل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِشْتَغِلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِشْتَغِلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِشْتَغِل"}}}},
+{root:"ع ط ا",topic:"giving (Gulf)",level:"easy",
+derivatives:[{word:"عَطَاء",meaning:"giving / contribution"},{word:"عَطِيَّة",meaning:"gift / donation"},{word:"مُعْطِي",meaning:"giver"},{word:"أَعْطِنِي",meaning:"give me (Gulf)"},{word:"عَطَا",meaning:"he gave (Gulf form)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"عَطَا"},"هي (She)":{ar:"هِيَ",form:"عَطَت"},"هم (Them)":{ar:"هُمْ",form:"عَطَوا"},"أنا (I)":{ar:"أَنَا",form:"عَطَيْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"عَطَيْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"عَطَيْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"عَطَيْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"عَطَيْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِعْطِي"},"هي (She)":{ar:"هِيَ",form:"تِعْطِي"},"هم (Them)":{ar:"هُمْ",form:"يِعْطُون"},"أنا (I)":{ar:"أَنَا",form:"أَعْطِي"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِعْطِي"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِعْطِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِعْطُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِعْطِي"}}}},
+{root:"ج ا ب",topic:"bringing (Gulf)",level:"easy",
+derivatives:[{word:"جَاب",meaning:"he brought (Gulf)"},{word:"جِيب",meaning:"bring! (Gulf imp.)"},{word:"جَايِب",meaning:"bringing (Gulf)"},{word:"جِيبَة",meaning:"pocket (Gulf)"},{word:"جَابَت",meaning:"she brought (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"جَاب"},"هي (She)":{ar:"هِيَ",form:"جَابَت"},"هم (Them)":{ar:"هُمْ",form:"جَابُوا"},"أنا (I)":{ar:"أَنَا",form:"جِبْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"جِبْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"جِبْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"جِبْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"جِبْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِجِيب"},"هي (She)":{ar:"هِيَ",form:"تِجِيب"},"هم (Them)":{ar:"هُمْ",form:"يِجِيبُون"},"أنا (I)":{ar:"أَنَا",form:"أَجِيب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِجِيب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِجِيبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِجِيبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِجِيب"}}}},
+{root:"ط ل ع",topic:"going out / up (Gulf)",level:"easy",
+derivatives:[{word:"طُلُوع",meaning:"rising / going up"},{word:"طَالِع",meaning:"going out / rising"},{word:"مَطْلَع",meaning:"beginning / starting point"},{word:"طَلْعَة",meaning:"an outing (Gulf)"},{word:"إطلالة",meaning:"view / appearance (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"طِلِع"},"هي (She)":{ar:"هِيَ",form:"طِلِعَت"},"هم (Them)":{ar:"هُمْ",form:"طِلِعُوا"},"أنا (I)":{ar:"أَنَا",form:"طِلِعْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"طِلِعْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"طِلِعْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"طِلِعْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"طِلِعْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِطْلَع"},"هي (She)":{ar:"هِيَ",form:"تِطْلَع"},"هم (Them)":{ar:"هُمْ",form:"يِطْلَعُون"},"أنا (I)":{ar:"أَنَا",form:"أَطْلَع"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِطْلَع"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِطْلَعِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِطْلَعُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِطْلَع"}}}}
+
+// ══════ INTERMEDIATE 34-67 ══════
+,{root:"ك ل م",topic:"speaking",level:"intermediate",
+derivatives:[{word:"كَلَام",meaning:"speech / words"},{word:"كَلِمَة",meaning:"word"},{word:"مُكَالَمَة",meaning:"phone call"},{word:"تَكَلُّم",meaning:"act of speaking"},{word:"مُتَكَلِّم",meaning:"speaker"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"كَلَّم"},"هي (She)":{ar:"هِيَ",form:"كَلَّمَت"},"هم (Them)":{ar:"هُمْ",form:"كَلَّمُوا"},"أنا (I)":{ar:"أَنَا",form:"كَلَّمْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"كَلَّمْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"كَلَّمْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"كَلَّمْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"كَلَّمْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتْكَلَّم"},"هي (She)":{ar:"هِيَ",form:"تِتْكَلَّم"},"هم (Them)":{ar:"هُمْ",form:"يِتْكَلَّمُون"},"أنا (I)":{ar:"أَنَا",form:"أَتْكَلَّم"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتْكَلَّم"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتْكَلَّمِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتْكَلَّمُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتْكَلَّم"}}}},
+{root:"س ف ر",topic:"traveling",level:"intermediate",
+derivatives:[{word:"سَفَر",meaning:"travel / journey"},{word:"مُسَافِر",meaning:"traveler"},{word:"سَفَارَة",meaning:"embassy"},{word:"مِسْفَرَة",meaning:"safe travels (Gulf expr.)"},{word:"الحمد لله على السلامة",meaning:"thank God for your safe return"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"سَافَر"},"هي (She)":{ar:"هِيَ",form:"سَافَرَت"},"هم (Them)":{ar:"هُمْ",form:"سَافَرُوا"},"أنا (I)":{ar:"أَنَا",form:"سَافَرْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"سَافَرْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"سَافَرْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"سَافَرْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"سَافَرْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسَافِر"},"هي (She)":{ar:"هِيَ",form:"تِسَافِر"},"هم (Them)":{ar:"هُمْ",form:"يِسَافِرُون"},"أنا (I)":{ar:"أَنَا",form:"أَسَافِر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسَافِر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسَافِرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسَافِرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسَافِر"}}}},
+{root:"ف ك ر",topic:"thinking",level:"intermediate",
+derivatives:[{word:"فِكْرَة",meaning:"idea / thought"},{word:"تَفْكِير",meaning:"thinking"},{word:"مُفَكِّر",meaning:"thinker"},{word:"أَفْكَار",meaning:"ideas"},{word:"وش رأيك؟",meaning:"what do you think? (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"فَكَّر"},"هي (She)":{ar:"هِيَ",form:"فَكَّرَت"},"هم (Them)":{ar:"هُمْ",form:"فَكَّرُوا"},"أنا (I)":{ar:"أَنَا",form:"فَكَّرْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"فَكَّرْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"فَكَّرْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"فَكَّرْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"فَكَّرْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِفَكِّر"},"هي (She)":{ar:"هِيَ",form:"تِفَكِّر"},"هم (Them)":{ar:"هُمْ",form:"يِفَكِّرُون"},"أنا (I)":{ar:"أَنَا",form:"أَفَكِّر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِفَكِّر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِفَكِّرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِفَكِّرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِفَكِّر"}}}},
+{root:"د ف ع",topic:"paying",level:"intermediate",
+derivatives:[{word:"دَفْع",meaning:"payment / pushing"},{word:"دَافِع",meaning:"payer / motive"},{word:"مَدْفُوع",meaning:"paid"},{word:"دَفْعَة",meaning:"installment / batch"},{word:"الحساب",meaning:"the bill (Gulf restaurant)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"دَفَع"},"هي (She)":{ar:"هِيَ",form:"دَفَعَت"},"هم (Them)":{ar:"هُمْ",form:"دَفَعُوا"},"أنا (I)":{ar:"أَنَا",form:"دَفَعْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"دَفَعْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"دَفَعْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"دَفَعْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"دَفَعْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِدْفَع"},"هي (She)":{ar:"هِيَ",form:"تِدْفَع"},"هم (Them)":{ar:"هُمْ",form:"يِدْفَعُون"},"أنا (I)":{ar:"أَنَا",form:"أَدْفَع"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِدْفَع"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِدْفَعِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِدْفَعُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِدْفَع"}}}},
+{root:"س أ ل",topic:"asking",level:"intermediate",
+derivatives:[{word:"سُؤَال",meaning:"question"},{word:"سَائِل",meaning:"questioner"},{word:"مَسْأَلَة",meaning:"matter / issue"},{word:"اسْتِفْسَار",meaning:"inquiry (Gulf formal)"},{word:"تَسَاؤُل",meaning:"wondering"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"سَأَل"},"هي (She)":{ar:"هِيَ",form:"سَأَلَت"},"هم (Them)":{ar:"هُمْ",form:"سَأَلُوا"},"أنا (I)":{ar:"أَنَا",form:"سَأَلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"سَأَلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"سَأَلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"سَأَلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"سَأَلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسْأَل"},"هي (She)":{ar:"هِيَ",form:"تِسْأَل"},"هم (Them)":{ar:"هُمْ",form:"يِسْأَلُون"},"أنا (I)":{ar:"أَنَا",form:"أَسْأَل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسْأَل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسْأَلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسْأَلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسْأَل"}}}},
+{root:"س ع د",topic:"helping / happiness",level:"intermediate",
+derivatives:[{word:"سَعَادَة",meaning:"happiness"},{word:"مَسَاعَدَة",meaning:"help / assistance"},{word:"سَعِيد",meaning:"happy"},{word:"مُسَاعِد",meaning:"assistant / helper"},{word:"تكفون",meaning:"please help (Gulf plea)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"سَاعَد"},"هي (She)":{ar:"هِيَ",form:"سَاعَدَت"},"هم (Them)":{ar:"هُمْ",form:"سَاعَدُوا"},"أنا (I)":{ar:"أَنَا",form:"سَاعَدْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"سَاعَدْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"سَاعَدْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"سَاعَدْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"سَاعَدْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسَاعِد"},"هي (She)":{ar:"هِيَ",form:"تِسَاعِد"},"هم (Them)":{ar:"هُمْ",form:"يِسَاعِدُون"},"أنا (I)":{ar:"أَنَا",form:"أَسَاعِد"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسَاعِد"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسَاعِدِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسَاعِدُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسَاعِد"}}}},
+{root:"ن س ي",topic:"forgetting",level:"intermediate",
+derivatives:[{word:"نِسْيَان",meaning:"forgetting"},{word:"نَاسِي",meaning:"forgetful"},{word:"مَنْسِيّ",meaning:"forgotten"},{word:"أَنْسَى",meaning:"I forget (Gulf)"},{word:"ذَاكِرَة",meaning:"memory / storage device"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"نِسِي"},"هي (She)":{ar:"هِيَ",form:"نِسِيَت"},"هم (Them)":{ar:"هُمْ",form:"نِسُوا"},"أنا (I)":{ar:"أَنَا",form:"نِسِيت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"نِسِيت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"نِسِيتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"نِسِيتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسِينَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنْسَى"},"هي (She)":{ar:"هِيَ",form:"تِنْسَى"},"هم (Them)":{ar:"هُمْ",form:"يِنْسَوْن"},"أنا (I)":{ar:"أَنَا",form:"أَنْسَى"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنْسَى"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنْسَيْن"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنْسَوْن"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنْسَى"}}}},
+{root:"ن ظ ف",topic:"cleaning",level:"intermediate",
+derivatives:[{word:"نَظَافَة",meaning:"cleanliness"},{word:"نَظِيف",meaning:"clean / pure"},{word:"مُنَظِّف",meaning:"cleaner / detergent"},{word:"تَنْظِيف",meaning:"cleaning / sanitation"},{word:"أَنَظِّف",meaning:"I clean (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"نَظَّف"},"هي (She)":{ar:"هِيَ",form:"نَظَّفَت"},"هم (Them)":{ar:"هُمْ",form:"نَظَّفُوا"},"أنا (I)":{ar:"أَنَا",form:"نَظَّفْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"نَظَّفْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"نَظَّفْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"نَظَّفْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"نَظَّفْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنَظِّف"},"هي (She)":{ar:"هِيَ",form:"تِنَظِّف"},"هم (Them)":{ar:"هُمْ",form:"يِنَظِّفُون"},"أنا (I)":{ar:"أَنَا",form:"أَنَظِّف"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنَظِّف"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنَظِّفِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنَظِّفُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنَظِّف"}}}},
+{root:"ص و ر",topic:"photography",level:"intermediate",
+derivatives:[{word:"صُورَة",meaning:"photo / image"},{word:"تَصْوِير",meaning:"photography / filming"},{word:"مُصَوِّر",meaning:"photographer"},{word:"أُصَوِّر",meaning:"I take pictures (Gulf)"},{word:"تصوير",meaning:"photography (verbal noun)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"صَوَّر"},"هي (She)":{ar:"هِيَ",form:"صَوَّرَت"},"هم (Them)":{ar:"هُمْ",form:"صَوَّرُوا"},"أنا (I)":{ar:"أَنَا",form:"صَوَّرْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"صَوَّرْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"صَوَّرْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"صَوَّرْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"صَوَّرْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِصَوِّر"},"هي (She)":{ar:"هِيَ",form:"تِصَوِّر"},"هم (Them)":{ar:"هُمْ",form:"يِصَوِّرُون"},"أنا (I)":{ar:"أَنَا",form:"أَصَوِّر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِصَوِّر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِصَوِّرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِصَوِّرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِصَوِّر"}}}},
+{root:"ذ ك ر",topic:"remembering",level:"intermediate",
+derivatives:[{word:"ذِكْرَى",meaning:"memory / anniversary"},{word:"تَذْكِير",meaning:"reminder"},{word:"مُذَكِّرَة",meaning:"notebook / memo"},{word:"ذِكْر",meaning:"mention / remembrance of God"},{word:"أُذَكِّرُك",meaning:"I remind you (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"ذَكَر"},"هي (She)":{ar:"هِيَ",form:"ذَكَرَت"},"هم (Them)":{ar:"هُمْ",form:"ذَكَرُوا"},"أنا (I)":{ar:"أَنَا",form:"ذَكَرْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"ذَكَرْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"ذَكَرْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"ذَكَرْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"ذَكَرْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِذَكِّر"},"هي (She)":{ar:"هِيَ",form:"تِذَكِّر"},"هم (Them)":{ar:"هُمْ",form:"يِذَكِّرُون"},"أنا (I)":{ar:"أَنَا",form:"أَذَكِّر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِذَكِّر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِذَكِّرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِذَكِّرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِذَكِّر"}}}},
+{root:"ف ض ل",topic:"preferring",level:"intermediate",
+derivatives:[{word:"تَفْضِيل",meaning:"preference"},{word:"أَفْضَل",meaning:"better / preferable"},{word:"فَضَل",meaning:"grace / extra"},{word:"مُفَضَّل",meaning:"favourite"},{word:"أُفَضِّل",meaning:"I prefer (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"فَضَّل"},"هي (She)":{ar:"هِيَ",form:"فَضَّلَت"},"هم (Them)":{ar:"هُمْ",form:"فَضَّلُوا"},"أنا (I)":{ar:"أَنَا",form:"فَضَّلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"فَضَّلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"فَضَّلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"فَضَّلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"فَضَّلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِفَضِّل"},"هي (She)":{ar:"هِيَ",form:"تِفَضِّل"},"هم (Them)":{ar:"هُمْ",form:"يِفَضِّلُون"},"أنا (I)":{ar:"أَنَا",form:"أَفَضِّل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِفَضِّل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِفَضِّلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِفَضِّلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِفَضِّل"}}}},
+{root:"ص ل ح",topic:"fixing",level:"intermediate",
+derivatives:[{word:"إِصْلَاح",meaning:"repair / reform"},{word:"مُصْلِح",meaning:"reformer / repairman"},{word:"صَالِح",meaning:"righteous / valid"},{word:"يُصَلِّح",meaning:"he fixes (Gulf)"},{word:"صَلَاح",meaning:"goodness / righteousness"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"صَلَّح"},"هي (She)":{ar:"هِيَ",form:"صَلَّحَت"},"هم (Them)":{ar:"هُمْ",form:"صَلَّحُوا"},"أنا (I)":{ar:"أَنَا",form:"صَلَّحْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"صَلَّحْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"صَلَّحْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"صَلَّحْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"صَلَّحْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِصَلِّح"},"هي (She)":{ar:"هِيَ",form:"تِصَلِّح"},"هم (Them)":{ar:"هُمْ",form:"يِصَلِّحُون"},"أنا (I)":{ar:"أَنَا",form:"أَصَلِّح"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِصَلِّح"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِصَلِّحِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِصَلِّحُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِصَلِّح"}}}},
+{root:"ر س ل",topic:"sending",level:"intermediate",
+derivatives:[{word:"إِرْسَال",meaning:"sending / signal"},{word:"رِسَالَة",meaning:"message / letter"},{word:"مُرْسَل",meaning:"sent / messenger"},{word:"رَسُول",meaning:"prophet / messenger"},{word:"الإرسال",meaning:"cell signal (Gulf tech)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"أَرْسَل"},"هي (She)":{ar:"هِيَ",form:"أَرْسَلَت"},"هم (Them)":{ar:"هُمْ",form:"أَرْسَلُوا"},"أنا (I)":{ar:"أَنَا",form:"أَرْسَلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"أَرْسَلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"أَرْسَلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"أَرْسَلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"أَرْسَلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِرْسِل"},"هي (She)":{ar:"هِيَ",form:"تِرْسِل"},"هم (Them)":{ar:"هُمْ",form:"يِرْسِلُون"},"أنا (I)":{ar:"أَنَا",form:"أَرْسِل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِرْسِل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِرْسِلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِرْسِلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِرْسِل"}}}},
+{root:"ح و ل",topic:"transferring",level:"intermediate",
+derivatives:[{word:"تَحْوِيل",meaning:"transfer / conversion"},{word:"حَوَالَة",meaning:"money transfer (Gulf)"},{word:"مُحَوِّل",meaning:"transformer"},{word:"أُحَوِّلُك",meaning:"I transfer your call (Gulf)"},{word:"تحويل",meaning:"redirect / reroute"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"حَوَّل"},"هي (She)":{ar:"هِيَ",form:"حَوَّلَت"},"هم (Them)":{ar:"هُمْ",form:"حَوَّلُوا"},"أنا (I)":{ar:"أَنَا",form:"حَوَّلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"حَوَّلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"حَوَّلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"حَوَّلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"حَوَّلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِحَوِّل"},"هي (She)":{ar:"هِيَ",form:"تِحَوِّل"},"هم (Them)":{ar:"هُمْ",form:"يِحَوِّلُون"},"أنا (I)":{ar:"أَنَا",form:"أَحَوِّل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِحَوِّل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِحَوِّلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِحَوِّلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِحَوِّل"}}}},
+{root:"ج د د",topic:"renewing",level:"intermediate",
+derivatives:[{word:"جَدِيد",meaning:"new / recent"},{word:"تَجْدِيد",meaning:"renewal / renovation"},{word:"مُجَدَّد",meaning:"renewed / updated"},{word:"أُجَدِّد",meaning:"I renew (Gulf)"},{word:"جِدِّيَّة",meaning:"seriousness"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"جَدَّد"},"هي (She)":{ar:"هِيَ",form:"جَدَّدَت"},"هم (Them)":{ar:"هُمْ",form:"جَدَّدُوا"},"أنا (I)":{ar:"أَنَا",form:"جَدَّدْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"جَدَّدْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"جَدَّدْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"جَدَّدْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"جَدَّدْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِجَدِّد"},"هي (She)":{ar:"هِيَ",form:"تِجَدِّد"},"هم (Them)":{ar:"هُمْ",form:"يِجَدِّدُون"},"أنا (I)":{ar:"أَنَا",form:"أَجَدِّد"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِجَدِّد"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِجَدِّدِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِجَدِّدُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِجَدِّد"}}}},
+{root:"و ق ف",topic:"stopping / parking",level:"intermediate",
+derivatives:[{word:"وُقُوف",meaning:"stopping / standing"},{word:"مَوْقِف",meaning:"parking lot / stance"},{word:"وَاقِف",meaning:"standing / stopped"},{word:"أُوَقِّف",meaning:"I park (Gulf)"},{word:"إيقاف",meaning:"suspension / stopping"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"وَقَف"},"هي (She)":{ar:"هِيَ",form:"وَقَفَت"},"هم (Them)":{ar:"هُمْ",form:"وَقَفُوا"},"أنا (I)":{ar:"أَنَا",form:"وَقَفْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"وَقَفْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"وَقَفْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"وَقَفْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"وَقَفْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يُوقِّف"},"هي (She)":{ar:"هِيَ",form:"تُوقِّف"},"هم (Them)":{ar:"هُمْ",form:"يُوقِّفُون"},"أنا (I)":{ar:"أَنَا",form:"أُوقِّف"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تُوقِّف"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تُوقِّفِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تُوقِّفُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نُوقِّف"}}}},
+{root:"ق ب ل",topic:"accepting",level:"intermediate",
+derivatives:[{word:"قَبُول",meaning:"acceptance / admission"},{word:"مَقْبُول",meaning:"acceptable / passing"},{word:"تَقَبَّل",meaning:"to receive graciously"},{word:"قَبِل",meaning:"before (prep.)"},{word:"قُبْلَة",meaning:"a kiss"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"قَبِل"},"هي (She)":{ar:"هِيَ",form:"قَبِلَت"},"هم (Them)":{ar:"هُمْ",form:"قَبِلُوا"},"أنا (I)":{ar:"أَنَا",form:"قَبِلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"قَبِلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"قَبِلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"قَبِلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"قَبِلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِقْبَل"},"هي (She)":{ar:"هِيَ",form:"تِقْبَل"},"هم (Them)":{ar:"هُمْ",form:"يِقْبَلُون"},"أنا (I)":{ar:"أَنَا",form:"أَقْبَل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِقْبَل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِقْبَلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِقْبَلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِقْبَل"}}}},
+{root:"ش ر ك",topic:"participating",level:"intermediate",
+derivatives:[{word:"شَرِكَة",meaning:"company / corporation"},{word:"مُشَارَكَة",meaning:"participation"},{word:"شَرِيك",meaning:"partner"},{word:"اشتركت",meaning:"I subscribed (Gulf)"},{word:"تَشَارَك",meaning:"they collaborated"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اشترك"},"هي (She)":{ar:"هِيَ",form:"اشتركت"},"هم (Them)":{ar:"هُمْ",form:"اشتركوا"},"أنا (I)":{ar:"أَنَا",form:"اشتركت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اشتركت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اشتركتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اشتركتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اشتركنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِشْتَرِك"},"هي (She)":{ar:"هِيَ",form:"تِشْتَرِك"},"هم (Them)":{ar:"هُمْ",form:"يِشْتَرِكُون"},"أنا (I)":{ar:"أَنَا",form:"أَشْتَرِك"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِشْتَرِك"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِشْتَرِكِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِشْتَرِكُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِشْتَرِك"}}}},
+{root:"ت ر ج م",topic:"translating",level:"intermediate",
+derivatives:[{word:"تَرْجَمَة",meaning:"translation"},{word:"مُتَرْجِم",meaning:"translator"},{word:"تَرْجَمَان",meaning:"interpreter"},{word:"مُتَرْجَم",meaning:"translated / subtitled"},{word:"أُتَرْجِم",meaning:"I translate (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَرْجَم"},"هي (She)":{ar:"هِيَ",form:"تَرْجَمَت"},"هم (Them)":{ar:"هُمْ",form:"تَرْجَمُوا"},"أنا (I)":{ar:"أَنَا",form:"تَرْجَمْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَرْجَمْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَرْجَمْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَرْجَمْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَرْجَمْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَرْجِم"},"هي (She)":{ar:"هِيَ",form:"تِتَرْجِم"},"هم (Them)":{ar:"هُمْ",form:"يِتَرْجِمُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَرْجِم"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَرْجِم"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَرْجِمِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَرْجِمُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَرْجِم"}}}},
+{root:"س ك ن",topic:"residing",level:"intermediate",
+derivatives:[{word:"سُكَّان",meaning:"residents / population"},{word:"مَسْكَن",meaning:"dwelling"},{word:"سَكَن",meaning:"housing"},{word:"إِقَامَة",meaning:"residency permit (Gulf)"},{word:"سَاكِن",meaning:"resident / still / silent"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"سَكَن"},"هي (She)":{ar:"هِيَ",form:"سَكَنَت"},"هم (Them)":{ar:"هُمْ",form:"سَكَنُوا"},"أنا (I)":{ar:"أَنَا",form:"سَكَنْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"سَكَنْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"سَكَنْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"سَكَنْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"سَكَنْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسْكُن"},"هي (She)":{ar:"هِيَ",form:"تِسْكُن"},"هم (Them)":{ar:"هُمْ",form:"يِسْكُنُون"},"أنا (I)":{ar:"أَنَا",form:"أَسْكُن"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسْكُن"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسْكُنِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسْكُنُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسْكُن"}}}},
+{root:"ع ز م",topic:"inviting",level:"intermediate",
+derivatives:[{word:"عَزِيمَة",meaning:"determination / feast"},{word:"دَعْوَة",meaning:"invitation"},{word:"عَازِم",meaning:"determined / inviting"},{word:"أَعْزِمُكُم",meaning:"I invite you all (Gulf)"},{word:"نِلَبِّي",meaning:"we accept the invitation (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"عَزَم"},"هي (She)":{ar:"هِيَ",form:"عَزَمَت"},"هم (Them)":{ar:"هُمْ",form:"عَزَمُوا"},"أنا (I)":{ar:"أَنَا",form:"عَزَمْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"عَزَمْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"عَزَمْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"عَزَمْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"عَزَمْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِعْزِم"},"هي (She)":{ar:"هِيَ",form:"تِعْزِم"},"هم (Them)":{ar:"هُمْ",form:"يِعْزِمُون"},"أنا (I)":{ar:"أَنَا",form:"أَعْزِم"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِعْزِم"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِعْزِمِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِعْزِمُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِعْزِم"}}}},
+{root:"و ق ع",topic:"signing",level:"intermediate",
+derivatives:[{word:"تَوْقِيع",meaning:"signature"},{word:"مَوْقِع",meaning:"location / website"},{word:"وَاقِعَة",meaning:"incident"},{word:"أُوَقِّع",meaning:"I sign documents (Gulf)"},{word:"وَاقِعِيَّة",meaning:"realism"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"وَقَّع"},"هي (She)":{ar:"هِيَ",form:"وَقَّعَت"},"هم (Them)":{ar:"هُمْ",form:"وَقَّعُوا"},"أنا (I)":{ar:"أَنَا",form:"وَقَّعْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"وَقَّعْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"وَقَّعْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"وَقَّعْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"وَقَّعْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يُوَقِّع"},"هي (She)":{ar:"هِيَ",form:"تُوَقِّع"},"هم (Them)":{ar:"هُمْ",form:"يُوَقِّعُون"},"أنا (I)":{ar:"أَنَا",form:"أُوَقِّع"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تُوَقِّع"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تُوَقِّعِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تُوَقِّعُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نُوَقِّع"}}}},
+{root:"ت ع ب",topic:"being tired",level:"intermediate",
+derivatives:[{word:"تَعَب",meaning:"tiredness / fatigue"},{word:"تَعْبَان",meaning:"tired / unwell (Gulf)"},{word:"إِرْهَاق",meaning:"exhaustion"},{word:"مُتْعِب",meaning:"tiring / exhausting"},{word:"تَعَبَان",meaning:"broken / sick (Gulf colloquial)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَعِب"},"هي (She)":{ar:"هِيَ",form:"تَعِبَت"},"هم (Them)":{ar:"هُمْ",form:"تَعِبُوا"},"أنا (I)":{ar:"أَنَا",form:"تَعِبْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَعِبْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَعِبْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَعِبْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَعِبْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتْعَب"},"هي (She)":{ar:"هِيَ",form:"تِتْعَب"},"هم (Them)":{ar:"هُمْ",form:"يِتْعَبُون"},"أنا (I)":{ar:"أَنَا",form:"أَتْعَب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتْعَب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتْعَبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتْعَبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتْعَب"}}}},
+{root:"ن ص ح",topic:"advising",level:"intermediate",
+derivatives:[{word:"نَصِيحَة",meaning:"advice"},{word:"نَاصِح",meaning:"advisor"},{word:"نُصْح",meaning:"sincere advice"},{word:"تَنْصَح",meaning:"you advise"},{word:"نَنْصَح",meaning:"we recommend (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"نَصَح"},"هي (She)":{ar:"هِيَ",form:"نَصَحَت"},"هم (Them)":{ar:"هُمْ",form:"نَصَحُوا"},"أنا (I)":{ar:"أَنَا",form:"نَصَحْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"نَصَحْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"نَصَحْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"نَصَحْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"نَصَحْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنْصَح"},"هي (She)":{ar:"هِيَ",form:"تِنْصَح"},"هم (Them)":{ar:"هُمْ",form:"يِنْصَحُون"},"أنا (I)":{ar:"أَنَا",form:"أَنْصَح"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنْصَح"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنْصَحِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنْصَحُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنْصَح"}}}},
+{root:"ز ي د",topic:"increasing",level:"intermediate",
+derivatives:[{word:"زِيَادَة",meaning:"increase / extra"},{word:"زَائِد",meaning:"extra / surplus"},{word:"مَزِيد",meaning:"more / additional"},{word:"تَزِيدُون",meaning:"you all refill (Gulf)"},{word:"ارتفاع",meaning:"rise / increase (formal)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"زَاد"},"هي (She)":{ar:"هِيَ",form:"زَادَت"},"هم (Them)":{ar:"هُمْ",form:"زَادُوا"},"أنا (I)":{ar:"أَنَا",form:"زِدْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"زِدْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"زِدْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"زِدْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"زِدْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِزِيد"},"هي (She)":{ar:"هِيَ",form:"تِزِيد"},"هم (Them)":{ar:"هُمْ",form:"يِزِيدُون"},"أنا (I)":{ar:"أَنَا",form:"أَزِيد"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِزِيد"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِزِيدِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِزِيدُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِزِيد"}}}},
+{root:"ح ج ز",topic:"reserving",level:"intermediate",
+derivatives:[{word:"حَجْز",meaning:"reservation / booking"},{word:"مَحْجُوز",meaning:"reserved / booked"},{word:"حَاجِز",meaning:"barrier / checkpoint"},{word:"حَجْز مَوْعِد",meaning:"booking an appointment"},{word:"احتجاز",meaning:"detention (formal)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"حَجَز"},"هي (She)":{ar:"هِيَ",form:"حَجَزَت"},"هم (Them)":{ar:"هُمْ",form:"حَجَزُوا"},"أنا (I)":{ar:"أَنَا",form:"حَجَزْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"حَجَزْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"حَجَزْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"حَجَزْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"حَجَزْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِحْجِز"},"هي (She)":{ar:"هِيَ",form:"تِحْجِز"},"هم (Them)":{ar:"هُمْ",form:"يِحْجِزُون"},"أنا (I)":{ar:"أَنَا",form:"أَحْجِز"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِحْجِز"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِحْجِزِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِحْجِزُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِحْجِز"}}}},
+{root:"ع ل م",topic:"knowledge",level:"intermediate",
+derivatives:[{word:"عِلْم",meaning:"knowledge / science"},{word:"عَالِم",meaning:"scholar / scientist"},{word:"مَعْلُوم",meaning:"known / obvious"},{word:"تَعْلِيم",meaning:"education"},{word:"على حد علمي",meaning:"as far as I know (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"عَلِم"},"هي (She)":{ar:"هِيَ",form:"عَلِمَت"},"هم (Them)":{ar:"هُمْ",form:"عَلِمُوا"},"أنا (I)":{ar:"أَنَا",form:"عَلِمْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"عَلِمْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"عَلِمْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"عَلِمْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"عَلِمْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِعْرِف"},"هي (She)":{ar:"هِيَ",form:"تِعْرِف"},"هم (Them)":{ar:"هُمْ",form:"يِعْرِفُون"},"أنا (I)":{ar:"أَنَا",form:"أَعْرِف"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِعْرِف"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِعْرِفِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِعْرِفُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِعْرِف"}}}},
+{root:"ش ر ح",topic:"explaining",level:"intermediate",
+derivatives:[{word:"شَرْح",meaning:"explanation"},{word:"شَارِح",meaning:"explainer"},{word:"مَشْرُوح",meaning:"explained"},{word:"تَشْرِيح",meaning:"dissection / explanation"},{word:"يَشْرَح",meaning:"he explains"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"شَرَح"},"هي (She)":{ar:"هِيَ",form:"شَرَحَت"},"هم (Them)":{ar:"هُمْ",form:"شَرَحُوا"},"أنا (I)":{ar:"أَنَا",form:"شَرَحْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"شَرَحْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"شَرَحْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"شَرَحْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"شَرَحْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِشْرَح"},"هي (She)":{ar:"هِيَ",form:"تِشْرَح"},"هم (Them)":{ar:"هُمْ",form:"يِشْرَحُون"},"أنا (I)":{ar:"أَنَا",form:"أَشْرَح"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِشْرَح"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِشْرَحِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِشْرَحُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِشْرَح"}}}},
+{root:"ر ا ح",topic:"going (Gulf)",level:"intermediate",
+derivatives:[{word:"رَاح",meaning:"he went / future marker"},{word:"رَوَاح",meaning:"return home"},{word:"رَاحَة",meaning:"rest / comfort"},{word:"مُرِيح",meaning:"comfortable"},{word:"ارتاح",meaning:"he rested / relaxed"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"رَاح"},"هي (She)":{ar:"هِيَ",form:"رَاحَت"},"هم (Them)":{ar:"هُمْ",form:"رَاحُوا"},"أنا (I)":{ar:"أَنَا",form:"رُحْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"رُحْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"رُحْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"رُحْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"رُحْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِرُوح"},"هي (She)":{ar:"هِيَ",form:"تِرُوح"},"هم (Them)":{ar:"هُمْ",form:"يِرُوحُون"},"أنا (I)":{ar:"أَنَا",form:"أَرُوح"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِرُوح"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِرُوحِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِرُوحُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِرُوح"}}}},
+{root:"ن س ق",topic:"coordinating",level:"intermediate",
+derivatives:[{word:"تَنْسِيق",meaning:"coordination / formatting"},{word:"مُنَسِّق",meaning:"coordinator"},{word:"نَسَق",meaning:"pattern / sequence"},{word:"أُنَسِّق",meaning:"I coordinate (Gulf)"},{word:"مُنَسَّق",meaning:"coordinated / formatted"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"نَسَّق"},"هي (She)":{ar:"هِيَ",form:"نَسَّقَت"},"هم (Them)":{ar:"هُمْ",form:"نَسَّقُوا"},"أنا (I)":{ar:"أَنَا",form:"نَسَّقْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"نَسَّقْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"نَسَّقْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"نَسَّقْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"نَسَّقْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنَسِّق"},"هي (She)":{ar:"هِيَ",form:"تِنَسِّق"},"هم (Them)":{ar:"هُمْ",form:"يِنَسِّقُون"},"أنا (I)":{ar:"أَنَا",form:"أَنَسِّق"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنَسِّق"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنَسِّقِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنَسِّقُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنَسِّق"}}}},
+{root:"س و ق",topic:"driving",level:"intermediate",
+derivatives:[{word:"سَوَّاق",meaning:"driver / chauffeur (Gulf)"},{word:"قِيَادَة",meaning:"driving / leadership"},{word:"سُوق",meaning:"market / souq"},{word:"مَسَاق",meaning:"course / driving lane"},{word:"سَائِق",meaning:"driver (formal)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"سَاق"},"هي (She)":{ar:"هِيَ",form:"سَاقَت"},"هم (Them)":{ar:"هُمْ",form:"سَاقُوا"},"أنا (I)":{ar:"أَنَا",form:"سُقْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"سُقْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"سُقْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"سُقْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"سُقْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسُوق"},"هي (She)":{ar:"هِيَ",form:"تِسُوق"},"هم (Them)":{ar:"هُمْ",form:"يِسُوقُون"},"أنا (I)":{ar:"أَنَا",form:"أَسُوق"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسُوق"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسُوقِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسُوقُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسُوق"}}}},
+{root:"ر ا ج ع",topic:"reviewing",level:"intermediate",
+derivatives:[{word:"مُرَاجَعَة",meaning:"review / follow-up visit"},{word:"رَاجِع",meaning:"reviewing / check"},{word:"مَرْجِع",meaning:"reference"},{word:"تَرَاجَع",meaning:"decline / retreat"},{word:"أُرَاجِع",meaning:"I review / I follow up (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"رَاجَع"},"هي (She)":{ar:"هِيَ",form:"رَاجَعَت"},"هم (Them)":{ar:"هُمْ",form:"رَاجَعُوا"},"أنا (I)":{ar:"أَنَا",form:"رَاجَعْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"رَاجَعْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"رَاجَعْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"رَاجَعْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"رَاجَعْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِرَاجِع"},"هي (She)":{ar:"هِيَ",form:"تِرَاجِع"},"هم (Them)":{ar:"هُمْ",form:"يِرَاجِعُون"},"أنا (I)":{ar:"أَنَا",form:"أَرَاجِع"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِرَاجِع"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِرَاجِعِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِرَاجِعُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِرَاجِع"}}}},
+{root:"ا ن ت ظ ر",topic:"waiting",level:"intermediate",
+derivatives:[{word:"اِنْتِظَار",meaning:"waiting"},{word:"مُنْتَظَر",meaning:"awaited / expected"},{word:"مُنْتَظِر",meaning:"waiting (person)"},{word:"اِسْتَنَّى",meaning:"wait! (Gulf informal)"},{word:"يِنْتَظِر",meaning:"he waits (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"انتظر"},"هي (She)":{ar:"هِيَ",form:"انتظرت"},"هم (Them)":{ar:"هُمْ",form:"انتظروا"},"أنا (I)":{ar:"أَنَا",form:"انتظرت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"انتظرت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"انتظرتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"انتظرتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"انتظرنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنْتَظِر"},"هي (She)":{ar:"هِيَ",form:"تِنْتَظِر"},"هم (Them)":{ar:"هُمْ",form:"يِنْتَظِرُون"},"أنا (I)":{ar:"أَنَا",form:"أَنْتَظِر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنْتَظِر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنْتَظِرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنْتَظِرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنْتَظِر"}}}},
+{root:"ق ر ر",topic:"deciding",level:"intermediate",
+derivatives:[{word:"قَرَار",meaning:"decision"},{word:"مُقَرَّر",meaning:"scheduled / textbook"},{word:"تَقْرِير",meaning:"report"},{word:"قَرَّر",meaning:"he decided"},{word:"أَقَرَّ",meaning:"he confirmed / admitted"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"قَرَّر"},"هي (She)":{ar:"هِيَ",form:"قَرَّرَت"},"هم (Them)":{ar:"هُمْ",form:"قَرَّرُوا"},"أنا (I)":{ar:"أَنَا",form:"قَرَّرْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"قَرَّرْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"قَرَّرْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"قَرَّرْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"قَرَّرْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِقَرِّر"},"هي (She)":{ar:"هِيَ",form:"تِقَرِّر"},"هم (Them)":{ar:"هُمْ",form:"يِقَرِّرُون"},"أنا (I)":{ar:"أَنَا",form:"أَقَرِّر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِقَرِّر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِقَرِّرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِقَرِّرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِقَرِّر"}}}},
+{root:"ا س ت ل م",topic:"receiving",level:"intermediate",
+derivatives:[{word:"اِسْتِلَام",meaning:"receipt / taking delivery"},{word:"مُسْتَلَم",meaning:"received"},{word:"أَسْتَلِم",meaning:"I receive (Gulf official)"},{word:"اِسْتِقْبَال",meaning:"reception / welcoming"},{word:"تَرِد",meaning:"received (formal Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"استلم"},"هي (She)":{ar:"هِيَ",form:"استلمت"},"هم (Them)":{ar:"هُمْ",form:"استلموا"},"أنا (I)":{ar:"أَنَا",form:"استلمت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"استلمت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"استلمتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"استلمتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"استلمنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسْتَلِم"},"هي (She)":{ar:"هِيَ",form:"تِسْتَلِم"},"هم (Them)":{ar:"هُمْ",form:"يِسْتَلِمُون"},"أنا (I)":{ar:"أَنَا",form:"أَسْتَلِم"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسْتَلِم"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسْتَلِمِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسْتَلِمُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسْتَلِم"}}}}
+
+// ══════ HARD 68-100 ══════
+,{root:"ا ق ت ر ح",topic:"suggesting (VIII)",level:"hard",
+derivatives:[{word:"اقتراح",meaning:"suggestion / proposal"},{word:"مُقْتَرَح",meaning:"proposed idea"},{word:"أَقْتَرِح",meaning:"I suggest (Gulf formal)"},{word:"مُقْتَرِح",meaning:"proposer"},{word:"اقتراحات",meaning:"proposals / suggestions"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اقترح"},"هي (She)":{ar:"هِيَ",form:"اقترحت"},"هم (Them)":{ar:"هُمْ",form:"اقترحوا"},"أنا (I)":{ar:"أَنَا",form:"اقترحت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اقترحت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اقترحتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اقترحتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اقترحنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِقْتَرِح"},"هي (She)":{ar:"هِيَ",form:"تِقْتَرِح"},"هم (Them)":{ar:"هُمْ",form:"يِقْتَرِحُون"},"أنا (I)":{ar:"أَنَا",form:"أَقْتَرِح"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِقْتَرِح"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِقْتَرِحِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِقْتَرِحُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِقْتَرِح"}}}},
+{root:"ا ع ت ق د",topic:"believing (VIII)",level:"hard",
+derivatives:[{word:"اعتقاد",meaning:"belief / conviction"},{word:"مُعْتَقَد",meaning:"creed / belief"},{word:"أَعْتَقِد",meaning:"I believe / I think"},{word:"اعتقال",meaning:"arrest / detention"},{word:"مُعْتَقَل",meaning:"detainee / prisoner"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اعتقد"},"هي (She)":{ar:"هِيَ",form:"اعتقدت"},"هم (Them)":{ar:"هُمْ",form:"اعتقدوا"},"أنا (I)":{ar:"أَنَا",form:"اعتقدت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اعتقدت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اعتقدتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اعتقدتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اعتقدنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِعْتَقِد"},"هي (She)":{ar:"هِيَ",form:"تِعْتَقِد"},"هم (Them)":{ar:"هُمْ",form:"يِعْتَقِدُون"},"أنا (I)":{ar:"أَنَا",form:"أَعْتَقِد"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِعْتَقِد"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِعْتَقِدِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِعْتَقِدُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِعْتَقِد"}}}},
+{root:"ا ه ت م",topic:"caring about (VIII)",level:"hard",
+derivatives:[{word:"اهتمام",meaning:"care / interest"},{word:"مُهْتَمّ",meaning:"interested / concerned"},{word:"أَهَمِّيَّة",meaning:"importance"},{word:"اهتمامات",meaning:"interests / concerns"},{word:"مُهِمّ",meaning:"important"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اهتم"},"هي (She)":{ar:"هِيَ",form:"اهتمت"},"هم (Them)":{ar:"هُمْ",form:"اهتموا"},"أنا (I)":{ar:"أَنَا",form:"اهتميت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اهتميت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اهتميتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اهتميتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اهتمينا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِهْتَمّ"},"هي (She)":{ar:"هِيَ",form:"تِهْتَمّ"},"هم (Them)":{ar:"هُمْ",form:"يِهْتَمُّون"},"أنا (I)":{ar:"أَنَا",form:"أَهْتَمّ"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِهْتَمّ"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِهْتَمِّين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِهْتَمُّون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِهْتَمّ"}}}},
+{root:"ت ن م ر",topic:"bullying (V)",level:"hard",
+derivatives:[{word:"تَنَمُّر",meaning:"bullying / harassment"},{word:"مُتَنَمِّر",meaning:"bully / harasser"},{word:"تَنَمُّر إلكتروني",meaning:"cyberbullying"},{word:"يَتَنَمَّر",meaning:"he bullies"},{word:"ضد التنمر",meaning:"anti-bullying"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَنَمَّر"},"هي (She)":{ar:"هِيَ",form:"تَنَمَّرَت"},"هم (Them)":{ar:"هُمْ",form:"تَنَمَّرُوا"},"أنا (I)":{ar:"أَنَا",form:"تَنَمَّرْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَنَمَّرْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَنَمَّرْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَنَمَّرْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَنَمَّرْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَنَمَّر"},"هي (She)":{ar:"هِيَ",form:"تِتَنَمَّر"},"هم (Them)":{ar:"هُمْ",form:"يِتَنَمَّرُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَنَمَّر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَنَمَّر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَنَمَّرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَنَمَّرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَنَمَّر"}}}},
+{root:"ا ل ت ز م",topic:"committing (VIII)",level:"hard",
+derivatives:[{word:"الْتِزَام",meaning:"commitment / compliance"},{word:"مُلْتَزِم",meaning:"committed / observant"},{word:"الالتزام",meaning:"adherence (Gulf official)"},{word:"التزامه",meaning:"his commitment"},{word:"التزامات",meaning:"commitments / obligations"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اِلْتَزَم"},"هي (She)":{ar:"هِيَ",form:"التزمت"},"هم (Them)":{ar:"هُمْ",form:"التزموا"},"أنا (I)":{ar:"أَنَا",form:"التزمت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"التزمت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"التزمتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"التزمتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"التزمنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِلْتَزِم"},"هي (She)":{ar:"هِيَ",form:"تِلْتَزِم"},"هم (Them)":{ar:"هُمْ",form:"يِلْتَزِمُون"},"أنا (I)":{ar:"أَنَا",form:"أَلْتَزِم"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِلْتَزِم"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِلْتَزِمِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِلْتَزِمُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِلْتَزِم"}}}},
+{root:"ا س ت ع د",topic:"preparing (X)",level:"hard",
+derivatives:[{word:"اِسْتِعْدَاد",meaning:"preparation / readiness"},{word:"مُسْتَعِدّ",meaning:"ready / prepared"},{word:"يَسْتَعِدّ",meaning:"he prepares (Gulf)"},{word:"إِعْدَاد",meaning:"preparation / training"},{word:"التدريب",meaning:"training / internship (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اِسْتَعَدّ"},"هي (She)":{ar:"هِيَ",form:"استعدت"},"هم (Them)":{ar:"هُمْ",form:"استعدوا"},"أنا (I)":{ar:"أَنَا",form:"استعددت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"استعددت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"استعددتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"استعددتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"استعددنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسْتَعِدّ"},"هي (She)":{ar:"هِيَ",form:"تِسْتَعِدّ"},"هم (Them)":{ar:"هُمْ",form:"يِسْتَعِدُّون"},"أنا (I)":{ar:"أَنَا",form:"أَسْتَعِدّ"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسْتَعِدّ"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسْتَعِدِّين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسْتَعِدُّون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسْتَعِدّ"}}}},
+{root:"ت ع ا و ن",topic:"cooperating (VI)",level:"hard",
+derivatives:[{word:"تَعَاوُن",meaning:"cooperation / teamwork"},{word:"مُتَعَاوِن",meaning:"cooperative"},{word:"التعاون",meaning:"cooperation (Gulf official)"},{word:"تَعَاوَنَا",meaning:"they cooperated"},{word:"بِتَعَاوُن",meaning:"in cooperation with"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَعَاوَن"},"هي (She)":{ar:"هِيَ",form:"تَعَاوَنَت"},"هم (Them)":{ar:"هُمْ",form:"تَعَاوَنُوا"},"أنا (I)":{ar:"أَنَا",form:"تَعَاوَنْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَعَاوَنْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَعَاوَنْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَعَاوَنْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَعَاوَنَّا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَعَاوَن"},"هي (She)":{ar:"هِيَ",form:"تِتَعَاوَن"},"هم (Them)":{ar:"هُمْ",form:"يِتَعَاوَنُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَعَاوَن"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَعَاوَن"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَعَاوَنِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَعَاوَنُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَعَاوَن"}}}},
+{root:"ا ن ت ب ه",topic:"paying attention (VIII)",level:"hard",
+derivatives:[{word:"اِنْتِبَاه",meaning:"attention / alertness"},{word:"مُنْتَبِه",meaning:"attentive / alert"},{word:"الانتباه",meaning:"paying attention (verbal noun)"},{word:"أَنْتَبِه",meaning:"I pay attention"},{word:"انتبه!",meaning:"watch out! (Gulf imp.)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"انتبه"},"هي (She)":{ar:"هِيَ",form:"انتبهت"},"هم (Them)":{ar:"هُمْ",form:"انتبهوا"},"أنا (I)":{ar:"أَنَا",form:"انتبهت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"انتبهت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"انتبهتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"انتبهتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"انتبهنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنْتَبِه"},"هي (She)":{ar:"هِيَ",form:"تِنْتَبِه"},"هم (Them)":{ar:"هُمْ",form:"يِنْتَبِهُون"},"أنا (I)":{ar:"أَنَا",form:"أَنْتَبِه"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنْتَبِه"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنْتَبِهِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنْتَبِهُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنْتَبِه"}}}},
+{root:"ا ب ت ك ر",topic:"innovating (VIII)",level:"hard",
+derivatives:[{word:"اِبْتِكَار",meaning:"innovation"},{word:"مُبْتَكَر",meaning:"innovative / invented"},{word:"مُبْتَكِر",meaning:"innovator"},{word:"الابتكار",meaning:"innovation (Gulf formal)"},{word:"ابتكارات",meaning:"innovations"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"ابتكر"},"هي (She)":{ar:"هِيَ",form:"ابتكرت"},"هم (Them)":{ar:"هُمْ",form:"ابتكروا"},"أنا (I)":{ar:"أَنَا",form:"ابتكرت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"ابتكرت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"ابتكرتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"ابتكرتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"ابتكرنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِبْتَكِر"},"هي (She)":{ar:"هِيَ",form:"تِبْتَكِر"},"هم (Them)":{ar:"هُمْ",form:"يِبْتَكِرُون"},"أنا (I)":{ar:"أَنَا",form:"أَبْتَكِر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِبْتَكِر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِبْتَكِرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِبْتَكِرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِبْتَكِر"}}}},
+{root:"ا ح ت ا ج",topic:"needing (VIII)",level:"hard",
+derivatives:[{word:"اِحْتِيَاج",meaning:"need / requirement"},{word:"مُحْتَاج",meaning:"in need / needy"},{word:"احتياجات",meaning:"needs (Gulf official)"},{word:"أَحْتَاج",meaning:"I need"},{word:"ضَرُورَة",meaning:"necessity"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"احتاج"},"هي (She)":{ar:"هِيَ",form:"احتاجت"},"هم (Them)":{ar:"هُمْ",form:"احتاجوا"},"أنا (I)":{ar:"أَنَا",form:"احتجت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"احتجت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"احتجتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"احتجتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"احتجنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِحْتَاج"},"هي (She)":{ar:"هِيَ",form:"تِحْتَاج"},"هم (Them)":{ar:"هُمْ",form:"يِحْتَاجُون"},"أنا (I)":{ar:"أَنَا",form:"أَحْتَاج"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِحْتَاج"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِحْتَاجِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِحْتَاجُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِحْتَاج"}}}},
+{root:"ت و ا ص ل",topic:"communicating (VI)",level:"hard",
+derivatives:[{word:"تَوَاصُل",meaning:"communication / staying in touch"},{word:"مُتَوَاصِل",meaning:"continuous / in contact"},{word:"وسائل التواصل",meaning:"social media"},{word:"تَوَاصَلْنَا",meaning:"we stayed in touch"},{word:"إشعار",meaning:"notification (Gulf tech)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَوَاصَل"},"هي (She)":{ar:"هِيَ",form:"تَوَاصَلَت"},"هم (Them)":{ar:"هُمْ",form:"تَوَاصَلُوا"},"أنا (I)":{ar:"أَنَا",form:"تَوَاصَلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَوَاصَلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَوَاصَلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَوَاصَلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَوَاصَلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَوَاصَل"},"هي (She)":{ar:"هِيَ",form:"تِتَوَاصَل"},"هم (Them)":{ar:"هُمْ",form:"يِتَوَاصَلُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَوَاصَل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَوَاصَل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَوَاصَلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَوَاصَلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَوَاصَل"}}}},
+{root:"ت ذ ك ر",topic:"recalling (V)",level:"hard",
+derivatives:[{word:"تَذَكُّر",meaning:"recalling / remembering"},{word:"مُتَذَكِّر",meaning:"one who remembers"},{word:"تَذْكِرَة",meaning:"ticket / reminder"},{word:"أَتَذَكَّر",meaning:"I recall"},{word:"لا أتذكر",meaning:"I don't remember (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَذَكَّر"},"هي (She)":{ar:"هِيَ",form:"تَذَكَّرَت"},"هم (Them)":{ar:"هُمْ",form:"تَذَكَّرُوا"},"أنا (I)":{ar:"أَنَا",form:"تَذَكَّرْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَذَكَّرْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَذَكَّرْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَذَكَّرْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَذَكَّرْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَذَكَّر"},"هي (She)":{ar:"هِيَ",form:"تِتَذَكَّر"},"هم (Them)":{ar:"هُمْ",form:"يِتَذَكَّرُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَذَكَّر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَذَكَّر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَذَكَّرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَذَكَّرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَذَكَّر"}}}},
+{root:"ا س ت ق ب ل",topic:"welcoming (X)",level:"hard",
+derivatives:[{word:"اِسْتِقْبَال",meaning:"reception / welcoming"},{word:"مُسْتَقْبِل",meaning:"one who welcomes"},{word:"أَسْتَقْبِل",meaning:"I receive / I greet (Gulf)"},{word:"قاعة الاستقبال",meaning:"reception hall"},{word:"استقبلوا",meaning:"they received / welcomed"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"استقبل"},"هي (She)":{ar:"هِيَ",form:"استقبلت"},"هم (Them)":{ar:"هُمْ",form:"استقبلوا"},"أنا (I)":{ar:"أَنَا",form:"استقبلت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"استقبلت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"استقبلتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"استقبلتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"استقبلنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسْتَقْبِل"},"هي (She)":{ar:"هِيَ",form:"تِسْتَقْبِل"},"هم (Them)":{ar:"هُمْ",form:"يِسْتَقْبِلُون"},"أنا (I)":{ar:"أَنَا",form:"أَسْتَقْبِل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسْتَقْبِل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسْتَقْبِلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسْتَقْبِلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسْتَقْبِل"}}}},
+{root:"ت ج ن ب",topic:"avoiding (V)",level:"hard",
+derivatives:[{word:"تَجَنُّب",meaning:"avoidance"},{word:"مُتَجَنَّب",meaning:"avoided"},{word:"تَجَنَّبْ",meaning:"avoid! (imperative)"},{word:"أَتَجَنَّب",meaning:"I avoid"},{word:"تجنب الأخطاء",meaning:"avoiding mistakes"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَجَنَّب"},"هي (She)":{ar:"هِيَ",form:"تَجَنَّبَت"},"هم (Them)":{ar:"هُمْ",form:"تَجَنَّبُوا"},"أنا (I)":{ar:"أَنَا",form:"تَجَنَّبْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَجَنَّبْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَجَنَّبْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَجَنَّبْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَجَنَّبْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَجَنَّب"},"هي (She)":{ar:"هِيَ",form:"تِتَجَنَّب"},"هم (Them)":{ar:"هُمْ",form:"يِتَجَنَّبُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَجَنَّب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَجَنَّب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَجَنَّبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَجَنَّبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَجَنَّب"}}}},
+{root:"ا ع ت ذ ر",topic:"apologizing (VIII)",level:"hard",
+derivatives:[{word:"اِعْتِذَار",meaning:"apology"},{word:"مُعْتَذِر",meaning:"one who apologizes"},{word:"أَعْتَذِر",meaning:"I apologize"},{word:"إِزْعَاج",meaning:"disturbance / I disturbed you (Gulf)"},{word:"اعذرني",meaning:"excuse me (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اعتذر"},"هي (She)":{ar:"هِيَ",form:"اعتذرت"},"هم (Them)":{ar:"هُمْ",form:"اعتذروا"},"أنا (I)":{ar:"أَنَا",form:"اعتذرت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اعتذرت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اعتذرتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اعتذرتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اعتذرنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِعْتَذِر"},"هي (She)":{ar:"هِيَ",form:"تِعْتَذِر"},"هم (Them)":{ar:"هُمْ",form:"يِعْتَذِرُون"},"أنا (I)":{ar:"أَنَا",form:"أَعْتَذِر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِعْتَذِر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِعْتَذِرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِعْتَذِرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِعْتَذِر"}}}},
+{root:"ت ط و ر",topic:"developing (V)",level:"hard",
+derivatives:[{word:"تَطَوُّر",meaning:"development / evolution"},{word:"مُتَطَوِّر",meaning:"advanced / developed"},{word:"تَطْوِير",meaning:"upgrading / development"},{word:"التنمية",meaning:"development (Gulf formal)"},{word:"تَطَوَّر",meaning:"he evolved / progressed"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَطَوَّر"},"هي (She)":{ar:"هِيَ",form:"تَطَوَّرَت"},"هم (Them)":{ar:"هُمْ",form:"تَطَوَّرُوا"},"أنا (I)":{ar:"أَنَا",form:"تَطَوَّرْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَطَوَّرْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَطَوَّرْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَطَوَّرْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَطَوَّرْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَطَوَّر"},"هي (She)":{ar:"هِيَ",form:"تِتَطَوَّر"},"هم (Them)":{ar:"هُمْ",form:"يِتَطَوَّرُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَطَوَّر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَطَوَّر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَطَوَّرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَطَوَّرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَطَوَّر"}}}},
+{root:"ا س ت ع م ل",topic:"using (X)",level:"hard",
+derivatives:[{word:"اِسْتِعْمَال",meaning:"use / usage"},{word:"مُسْتَعْمَل",meaning:"used / second-hand"},{word:"أَسْتَعْمِل",meaning:"I use"},{word:"نَسْتَعْمِل",meaning:"we use (Gulf)"},{word:"الاستعمالات",meaning:"uses / applications"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"استعمل"},"هي (She)":{ar:"هِيَ",form:"استعملت"},"هم (Them)":{ar:"هُمْ",form:"استعملوا"},"أنا (I)":{ar:"أَنَا",form:"استعملت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"استعملت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"استعملتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"استعملتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"استعملنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسْتَعْمِل"},"هي (She)":{ar:"هِيَ",form:"تِسْتَعْمِل"},"هم (Them)":{ar:"هُمْ",form:"يِسْتَعْمِلُون"},"أنا (I)":{ar:"أَنَا",form:"أَسْتَعْمِل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسْتَعْمِل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسْتَعْمِلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسْتَعْمِلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسْتَعْمِل"}}}},
+{root:"ا ع ت ر ف",topic:"confessing (VIII)",level:"hard",
+derivatives:[{word:"اِعْتِرَاف",meaning:"confession / acknowledgment"},{word:"مُعْتَرِف",meaning:"one who confesses"},{word:"أَعْتَرِف",meaning:"I confess / I admit"},{word:"اعتراض",meaning:"objection"},{word:"لا أعترف",meaning:"I don't admit"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اعترف"},"هي (She)":{ar:"هِيَ",form:"اعترفت"},"هم (Them)":{ar:"هُمْ",form:"اعترفوا"},"أنا (I)":{ar:"أَنَا",form:"اعترفت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اعترفت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اعترفتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اعترفتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اعترفنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِعْتَرِف"},"هي (She)":{ar:"هِيَ",form:"تِعْتَرِف"},"هم (Them)":{ar:"هُمْ",form:"يِعْتَرِفُون"},"أنا (I)":{ar:"أَنَا",form:"أَعْتَرِف"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِعْتَرِف"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِعْتَرِفِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِعْتَرِفُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِعْتَرِف"}}}},
+{root:"ت خ ص ص",topic:"specializing (V)",level:"hard",
+derivatives:[{word:"تَخَصُّص",meaning:"specialization / major"},{word:"مُتَخَصِّص",meaning:"specialist"},{word:"تَخْصِيص",meaning:"allocation / dedication"},{word:"أَكَادِيمِيّ",meaning:"academic (Gulf)"},{word:"تَخَصَّص",meaning:"he specialized"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَخَصَّص"},"هي (She)":{ar:"هِيَ",form:"تَخَصَّصَت"},"هم (Them)":{ar:"هُمْ",form:"تَخَصَّصُوا"},"أنا (I)":{ar:"أَنَا",form:"تَخَصَّصْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَخَصَّصْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَخَصَّصْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَخَصَّصْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَخَصَّصْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَخَصَّص"},"هي (She)":{ar:"هِيَ",form:"تِتَخَصَّص"},"هم (Them)":{ar:"هُمْ",form:"يِتَخَصَّصُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَخَصَّص"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَخَصَّص"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَخَصَّصِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَخَصَّصُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَخَصَّص"}}}},
+{root:"ا ن ت ق ل",topic:"relocating (VIII)",level:"hard",
+derivatives:[{word:"اِنْتِقَال",meaning:"relocation / transfer"},{word:"مُنْتَقِل",meaning:"relocated / migrant"},{word:"أَنْتَقِل",meaning:"I move / I transfer"},{word:"انتقال",meaning:"transition / move"},{word:"نقل",meaning:"transfer / transportation"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"انتقل"},"هي (She)":{ar:"هِيَ",form:"انتقلت"},"هم (Them)":{ar:"هُمْ",form:"انتقلوا"},"أنا (I)":{ar:"أَنَا",form:"انتقلت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"انتقلت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"انتقلتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"انتقلتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"انتقلنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنْتَقِل"},"هي (She)":{ar:"هِيَ",form:"تِنْتَقِل"},"هم (Them)":{ar:"هُمْ",form:"يِنْتَقِلُون"},"أنا (I)":{ar:"أَنَا",form:"أَنْتَقِل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنْتَقِل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنْتَقِلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنْتَقِلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنْتَقِل"}}}},
+{root:"ا س ت ف س ر",topic:"inquiring (X)",level:"hard",
+derivatives:[{word:"اِسْتِفْسَار",meaning:"inquiry / request for info"},{word:"مُسْتَفْسِر",meaning:"inquirer"},{word:"أَسْتَفْسِر",meaning:"I inquire"},{word:"استفسارات",meaning:"inquiries (Gulf official)"},{word:"بخصوص الاستفسار",meaning:"regarding the inquiry"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"استفسر"},"هي (She)":{ar:"هِيَ",form:"استفسرت"},"هم (Them)":{ar:"هُمْ",form:"استفسروا"},"أنا (I)":{ar:"أَنَا",form:"استفسرت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"استفسرت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"استفسرتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"استفسرتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"استفسرنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسْتَفْسِر"},"هي (She)":{ar:"هِيَ",form:"تِسْتَفْسِر"},"هم (Them)":{ar:"هُمْ",form:"يِسْتَفْسِرُون"},"أنا (I)":{ar:"أَنَا",form:"أَسْتَفْسِر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسْتَفْسِر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسْتَفْسِرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسْتَفْسِرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسْتَفْسِر"}}}},
+{root:"ت ب ر ع",topic:"donating (V)",level:"hard",
+derivatives:[{word:"تَبَرُّع",meaning:"donation / volunteering"},{word:"مُتَبَرِّع",meaning:"donor / volunteer"},{word:"التبرعات",meaning:"donations (Gulf charity)"},{word:"أَتَبَرَّع",meaning:"I donate"},{word:"تَبَرَّعَ",meaning:"he donated"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَبَرَّع"},"هي (She)":{ar:"هِيَ",form:"تَبَرَّعَت"},"هم (Them)":{ar:"هُمْ",form:"تَبَرَّعُوا"},"أنا (I)":{ar:"أَنَا",form:"تَبَرَّعْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَبَرَّعْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَبَرَّعْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَبَرَّعْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَبَرَّعْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَبَرَّع"},"هي (She)":{ar:"هِيَ",form:"تِتَبَرَّع"},"هم (Them)":{ar:"هُمْ",form:"يِتَبَرَّعُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَبَرَّع"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَبَرَّع"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَبَرَّعِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَبَرَّعُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَبَرَّع"}}}},
+{root:"ا ج ت م ع",topic:"meeting (VIII)",level:"hard",
+derivatives:[{word:"اِجْتِمَاع",meaning:"meeting / gathering"},{word:"مُجْتَمَع",meaning:"society / community"},{word:"اِجْتِمَاعِيّ",meaning:"social"},{word:"مُجْتَمِعِين",meaning:"gathered / assembled"},{word:"اجتماعات",meaning:"meetings (Gulf work)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اجتمع"},"هي (She)":{ar:"هِيَ",form:"اجتمعت"},"هم (Them)":{ar:"هُمْ",form:"اجتمعوا"},"أنا (I)":{ar:"أَنَا",form:"اجتمعت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اجتمعت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اجتمعتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اجتمعتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اجتمعنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِجْتَمِع"},"هي (She)":{ar:"هِيَ",form:"تِجْتَمِع"},"هم (Them)":{ar:"هُمْ",form:"يِجْتَمِعُون"},"أنا (I)":{ar:"أَنَا",form:"أَجْتَمِع"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِجْتَمِع"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِجْتَمِعِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِجْتَمِعُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِجْتَمِع"}}}},
+{root:"ت ح م ل",topic:"tolerating (V)",level:"hard",
+derivatives:[{word:"تَحَمُّل",meaning:"tolerance / endurance"},{word:"مُتَحَمِّل",meaning:"patient / tolerant"},{word:"التسامح",meaning:"tolerance / forgiveness"},{word:"أَتَحَمَّل",meaning:"I tolerate / I endure"},{word:"لا يتحمل",meaning:"intolerable / can't bear it"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَحَمَّل"},"هي (She)":{ar:"هِيَ",form:"تَحَمَّلَت"},"هم (Them)":{ar:"هُمْ",form:"تَحَمَّلُوا"},"أنا (I)":{ar:"أَنَا",form:"تَحَمَّلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَحَمَّلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَحَمَّلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَحَمَّلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَحَمَّلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَحَمَّل"},"هي (She)":{ar:"هِيَ",form:"تِتَحَمَّل"},"هم (Them)":{ar:"هُمْ",form:"يِتَحَمَّلُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَحَمَّل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَحَمَّل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَحَمَّلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَحَمَّلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَحَمَّل"}}}},
+{root:"ت ق د م",topic:"progressing (V)",level:"hard",
+derivatives:[{word:"تَقَدُّم",meaning:"progress / advancement"},{word:"مُتَقَدِّم",meaning:"applicant / advanced"},{word:"تَقَدَّم",meaning:"he advanced / applied"},{word:"أَوْلَوِيَّاتُنَا",meaning:"our priorities (Gulf)"},{word:"الأداء",meaning:"performance (Gulf formal)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَقَدَّم"},"هي (She)":{ar:"هِيَ",form:"تَقَدَّمَت"},"هم (Them)":{ar:"هُمْ",form:"تَقَدَّمُوا"},"أنا (I)":{ar:"أَنَا",form:"تَقَدَّمْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَقَدَّمْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَقَدَّمْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَقَدَّمْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَقَدَّمْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَقَدَّم"},"هي (She)":{ar:"هِيَ",form:"تِتَقَدَّم"},"هم (Them)":{ar:"هُمْ",form:"يِتَقَدَّمُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَقَدَّم"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَقَدَّم"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَقَدَّمِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَقَدَّمُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَقَدَّم"}}}},
+{root:"ا ط ل ع",topic:"checking / viewing (IV)",level:"hard",
+derivatives:[{word:"اِطِّلَاع",meaning:"viewing / being informed"},{word:"مُطَّلِع",meaning:"informed / well-read"},{word:"أَطَّلِع",meaning:"I check / I view"},{word:"أُطالع",meaning:"I look at / browse (Gulf)"},{word:"اطلاع",meaning:"awareness / briefing"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اطّلع"},"هي (She)":{ar:"هِيَ",form:"اطلعت"},"هم (Them)":{ar:"هُمْ",form:"اطلعوا"},"أنا (I)":{ar:"أَنَا",form:"اطلعت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اطلعت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اطلعتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اطلعتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اطلعنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِطَّلِع"},"هي (She)":{ar:"هِيَ",form:"تِطَّلِع"},"هم (Them)":{ar:"هُمْ",form:"يِطَّلِعُون"},"أنا (I)":{ar:"أَنَا",form:"أَطَّلِع"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِطَّلِع"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِطَّلِعِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِطَّلِعُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِطَّلِع"}}}},
+{root:"ت د ر ب",topic:"training (V)",level:"hard",
+derivatives:[{word:"تَدْرِيب",meaning:"training / internship"},{word:"مُتَدَرِّب",meaning:"trainee"},{word:"مُدَرِّب",meaning:"trainer / coach"},{word:"حصص تدريبية",meaning:"training sessions (Gulf)"},{word:"تَدَرَّب",meaning:"he trained"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَدَرَّب"},"هي (She)":{ar:"هِيَ",form:"تَدَرَّبَت"},"هم (Them)":{ar:"هُمْ",form:"تَدَرَّبُوا"},"أنا (I)":{ar:"أَنَا",form:"تَدَرَّبْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَدَرَّبْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَدَرَّبْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَدَرَّبْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَدَرَّبْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَدَرَّب"},"هي (She)":{ar:"هِيَ",form:"تِتَدَرَّب"},"هم (Them)":{ar:"هُمْ",form:"يِتَدَرَّبُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَدَرَّب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَدَرَّب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَدَرَّبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَدَرَّبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَدَرَّب"}}}},
+{root:"ا ع ت م د",topic:"relying on (VIII)",level:"hard",
+derivatives:[{word:"اِعْتِمَاد",meaning:"reliance / accreditation"},{word:"مُعْتَمَد",meaning:"approved / accredited"},{word:"أَعْتَمِد",meaning:"I rely on / I depend"},{word:"اعتماد",meaning:"budget approval (Gulf official)"},{word:"معتمد",meaning:"authorized / certified"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"اعتمد"},"هي (She)":{ar:"هِيَ",form:"اعتمدت"},"هم (Them)":{ar:"هُمْ",form:"اعتمدوا"},"أنا (I)":{ar:"أَنَا",form:"اعتمدت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"اعتمدت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"اعتمدتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"اعتمدتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"اعتمدنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِعْتَمِد"},"هي (She)":{ar:"هِيَ",form:"تِعْتَمِد"},"هم (Them)":{ar:"هُمْ",form:"يِعْتَمِدُون"},"أنا (I)":{ar:"أَنَا",form:"أَعْتَمِد"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِعْتَمِد"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِعْتَمِدِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِعْتَمِدُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِعْتَمِد"}}}},
+{root:"ت خ ي م",topic:"camping (V)",level:"hard",
+derivatives:[{word:"تَخْيِيم",meaning:"camping (verbal noun)"},{word:"مُخَيَّم",meaning:"camp / refugee camp"},{word:"تَخَيَّم",meaning:"they camped"},{word:"الخيام",meaning:"tents (Gulf camping)"},{word:"أَتَخَيَّم",meaning:"I go camping"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"تَخَيَّم"},"هي (She)":{ar:"هِيَ",form:"تَخَيَّمَت"},"هم (Them)":{ar:"هُمْ",form:"تَخَيَّمُوا"},"أنا (I)":{ar:"أَنَا",form:"تَخَيَّمْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تَخَيَّمْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تَخَيَّمْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تَخَيَّمْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"تَخَيَّمْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِتَخَيَّم"},"هي (She)":{ar:"هِيَ",form:"تِتَخَيَّم"},"هم (Them)":{ar:"هُمْ",form:"يِتَخَيَّمُون"},"أنا (I)":{ar:"أَنَا",form:"أَتَخَيَّم"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِتَخَيَّم"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِتَخَيَّمِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِتَخَيَّمُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِتَخَيَّم"}}}},
+{root:"ا ن ق ل ب",topic:"flipping / overthrowing (VII)",level:"hard",
+derivatives:[{word:"اِنْقِلَاب",meaning:"coup / overturning"},{word:"مُنْقَلِب",meaning:"overturned / overthrown"},{word:"أَنْقَلِب",meaning:"I overturn / flip over"},{word:"انقلاب",meaning:"a flip / reversal"},{word:"تَقَلُّبَات",meaning:"fluctuations / mood swings"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"انقلب"},"هي (She)":{ar:"هِيَ",form:"انقلبت"},"هم (Them)":{ar:"هُمْ",form:"انقلبوا"},"أنا (I)":{ar:"أَنَا",form:"انقلبت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"انقلبت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"انقلبتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"انقلبتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"انقلبنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنْقَلِب"},"هي (She)":{ar:"هِيَ",form:"تِنْقَلِب"},"هم (Them)":{ar:"هُمْ",form:"يِنْقَلِبُون"},"أنا (I)":{ar:"أَنَا",form:"أَنْقَلِب"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنْقَلِب"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنْقَلِبِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنْقَلِبُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنْقَلِب"}}}},
+{root:"ا س ت ث م ر",topic:"investing (X)",level:"hard",
+derivatives:[{word:"اِسْتِثْمَار",meaning:"investment"},{word:"مُسْتَثْمِر",meaning:"investor"},{word:"أَسْتَثْمِر",meaning:"I invest"},{word:"استثمارات",meaning:"investments (Gulf economic)"},{word:"عائد الاستثمار",meaning:"return on investment"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"استثمر"},"هي (She)":{ar:"هِيَ",form:"استثمرت"},"هم (Them)":{ar:"هُمْ",form:"استثمروا"},"أنا (I)":{ar:"أَنَا",form:"استثمرت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"استثمرت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"استثمرتي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"استثمرتوا"},"نحن (Us)":{ar:"نَحْنُ",form:"استثمرنا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِسْتَثْمِر"},"هي (She)":{ar:"هِيَ",form:"تِسْتَثْمِر"},"هم (Them)":{ar:"هُمْ",form:"يِسْتَثْمِرُون"},"أنا (I)":{ar:"أَنَا",form:"أَسْتَثْمِر"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِسْتَثْمِر"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِسْتَثْمِرِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِسْتَثْمِرُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِسْتَثْمِر"}}}}
+
+,{root:"ن ق ل",topic:"moving / transferring",level:"easy",
+derivatives:[{word:"نَقْل",meaning:"transfer / transport"},{word:"مَنْقُول",meaning:"transported / transferred"},{word:"نَاقِل",meaning:"carrier / transmitter"},{word:"وَسَائِل النَّقْل",meaning:"means of transport"},{word:"أَنْقُل",meaning:"I move / I transfer (Gulf)"}],
+conjugation:{past:{"هو (He)":{ar:"هُوَ",form:"نَقَل"},"هي (She)":{ar:"هِيَ",form:"نَقَلَت"},"هم (Them)":{ar:"هُمْ",form:"نَقَلُوا"},"أنا (I)":{ar:"أَنَا",form:"نَقَلْت"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"نَقَلْت"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"نَقَلْتِي"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"نَقَلْتُوا"},"نحن (Us)":{ar:"نَحْنُ",form:"نَقَلْنَا"}},
+present:{"هو (He)":{ar:"هُوَ",form:"يِنْقُل"},"هي (She)":{ar:"هِيَ",form:"تِنْقُل"},"هم (Them)":{ar:"هُمْ",form:"يِنْقُلُون"},"أنا (I)":{ar:"أَنَا",form:"أَنْقُل"},"أنتَ (You m.)":{ar:"أَنْتَ",form:"تِنْقُل"},"أنتِ (You f.)":{ar:"أَنْتِ",form:"تِنْقُلِين"},"أنتم (You pl.)":{ar:"أَنْتُم",form:"تِنْقُلُون"},"نحن (Us)":{ar:"نَحْنُ",form:"نِنْقُل"}}}}
+
+]; // end rootsData
+
+// ══════════════════════════════════════════════════════════
+//  GLOBALS
+// ══════════════════════════════════════════════════════════
+let currentRoot=null,quizQueue=[],wrongWords=[],quizIndex=0;
+let quizScore={correct:0,total:0},quizCurrent=null,quizLocked=false;
+let isReviewMode=false,totalCorrect=0,masteredRoots=new Set(),currentLevel='all';
+
+// ══════════════════════════════════════════════════════════
+//  TTS
+// ══════════════════════════════════════════════════════════
+let ttsReady=false;
+function initTTS(){
+  if(!window.speechSynthesis)return;
+  const load=()=>{if(window.speechSynthesis.getVoices().length>0)ttsReady=true;};
+  load(); window.speechSynthesis.onvoiceschanged=load;
+}
+function speakWord(text){
+  if(!window.speechSynthesis){toast('TTS not available');return;}
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='ar-SA'; u.rate=0.72; u.pitch=1.0; u.volume=1.0;
+  const voices=window.speechSynthesis.getVoices();
+  const v=voices.find(v=>v.lang==='ar-SA')||voices.find(v=>v.lang.startsWith('ar'));
+  if(v)u.voice=v;
+  window.speechSynthesis.speak(u);
+}
+function speakQuizWord(){if(quizCurrent)speakWord(quizCurrent.word);}
+
+// ══════════════════════════════════════════════════════════
+//  ROOT GRID
+// ══════════════════════════════════════════════════════════
+const levelColors={easy:'#3AA98E',intermediate:'#C8973A',hard:'#C04A3A'};
+const levelLabels={easy:'⬤ Easy',intermediate:'⬤ Intermediate',hard:'⬤ Hard'};
+
+function buildRootGrid(){
+  const grid=document.getElementById('rootGrid');
+  grid.innerHTML='';
+  let filtered=rootsData;
+  if(currentLevel!=='all')filtered=rootsData.filter(r=>r.level===currentLevel);
+  const q=document.getElementById('searchBox').value.toLowerCase();
+  if(q)filtered=filtered.filter(r=>r.root.includes(q)||r.topic.toLowerCase().includes(q));
+  if(!filtered.length){
+    grid.innerHTML='<div style="color:var(--text-dim);font-size:12px;padding:20px;grid-column:1/-1;text-align:center">No roots found</div>';
+    return;
+  }
+  filtered.forEach(root=>{
+    const btn=document.createElement('button');
+    const mastered=masteredRoots.has(root.root);
+    btn.className='root-btn'+(mastered?' mastered':'');
+    btn.innerHTML=`<div class="root-letters">${root.root}</div>
+      <div class="root-topic">${root.topic}</div>
+      <div class="root-stars" style="color:${levelColors[root.level]}">${mastered?'★★★':levelLabels[root.level]}</div>`;
+    btn.onclick=()=>openRoot(root);
+    grid.appendChild(btn);
+  });
+}
+function filterRoots(){buildRootGrid();}
+function filterLevel(level,btn){
+  currentLevel=level;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildRootGrid();
+}
+
+// ══════════════════════════════════════════════════════════
+//  OPEN ROOT
+// ══════════════════════════════════════════════════════════
+function openRoot(root){
+  currentRoot=root; quizScore={correct:0,total:0}; wrongWords=[]; quizIndex=0; isReviewMode=false;
+  document.getElementById('rootScreen').style.display='none';
+  document.getElementById('derivativeScreen').style.display='block';
+  document.getElementById('roundOverlay').classList.remove('show');
+  document.getElementById('reviewBadge').style.display='none';
+  document.getElementById('heroLetters').textContent=root.root;
+  document.getElementById('heroTopic').textContent=root.topic.toUpperCase();
+  document.getElementById('heroLevel').textContent=root.level.toUpperCase();
+  buildDerivativesList(root);
+  buildConjTable(root);
+  quizQueue=shuffle([...root.derivatives,...root.derivatives]);
+  nextQuizQuestion();
+  setTimeout(()=>speakWord(root.derivatives[0].word),700);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildDerivativesList(root){
+  const list=document.getElementById('derivativesList');
+  list.innerHTML='';
+  root.derivatives.forEach(d=>{
+    const row=document.createElement('div');
+    row.className='deriv-row';
+    row.innerHTML=`<div class="deriv-arabic">${d.word}</div>
+      <div class="deriv-arrow">→</div>
+      <div class="deriv-meaning">${d.meaning}</div>
+      <button class="speak-btn" onclick="speakWord('${d.word.replace(/'/g,"\\'")}')">🔊</button>`;
+    list.appendChild(row);
+  });
+}
+
+function buildConjTable(root){
+  const table=document.getElementById('conjTable');
+  const conj=root.conjugation;
+  const pronouns=Object.keys(conj.past);
+  let html=`<thead><tr>
+    <th class="col-pronoun">Pronoun</th>
+    <th>Past (ماضي)</th>
+    <th>Present (مضارع)</th>
+    <th>Future (مستقبل)</th>
+  </tr></thead><tbody>`;
+  pronouns.forEach(pro=>{
+    const past=conj.past[pro];
+    const present=conj.present[pro];
+    const future='رَاح '+present.form;
+    html+=`<tr>
+      <td class="td-pronoun"><span class="ar-pro">${past.ar}</span>${pro.replace(/\(.*?\)/,'').trim()}</td>
+      <td class="td-past" onclick="speakWord('${past.form}')" title="Tap to hear">${past.form}</td>
+      <td class="td-present" onclick="speakWord('${present.form}')" title="Tap to hear">${present.form}</td>
+      <td class="td-future" onclick="speakWord('${future}')" title="Tap to hear">${future}</td>
+    </tr>`;
+  });
+  html+='</tbody>';
+  table.innerHTML=html;
+}
+
+function toggleConj(){
+  const body=document.getElementById('conjBody');
+  const btn=document.querySelector('.conj-toggle');
+  if(body.style.display==='none'){body.style.display='block';btn.textContent='Hide';}
+  else{body.style.display='none';btn.textContent='Show';}
+}
+
+// ══════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════
+function nextQuizQuestion(){
+  document.getElementById('roundOverlay').classList.remove('show');
+  document.getElementById('feedbackBanner').className='feedback-banner';
+  if(quizIndex>=quizQueue.length){
+    if(wrongWords.length>0&&!isReviewMode){
+      quizQueue=shuffle([...wrongWords]); wrongWords=[]; quizIndex=0; isReviewMode=true;
+      document.getElementById('reviewBadge').style.display='inline-block';
+    }else{showRoundComplete();return;}
+  }
+  quizLocked=false; quizCurrent=quizQueue[quizIndex];
+  updateProgress();
+  document.getElementById('quizScoreLabel').textContent=`Score: ${quizScore.correct} / ${quizScore.total}`;
+  document.getElementById('quizWord').textContent=quizCurrent.word;
+  generateChoices();
+  setTimeout(()=>speakWord(quizCurrent.word),500);
+}
+
+function generateChoices(){
+  const grid=document.getElementById('choicesGrid');
+  grid.innerHTML='';
+  const pool=currentRoot.derivatives.filter(d=>d.meaning!==quizCurrent.meaning);
+  let opts=shuffle(pool).slice(0,3);
+  opts.push(quizCurrent);
+  opts=shuffle(opts);
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.textContent=opt.meaning;
+    btn.onclick=()=>handleChoice(opt,btn);
+    grid.appendChild(btn);
+  });
+}
+
+function handleChoice(opt,btn){
+  if(quizLocked)return;
+  quizLocked=true; quizScore.total++;
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedbackBanner');
+  if(opt.meaning===quizCurrent.meaning){
+    btn.classList.add('correct'); quizScore.correct++; totalCorrect++;
+    document.getElementById('totalCorrect').textContent=totalCorrect;
+    fb.className='feedback-banner correct-fb show';
+    fb.innerHTML=`✓ Correct! &nbsp;<strong>${quizCurrent.word}</strong>&nbsp; = ${quizCurrent.meaning}`;
+  }else{
+    btn.classList.add('wrong');
+    document.querySelectorAll('.choice-btn').forEach(b=>{if(b.textContent===quizCurrent.meaning)b.classList.add('correct');});
+    wrongWords.push(quizCurrent);
+    fb.className='feedback-banner wrong-fb show';
+    fb.innerHTML=`✗ That was &nbsp;<strong>${quizCurrent.word}</strong>&nbsp; = ${quizCurrent.meaning}`;
+    setTimeout(()=>speakWord(quizCurrent.word),250);
+  }
+  document.getElementById('quizScoreLabel').textContent=`Score: ${quizScore.correct} / ${quizScore.total}`;
+  quizIndex++;
+  setTimeout(nextQuizQuestion,1200);
+}
+
+function updateProgress(){
+  const pct=Math.round((quizIndex/quizQueue.length)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressFrac').textContent=`${quizIndex} / ${quizQueue.length}`;
+}
+
+function showRoundComplete(){
+  const pct=quizScore.total>0?Math.round((quizScore.correct/quizScore.total)*100):0;
+  const emoji=pct>=90?'🏆':pct>=70?'⭐':pct>=50?'💪':'📚';
+  const msg=pct>=90?`Outstanding! You mastered <strong style="color:var(--gold)">${currentRoot.root}</strong>!`
+    :pct>=70?`Great work on <strong style="color:var(--gold)">${currentRoot.root}</strong>! Keep building!`
+    :pct>=50?`Good effort — review the conjugation table and try again!`
+    :`Keep going — every attempt strengthens your memory!`;
+  document.getElementById('roundEmoji').textContent=emoji;
+  document.getElementById('roundMsg').innerHTML=`You scored <strong style="color:var(--gold)">${quizScore.correct} / ${quizScore.total}</strong> (${pct}%)<br><br>${msg}`;
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('roundOverlay').classList.add('show');
+  if(pct>=80){masteredRoots.add(currentRoot.root);document.getElementById('totalRoots').textContent=masteredRoots.size;}
+}
+
+function restartQuiz(){
+  quizScore={correct:0,total:0}; wrongWords=[]; quizIndex=0; isReviewMode=false;
+  document.getElementById('reviewBadge').style.display='none';
+  document.getElementById('roundOverlay').classList.remove('show');
+  quizQueue=shuffle([...currentRoot.derivatives,...currentRoot.derivatives]);
+  nextQuizQuestion();
+}
+
+function goBack(){
+  document.getElementById('derivativeScreen').style.display='none';
+  document.getElementById('rootScreen').style.display='block';
+  buildRootGrid();
+}
+
+// ══════════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════════
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+let toastTimer;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+// INIT
+initTTS();
+buildRootGrid();
+</script>
+</body>
+</html>
