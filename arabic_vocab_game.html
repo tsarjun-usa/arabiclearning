@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arabic Daily Vocab · لُعْبَة المُفْرَدَات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0E0D0B; --surface:#18170E; --card:#201F14; --border:#2E2C1A;
+  --gold:#C8973A; --gold-l:#E8B84B; --gold-d:#8A6320;
+  --teal:#2A7B6A; --teal-l:#3AA98E;
+  --sand:#E2CDA0; --sand-d:#9E8B72;
+  --text:#EDE0C4; --text-d:#7A6E58;
+  --green:#3A8A5A; --green-l:#4DB870;
+  --red:#C04A3A; --red-l:#E05040;
+  --blue:#2A5F8A; --blue-l:#3A80BE;
+  --r:10px; --r2:16px; --r3:24px;
+  --font-ar:'Noto Naskh Arabic',serif;
+  --font-ui:'IBM Plex Sans',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui)}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(200,151,58,.07) 0%,transparent 70%),
+             radial-gradient(ellipse 60% 40% at 80% 80%,rgba(42,123,106,.05) 0%,transparent 60%);
+  pointer-events:none;z-index:0}
+
+/* ── SCREENS ── */
+.screen{position:relative;z-index:1;display:none;min-height:100vh;padding:20px 16px 60px;
+  flex-direction:column;align-items:center}
+.screen.active{display:flex}
+.wrap{width:100%;max-width:680px}
+
+/* ── COMMON COMPONENTS ── */
+.page-header{display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:24px;gap:12px}
+.logo-ar{font-family:var(--font-ar);font-size:22px;font-weight:700;color:var(--gold);direction:rtl}
+.logo-sub{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-d);margin-top:2px}
+.back-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:8px 14px;font-family:var(--font-ui);font-size:12px;color:var(--text-d);cursor:pointer;
+  transition:all .18s;white-space:nowrap}
+.back-btn:hover{border-color:var(--gold);color:var(--gold)}
+.btn{background:var(--gold);color:var(--bg);border:none;border-radius:var(--r);
+  padding:12px 22px;font-family:var(--font-ui);font-size:13px;font-weight:700;
+  letter-spacing:.5px;cursor:pointer;transition:all .18s;white-space:nowrap}
+.btn:hover{background:var(--gold-l);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-teal{background:var(--teal);color:var(--text)}
+.btn-teal:hover{background:var(--teal-l)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--sand-d)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);background:transparent}
+.chip{display:inline-block;padding:4px 10px;border-radius:20px;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.chip-gold{background:rgba(200,151,58,.15);color:var(--gold);border:1px solid rgba(200,151,58,.3)}
+.chip-teal{background:rgba(42,123,106,.15);color:var(--teal-l);border:1px solid rgba(42,123,106,.3)}
+.chip-green{background:rgba(58,138,90,.15);color:var(--green-l);border:1px solid rgba(58,138,90,.3)}
+.chip-red{background:rgba(192,74,58,.15);color:var(--red-l);border:1px solid rgba(192,74,58,.3)}
+.chip-grey{background:rgba(122,110,88,.1);color:var(--text-d);border:1px solid var(--border)}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--surface);border:1px solid var(--gold);border-radius:var(--r);
+  padding:10px 20px;font-size:13px;color:var(--sand);z-index:9999;
+  opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ════════════════════════════════════════════════
+   SCREEN 1: USER SELECT
+   ════════════════════════════════════════════════ */
+#screen-users{justify-content:flex-start}
+.users-hero{text-align:center;padding:20px 0 32px}
+.users-hero .ar-title{font-family:var(--font-ar);font-size:42px;font-weight:700;
+  color:var(--gold);direction:rtl;line-height:1.2}
+.users-hero .en-title{font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--text-d);margin-top:6px}
+.users-hero .tagline{font-size:14px;color:var(--sand-d);margin-top:12px;max-width:400px;margin-left:auto;margin-right:auto}
+.users-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:460px}
+.user-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--r2);
+  padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s}
+.user-card:hover{border-color:var(--gold);transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(200,151,58,.12)}
+.user-card .avatar{font-size:40px;margin-bottom:10px}
+.user-card .uname{font-size:16px;font-weight:700;color:var(--sand);margin-bottom:4px}
+.user-card .ustats{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-d)}
+.user-card .uprogress{margin-top:10px;height:4px;background:var(--card);border-radius:2px;overflow:hidden}
+.user-card .uprogress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));
+  border-radius:2px;transition:width .4s}
+.upload-section{margin-top:28px;width:100%;max-width:460px}
+.upload-box{border:2px dashed var(--border);border-radius:var(--r2);padding:20px;
+  text-align:center;cursor:pointer;transition:all .2s}
+.upload-box:hover{border-color:var(--gold-d);background:rgba(200,151,58,.04)}
+.upload-box input{display:none}
+.upload-box .icon{font-size:28px;margin-bottom:8px}
+.upload-box .label{font-size:13px;color:var(--sand-d);margin-bottom:4px}
+.upload-box .hint{font-size:11px;color:var(--text-d)}
+
+/* ════════════════════════════════════════════════
+   SCREEN 2: DASHBOARD
+   ════════════════════════════════════════════════ */
+.dash-user-bar{display:flex;align-items:center;gap:14px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px;margin-bottom:20px}
+.dash-avatar{font-size:32px;line-height:1}
+.dash-user-info .name{font-size:18px;font-weight:700;color:var(--sand)}
+.dash-user-info .level{font-size:11px;color:var(--text-d);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.dash-streak{margin-left:auto;text-align:center}
+.dash-streak .num{font-size:26px;font-weight:700;color:var(--gold);font-family:var(--font-mono)}
+.dash-streak .lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-d)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 10px;text-align:center}
+.stat-box .num{font-size:22px;font-weight:700;font-family:var(--font-mono);color:var(--gold);line-height:1}
+.stat-box .lbl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-d);margin-top:4px}
+.stat-box .sublbl{font-size:9px;color:var(--text-d)}
+.section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-d);
+  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.today-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.today-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);
+  padding:16px 18px;display:flex;align-items:center;gap:14px}
+.today-card.completed{border-color:var(--green);background:rgba(58,138,90,.06)}
+.today-card.locked{opacity:.55}
+.today-card .tc-icon{font-size:28px;flex-shrink:0}
+.today-card .tc-info{flex:1}
+.today-card .tc-title{font-size:14px;font-weight:600;color:var(--sand);margin-bottom:2px}
+.today-card .tc-desc{font-size:11px;color:var(--text-d)}
+.today-card .tc-score{font-size:11px;font-weight:600;margin-top:4px}
+.today-card .tc-score.good{color:var(--green-l)}
+.today-card .tc-score.ok{color:var(--gold)}
+.today-card .tc-score.bad{color:var(--red-l)}
+.today-card .tc-btn{flex-shrink:0}
+.progress-overview{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);padding:16px 18px;margin-bottom:20px}
+.prog-bar-row{margin-bottom:10px}
+.prog-bar-label{display:flex;justify-content:space-between;font-size:11px;
+  color:var(--text-d);margin-bottom:5px}
+.prog-bar-bg{height:8px;background:var(--card);border-radius:4px;overflow:hidden}
+.prog-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.fill-gold{background:linear-gradient(90deg,var(--teal),var(--gold))}
+.fill-teal{background:var(--teal-l)}
+.fill-green{background:var(--green-l)}
+.fill-red{background:var(--red-l)}
+
+/* ════════════════════════════════════════════════
+   SCREEN 3: LEARN (FLASHCARDS)
+   ════════════════════════════════════════════════ */
+.learn-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.learn-progress-bar{flex:1;height:6px;background:var(--card);border-radius:3px;overflow:hidden}
+.learn-progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));
+  border-radius:3px;transition:width .4s}
+.learn-counter{font-size:12px;font-family:var(--font-mono);color:var(--gold);white-space:nowrap}
+/* Flashcard */
+.flashcard-scene{perspective:1000px;width:100%;max-width:560px;margin:0 auto 20px;
+  min-height:340px;cursor:pointer}
+.flashcard{width:100%;height:100%;min-height:340px;position:relative;
+  transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+.flashcard.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r2);
+  overflow:hidden;display:flex;flex-direction:column}
+.card-back-face{transform:rotateY(180deg)}
+/* Front */
+.card-front-face{background:var(--surface);border:1px solid var(--border)}
+.card-img{width:100%;height:180px;object-fit:cover;display:block}
+.card-img-placeholder{width:100%;height:180px;background:var(--card);
+  display:flex;align-items:center;justify-content:center;font-size:40px;opacity:.4}
+.card-front-body{flex:1;padding:20px 24px 16px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center}
+.card-arabic{font-family:var(--font-ar);font-size:52px;font-weight:700;color:var(--sand);
+  direction:rtl;line-height:1.2;margin-bottom:8px}
+.card-tr{font-size:15px;color:var(--gold);font-style:italic;margin-bottom:6px}
+.card-tap-hint{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-d);
+  display:flex;align-items:center;gap:6px}
+/* Back */
+.card-back-face{background:var(--card);border:1px solid var(--border)}
+.card-back-body{flex:1;padding:24px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.card-english{font-size:28px;font-weight:700;color:var(--gold);text-align:center}
+.card-ctx{background:var(--surface);border-radius:var(--r);padding:14px 16px;border:1px solid var(--border)}
+.card-ctx-ar{font-family:var(--font-ar);font-size:20px;color:var(--sand);direction:rtl;
+  text-align:right;line-height:1.6;margin-bottom:6px}
+.card-ctx-en{font-size:12px;color:var(--text-d);font-style:italic}
+.card-arabic-mini{font-family:var(--font-ar);font-size:22px;color:var(--sand-d);
+  direction:rtl;text-align:center}
+.card-tr-mini{font-size:12px;color:var(--gold-d);text-align:center;font-style:italic}
+.card-lvl{text-align:center}
+/* Learn controls */
+.learn-controls{display:flex;gap:10px;max-width:560px;margin:0 auto;width:100%}
+.learn-controls .btn{flex:1;padding:14px}
+.tts-row{display:flex;justify-content:center;gap:10px;max-width:560px;margin:0 auto 12px;width:100%}
+.tts-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:9px 16px;font-size:12px;color:var(--sand-d);cursor:pointer;display:flex;
+  align-items:center;gap:7px;transition:all .18s}
+.tts-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ════════════════════════════════════════════════
+   SCREEN 4: QUIZ
+   ════════════════════════════════════════════════ */
+.quiz-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.quiz-score-box{display:flex;gap:12px;margin-left:auto}
+.quiz-score-chip{text-align:center;padding:6px 12px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r)}
+.quiz-score-chip .num{font-size:18px;font-weight:700;font-family:var(--font-mono);color:var(--gold);line-height:1}
+.quiz-score-chip .lbl{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-d)}
+.quiz-word-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);overflow:hidden;margin-bottom:16px}
+.quiz-img{width:100%;height:200px;object-fit:cover;display:block}
+.quiz-img-placeholder{width:100%;height:200px;background:var(--card);
+  display:flex;align-items:center;justify-content:center;font-size:40px;opacity:.35}
+.quiz-word-body{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.quiz-arabic{font-family:var(--font-ar);font-size:48px;font-weight:700;color:var(--sand);direction:rtl;line-height:1.2}
+.quiz-tr{font-size:13px;color:var(--gold);font-style:italic}
+.quiz-tts-btn{background:var(--gold);color:var(--bg);border:none;border-radius:var(--r);
+  padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;
+  white-space:nowrap;flex-shrink:0}
+.quiz-tts-btn:hover{background:var(--gold-l)}
+.quiz-instruction{font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text-d);text-align:center;margin-bottom:12px}
+.quiz-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.choice-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px 14px;font-family:var(--font-ui);font-size:13px;font-weight:600;
+  color:var(--sand);cursor:pointer;transition:all .18s;text-align:center;line-height:1.3}
+.choice-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);
+  transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,151,58,.12)}
+.choice-btn.correct{background:rgba(58,138,90,.15)!important;border-color:var(--green)!important;
+  color:var(--green-l)!important;transform:none!important}
+.choice-btn.wrong{background:rgba(192,74,58,.12)!important;border-color:var(--red)!important;
+  color:var(--red-l)!important}
+.feedback-banner{background:var(--surface);border-radius:var(--r);padding:10px 16px;
+  font-size:13px;text-align:center;display:none;margin-bottom:12px;border:1px solid var(--border)}
+.feedback-banner.show{display:block}
+.feedback-banner.correct-fb{background:rgba(58,138,90,.1);border-color:var(--green);color:var(--green-l)}
+.feedback-banner.wrong-fb{background:rgba(192,74,58,.08);border-color:var(--red);color:var(--red-l)}
+.ctx-reveal{background:var(--card);border-radius:var(--r);padding:10px 14px;
+  font-size:12px;display:none;margin-bottom:10px;border:1px solid var(--border)}
+.ctx-reveal.show{display:block}
+.ctx-reveal .ctx-ar{font-family:var(--font-ar);font-size:16px;color:var(--sand);
+  direction:rtl;text-align:right;margin-bottom:4px}
+.ctx-reveal .ctx-en{color:var(--text-d);font-style:italic}
+/* Quiz Complete Overlay */
+.quiz-overlay{display:none;position:fixed;inset:0;background:rgba(14,13,11,.85);
+  z-index:100;align-items:center;justify-content:center;padding:20px}
+.quiz-overlay.show{display:flex}
+.quiz-result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);
+  padding:32px;max-width:420px;width:100%;text-align:center}
+.qr-emoji{font-size:56px;margin-bottom:12px}
+.qr-title{font-size:20px;font-weight:700;color:var(--sand);margin-bottom:8px}
+.qr-msg{font-size:14px;color:var(--sand-d);line-height:1.6;margin-bottom:24px}
+.qr-btns{display:flex;gap:10px;justify-content:center}
+
+/* ════════════════════════════════════════════════
+   SCREEN 5: PROGRESS
+   ════════════════════════════════════════════════ */
+.prog-section{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);padding:16px 18px;margin-bottom:16px}
+.prog-section h3{font-size:13px;font-weight:700;color:var(--sand);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px}
+.level-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.level-lbl{font-size:11px;color:var(--text-d);width:60px;flex-shrink:0}
+.level-bar{flex:1;height:10px;background:var(--card);border-radius:5px;overflow:hidden}
+.level-bar-fill{height:100%;border-radius:5px;transition:width .6s}
+.level-count{font-size:11px;color:var(--text-d);width:50px;text-align:right;flex-shrink:0}
+.word-list-filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.filter-btn{background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:5px 12px;font-size:11px;color:var(--text-d);cursor:pointer;transition:all .18s}
+.filter-btn.active{background:rgba(200,151,58,.15);border-color:var(--gold);color:var(--gold)}
+.word-list{max-height:400px;overflow-y:auto}
+.word-item{display:flex;align-items:center;gap:12px;padding:8px 4px;
+  border-bottom:1px solid var(--border)}
+.word-item:last-child{border-bottom:none}
+.word-ar{font-family:var(--font-ar);font-size:20px;color:var(--sand);direction:rtl;width:80px;text-align:right;flex-shrink:0}
+.word-en{font-size:12px;color:var(--sand-d);flex:1}
+.word-tr{font-size:11px;color:var(--text-d);font-style:italic;flex-shrink:0}
+.word-status{flex-shrink:0}
+.word-acc{font-size:11px;color:var(--text-d);width:40px;text-align:right;flex-shrink:0}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .users-grid{grid-template-columns:1fr 1fr}
+  .stats-row{grid-template-columns:repeat(3,1fr)}
+  .quiz-choices{grid-template-columns:1fr}
+  .card-arabic{font-size:42px}
+  .quiz-arabic{font-size:36px}
+  .learn-controls{flex-direction:column}
+  .qr-btns{flex-direction:column}
+}
+@media(max-width:360px){.users-grid{grid-template-columns:1fr}}
+
+/* ── FIREBASE SETUP MODAL ── */
+.fb-modal-overlay{display:none;position:fixed;inset:0;background:rgba(14,13,11,.92);
+  z-index:9000;align-items:center;justify-content:center;padding:20px}
+.fb-modal-overlay.show{display:flex}
+.fb-modal{background:var(--surface);border:1px solid var(--gold);border-radius:var(--r3);
+  padding:28px;max-width:500px;width:100%}
+.fb-modal h2{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.fb-modal p{font-size:12px;color:var(--sand-d);line-height:1.6;margin-bottom:14px}
+.fb-modal ol{font-size:12px;color:var(--sand-d);line-height:1.9;padding-left:18px;margin-bottom:14px}
+.fb-modal ol li code{background:var(--card);padding:1px 6px;border-radius:4px;
+  font-family:var(--font-mono);font-size:11px;color:var(--gold)}
+.fb-textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:10px 12px;font-family:var(--font-mono);font-size:11px;color:var(--sand);
+  resize:vertical;min-height:120px;outline:none;transition:border-color .2s}
+.fb-textarea:focus{border-color:var(--gold)}
+.fb-error{color:var(--red-l);font-size:12px;margin-top:6px;display:none}
+.fb-btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;
+  transition:background .3s}
+.sync-dot.synced{background:var(--green-l)}
+.sync-dot.syncing{background:var(--gold);animation:pulse .8s infinite alternate}
+.sync-dot.error{background:var(--red-l)}
+.sync-dot.offline{background:var(--text-d)}
+@keyframes pulse{from{opacity:.4}to{opacity:1}}
+.sync-bar{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text-d);
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;justify-content:flex-end}
+.fb-skip-btn{background:transparent;border:none;font-size:11px;color:var(--text-d);
+  cursor:pointer;text-decoration:underline;padding:4px}
+.fb-skip-btn:hover{color:var(--sand-d)}
+</style>
+</head>
+<body>
+
+<!-- ════ SCREEN 1: USER SELECT ════ -->
+<div id="screen-users" class="screen active">
+<div class="wrap">
+  <div class="users-hero">
+    <div class="ar-title">لُعْبَة المُفْرَدَات</div>
+    <div class="en-title">Arabic Vocabulary — Daily Training</div>
+    <div class="tagline">20 new words every day · Personalized review · Track your progress</div>
+  </div>
+  <div class="users-grid" id="usersGrid"></div>
+  <div class="upload-section">
+    <div class="upload-box" onclick="document.getElementById('jsonUpload').click()">
+      <input type="file" id="jsonUpload" accept=".json" multiple onchange="handleJsonUpload(event)">
+      <div class="icon">📂</div>
+      <div class="label">Upload additional vocabulary JSON</div>
+      <div class="hint">Same format: [{ar, tr, en, ctxAr, ctxEn, lvl}]</div>
+    </div>
+    <div id="uploadStatus" style="text-align:center;font-size:12px;color:var(--teal-l);margin-top:8px;display:none"></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ SCREEN 2: DASHBOARD ════ -->
+<div id="screen-dash" class="screen">
+<div class="wrap">
+  <div class="page-header">
+    <div>
+      <div class="logo-ar">لُعْبَة المُفْرَدَات</div>
+      <div class="logo-sub">Daily Training</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+    <button class="back-btn" onclick="showScreen('users')">← Users</button>
+    <div id="dashSyncBar" class="sync-bar">
+      <span class="sync-dot offline" id="dashSyncDot"></span>
+      <span id="dashSyncLabel">offline</span>
+    </div>
+  </div>
+  </div>
+  <div id="dashUserBar" class="dash-user-bar"></div>
+  <div id="dashStats" class="stats-row"></div>
+  <div class="section-title">Today's Session</div>
+  <div id="dashTodayCards" class="today-cards"></div>
+  <div class="section-title">Overall Progress</div>
+  <div id="dashProgressBars" class="progress-overview"></div>
+  <div style="display:flex;justify-content:center;gap:10px;margin-top:4px;flex-wrap:wrap">
+    <button class="btn btn-ghost" onclick="showScreen('progress')">📊 Detailed Progress</button>
+    <button class="btn btn-ghost" onclick="showFbSetup()">☁️ Sync Status</button>
+  </div>
+</div>
+</div>
+
+<!-- ════ SCREEN 3: LEARN (FLASHCARDS) ════ -->
+<div id="screen-learn" class="screen">
+<div class="wrap">
+  <div class="learn-header">
+    <button class="back-btn" onclick="showScreen('dash')">← Back</button>
+    <div class="learn-progress-bar"><div class="learn-progress-fill" id="learnProgFill"></div></div>
+    <div class="learn-counter" id="learnCounter">0 / 20</div>
+  </div>
+  <div id="learnChipRow" style="text-align:center;margin-bottom:14px">
+    <span class="chip chip-gold" id="learnChip">NEW WORDS TODAY</span>
+  </div>
+  <div class="flashcard-scene" onclick="flipCardIfFront()">
+    <div class="flashcard" id="flashcard">
+      <!-- Front -->
+      <div class="card-face card-front-face">
+        <img id="fcImg" class="card-img" src="" alt="" onerror="this.style.display='none';document.getElementById('fcImgPh').style.display='flex'" onload="this.style.display='block';document.getElementById('fcImgPh').style.display='none'">
+        <div id="fcImgPh" class="card-img-placeholder">🔍</div>
+        <div class="card-front-body">
+          <div class="card-arabic" id="fcArabic"></div>
+          <div class="card-tr" id="fcTr"></div>
+          <div class="card-tap-hint">👆 tap to see meaning</div>
+        </div>
+      </div>
+      <!-- Back -->
+      <div class="card-face card-back-face">
+        <div class="card-back-body">
+          <div style="text-align:center">
+            <div class="card-arabic-mini" id="fcArabicMini"></div>
+            <div class="card-tr-mini" id="fcTrMini"></div>
+          </div>
+          <div class="card-english" id="fcEnglish"></div>
+          <div class="card-ctx" id="fcCtx">
+            <div class="card-ctx-ar" id="fcCtxAr"></div>
+            <div class="card-ctx-en" id="fcCtxEn"></div>
+          </div>
+          <div class="card-lvl" id="fcLvl"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tts-row">
+    <button class="tts-btn" onclick="speakCurrent()">🔊 <span>Hear pronunciation</span></button>
+  </div>
+  <div class="learn-controls" id="learnControls">
+    <button class="btn btn-ghost" id="btnLearnSkip" onclick="learnMarkAndNext(false)">Still learning →</button>
+    <button class="btn btn-teal" id="btnLearnKnow" onclick="learnMarkAndNext(true)">Got it! ✓</button>
+  </div>
+  <!-- Learn complete -->
+  <div id="learnCompletePanel" style="display:none;text-align:center;padding:20px">
+    <div style="font-size:48px;margin-bottom:12px">🎉</div>
+    <div style="font-size:18px;font-weight:700;color:var(--sand);margin-bottom:8px">All 20 words reviewed!</div>
+    <div style="font-size:13px;color:var(--sand-d);margin-bottom:20px" id="learnCompleteMsg"></div>
+    <button class="btn" onclick="showScreen('dash')">Go to Quiz →</button>
+  </div>
+</div>
+</div>
+
+<!-- ════ SCREEN 4: QUIZ ════ -->
+<div id="screen-quiz" class="screen">
+<div class="wrap">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="showScreen('dash')">← Back</button>
+    <div class="quiz-score-box">
+      <div class="quiz-score-chip"><div class="num" id="qScore">0</div><div class="lbl">Score</div></div>
+      <div class="quiz-score-chip"><div class="num" id="qStreak">0</div><div class="lbl">Streak</div></div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div class="learn-progress-bar"><div class="learn-progress-fill" id="quizProgFill"></div></div>
+    <div class="learn-counter" id="quizCounter">0 / 20</div>
+  </div>
+  <div id="quizTypeBadge" style="text-align:center;margin-bottom:12px"></div>
+  <div class="quiz-word-card" id="quizWordCard">
+    <img id="qImg" class="quiz-img" src="" alt=""
+      onerror="this.style.display='none';document.getElementById('qImgPh').style.display='flex'"
+      onload="this.style.display='block';document.getElementById('qImgPh').style.display='none'">
+    <div id="qImgPh" class="quiz-img-placeholder">🔍</div>
+    <div class="quiz-word-body">
+      <div>
+        <div class="quiz-arabic" id="qArabic"></div>
+        <div class="quiz-tr" id="qTr"></div>
+      </div>
+      <button class="quiz-tts-btn" onclick="speakQuizWord()">🔊 Hear</button>
+    </div>
+  </div>
+  <div class="quiz-instruction" id="quizInstruction">What does this word mean?</div>
+  <div class="quiz-choices" id="quizChoices"></div>
+  <div class="feedback-banner" id="feedbackBanner"></div>
+  <div class="ctx-reveal" id="ctxReveal">
+    <div class="ctx-ar" id="ctxRevealAr"></div>
+    <div class="ctx-en" id="ctxRevealEn"></div>
+  </div>
+</div>
+<!-- Quiz Complete Overlay -->
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-result-card">
+    <div class="qr-emoji" id="qrEmoji">🏆</div>
+    <div class="qr-title" id="qrTitle">Quiz Complete!</div>
+    <div class="qr-msg" id="qrMsg"></div>
+    <div class="qr-btns">
+      <button class="btn btn-ghost" id="qrRetry" onclick="retryQuiz()">🔁 Retry</button>
+      <button class="btn" onclick="showScreen('dash')">Dashboard →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════ SCREEN 5: PROGRESS ════ -->
+<div id="screen-progress" class="screen">
+<div class="wrap">
+  <div class="page-header">
+    <div>
+      <div style="font-size:16px;font-weight:700;color:var(--sand)">My Progress</div>
+      <div class="logo-sub" id="progUserName"></div>
+    </div>
+    <button class="back-btn" onclick="showScreen('dash')">← Dashboard</button>
+  </div>
+  <div id="progSummary" class="stats-row" style="margin-bottom:16px"></div>
+  <div class="prog-section" id="progByLevel"></div>
+  <div class="prog-section">
+    <h3>📋 Word List <span id="wordListCount" style="font-size:11px;color:var(--text-d);font-weight:400"></span></h3>
+    <div class="word-list-filters">
+      <button class="filter-btn active" onclick="filterWords('all',this)">All</button>
+      <button class="filter-btn" onclick="filterWords('seen',this)">Seen</button>
+      <button class="filter-btn" onclick="filterWords('mastered',this)">Mastered</button>
+      <button class="filter-btn" onclick="filterWords('learning',this)">Learning</button>
+      <button class="filter-btn" onclick="filterWords('unseen',this)">Not yet seen</button>
+    </div>
+    <div class="word-list" id="wordList"></div>
+  </div>
+</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  VOCABULARY DATA (embedded)
+// ═══════════════════════════════════════════════════════════════════
+const VOCAB_BASE = [{"ar":"أَنَا","tr":"ana","en":"I / I am","ctxAr":"أَنَا مِنْ أَمْرِيكَا","ctxEn":"I am from America","lvl":0,"img":"person portrait face"},{"ar":"اسْمِي","tr":"ismi","en":"my name","ctxAr":"اسْمِي أَحْمَد","ctxEn":"My name is Ahmad","lvl":0,"img":"name tag identity"},{"ar":"هُوَ","tr":"huwa","en":"he","ctxAr":"هُوَ مُوَظَّف","ctxEn":"He is an employee","lvl":0,"img":"man portrait"},{"ar":"هِيَ","tr":"hiya","en":"she","ctxAr":"هِيَ مُوَظَّفَة","ctxEn":"She is an employee","lvl":0,"img":"woman portrait"},{"ar":"هُمْ","tr":"hum","en":"they","ctxAr":"هُمْ مِنَ السِّفَارَة","ctxEn":"They are from the embassy","lvl":0,"img":"group people team"},{"ar":"أَنْتَ","tr":"anta","en":"you (masc.)","ctxAr":"أَنْتَ مِنْ وَيْن؟","ctxEn":"Where are you from?","lvl":0,"img":"man smiling"},{"ar":"أَنْتِ","tr":"anti","en":"you (fem.)","ctxAr":"أَنْتِ جَدِيدَة؟","ctxEn":"Are you new?","lvl":0,"img":"woman smiling"},{"ar":"بَسْ","tr":"bas","en":"but / just (Gulf)","ctxAr":"بَسْ مَا عِنْدِي وَقْت","ctxEn":"But I don't have time","lvl":0,"img":"pause think"},{"ar":"مَعَ","tr":"maa","en":"with","ctxAr":"مَعَنَا هُنَا","ctxEn":"With us here","lvl":0,"img":"together hands holding"},{"ar":"إِيه","tr":"ih","en":"yes (Gulf Arabic)","ctxAr":"إِيه، صَحّ","ctxEn":"Yes, that's right","lvl":0,"img":"yes agree thumbs up"},{"ar":"صَحّ","tr":"sahh","en":"correct / right","ctxAr":"هَذَا صَحّ","ctxEn":"This is correct","lvl":0,"img":"checkmark correct green"},{"ar":"شَيْء","tr":"shay'","en":"thing / something","ctxAr":"مَا فِيه شَيْء","ctxEn":"There is nothing","lvl":0,"img":"mystery box gift"},{"ar":"حُلْو","tr":"hulw","en":"sweet / delicious (masc.)","ctxAr":"الأَكْل حُلْو","ctxEn":"The food is delicious","lvl":0,"img":"sweet dessert delicious"},{"ar":"حُلْوَة","tr":"hulwa","en":"beautiful / sweet (fem.)","ctxAr":"قَهْوَة حُلْوَة","ctxEn":"Sweet coffee","lvl":0,"img":"beautiful flower sweet"},{"ar":"زَيْن","tr":"zayn","en":"good / well (Gulf)","ctxAr":"كُلّ شَيْء زَيْن","ctxEn":"Everything is good","lvl":0,"img":"thumbs up good"},{"ar":"كَثِير","tr":"kathiir","en":"a lot / very","ctxAr":"شُكْراً كَثِير","ctxEn":"Thank you very much","lvl":0,"img":"abundance plenty"},{"ar":"مُهِمّ","tr":"muhimm","en":"important","ctxAr":"هَذَا مُهِمّ","ctxEn":"This is important","lvl":0,"img":"important star highlight"},{"ar":"نَفْس","tr":"nafs","en":"same / self","ctxAr":"نَفْس السِّعْر","ctxEn":"The same price","lvl":0,"img":"mirror reflection"},{"ar":"مَثَل","tr":"mathal","en":"like / such as","ctxAr":"مَثَل هَذَا","ctxEn":"Like this","lvl":0,"img":"similar compare"},{"ar":"يَعْنِي","tr":"ya'ni","en":"meaning / I mean","ctxAr":"يَعْنِي كَيْف؟","ctxEn":"What do you mean?","lvl":0,"img":"speech bubble talk"},{"ar":"أَوْ","tr":"aw","en":"or","ctxAr":"نَقْد أَوْ بِطَاقَة؟","ctxEn":"Cash or card?","lvl":0,"img":"choice fork road"},{"ar":"مَوّ","tr":"mo","en":"not (Gulf negation)","ctxAr":"مَوّ صَحّ","ctxEn":"That's not right","lvl":0,"img":"no sign prohibition"},{"ar":"وَلَد","tr":"walad","en":"boy / son","ctxAr":"عِنْدِي وَلَد","ctxEn":"I have a son","lvl":0,"img":"boy child playing"},{"ar":"بِنْت","tr":"bint","en":"girl / daughter","ctxAr":"عِنْدِي بِنْت","ctxEn":"I have a daughter","lvl":0,"img":"girl child smiling"},{"ar":"كَلْب","tr":"kalb","en":"dog","ctxAr":"عِنْدِي كَلْب","ctxEn":"I have a dog","lvl":0,"img":"dog cute pet"},{"ar":"أُمِّي","tr":"ummi","en":"my mother (Gulf)","ctxAr":"أُمِّي فِي البَيْت","ctxEn":"My mother is at home","lvl":0,"img":"mother family"},{"ar":"أَبُوي","tr":"abuuy","en":"my father (Gulf)","ctxAr":"أَبُوي مُوَظَّف","ctxEn":"My father is an employee","lvl":0,"img":"father family"},{"ar":"أَخُو","tr":"akhu","en":"brother (Gulf)","ctxAr":"أَخُو كَبِير","ctxEn":"Older brother","lvl":0,"img":"brothers siblings"},{"ar":"أُخْت","tr":"ukht","en":"sister","ctxAr":"عِنْدِي أُخْت","ctxEn":"I have a sister","lvl":0,"img":"sisters sisters"},{"ar":"عَمّ","tr":"amm","en":"uncle (paternal)","ctxAr":"عِنْدَ الْعَمّ","ctxEn":"At the uncle's","lvl":0,"img":"family uncle"},{"ar":"خَالَة","tr":"khaala","en":"aunt (maternal)","ctxAr":"خَالَة كَرِيمَة","ctxEn":"Generous aunt","lvl":0,"img":"family aunt"},{"ar":"عُمْر","tr":"umr","en":"age","ctxAr":"عُمْرِي ثَلَاثُون","ctxEn":"My age is thirty","lvl":0,"img":"birthday cake candles"},{"ar":"عِنْدِي","tr":"indi","en":"I have","ctxAr":"عِنْدِي مَوْعِد","ctxEn":"I have an appointment","lvl":0,"img":"hand holding"},{"ar":"أَهْلاً","tr":"ahlan","en":"hello / welcome","ctxAr":"أَهْلاً وَسَهْلاً","ctxEn":"Welcome!","lvl":0,"img":"welcome greeting door"},{"ar":"شُكْراً","tr":"shukran","en":"thank you","ctxAr":"شُكْراً جَزِيلاً","ctxEn":"Thank you very much","lvl":0,"img":"thank you gratitude"},{"ar":"جَدِيد","tr":"jadiid","en":"new (masc.)","ctxAr":"مُوَظَّف جَدِيد","ctxEn":"New employee","lvl":0,"img":"new modern sparkle"},{"ar":"كَبِير","tr":"kabiir","en":"big / old","ctxAr":"مَدِينَة كَبِيرَة","ctxEn":"A big city","lvl":0,"img":"big large building"},{"ar":"صَغِير","tr":"saghiir","en":"small / young","ctxAr":"وَلَد صَغِير","ctxEn":"A young boy","lvl":0,"img":"small tiny little"},{"ar":"حَار","tr":"haar","en":"hot","ctxAr":"الجَوّ حَار","ctxEn":"The weather is hot","lvl":0,"img":"desert sun heat"},{"ar":"بَارِد","tr":"baarid","en":"cold","ctxAr":"الجَوّ بَارِد","ctxEn":"The weather is cold","lvl":0,"img":"winter cold snow"},{"ar":"قَرِيب","tr":"qariib","en":"near / close","ctxAr":"قَرِيب مِنَ السِّفَارَة","ctxEn":"Close to the embassy","lvl":0,"img":"close nearby map"},{"ar":"بَعِيد","tr":"ba'iid","en":"far","ctxAr":"بَعِيد عَنِ البَيْت","ctxEn":"Far from home","lvl":0,"img":"far horizon distance"},{"ar":"رَخِيص","tr":"rakhiis","en":"cheap / inexpensive","ctxAr":"السِّعْر رَخِيص","ctxEn":"The price is cheap","lvl":0,"img":"sale discount cheap"},{"ar":"غَالِي","tr":"ghaali","en":"expensive","ctxAr":"هَذَا غَالِي","ctxEn":"This is expensive","lvl":0,"img":"luxury expensive jewels"},{"ar":"طَازِج","tr":"taazij","en":"fresh","ctxAr":"خُضَار طَازِج","ctxEn":"Fresh vegetables","lvl":0,"img":"fresh produce green"},{"ar":"يَسَار","tr":"yasaar","en":"left","ctxAr":"لِفّ يَسَار","ctxEn":"Turn left","lvl":0,"img":"left"},{"ar":"يَمِين","tr":"yamiin","en":"right","ctxAr":"لِفّ يَمِين","ctxEn":"Turn right","lvl":0,"img":"right"},{"ar":"فَوْق","tr":"fawq","en":"above / upstairs","ctxAr":"فَوْق الطَّابِق","ctxEn":"Above the floor","lvl":0,"img":"above"},{"ar":"جَنْب","tr":"janb","en":"next to","ctxAr":"جَنْب المَطْعَم","ctxEn":"Next to the restaurant","lvl":0,"img":"next"},{"ar":"وَرَا","tr":"wara","en":"behind (Gulf)","ctxAr":"وَرَا البِنَايَة","ctxEn":"Behind the building","lvl":0,"img":"behind"},{"ar":"قَدَّام","tr":"qaddaam","en":"in front of (Gulf)","ctxAr":"قَدَّام الإِشَارَة","ctxEn":"In front of the traffic light","lvl":0,"img":"front"},{"ar":"بَيْن","tr":"bayn","en":"between","ctxAr":"بَيْن الشَّارِعَيْن","ctxEn":"Between the two streets","lvl":0,"img":"between"},{"ar":"لَفّ","tr":"laff","en":"turn","ctxAr":"لِفّ يَمِين","ctxEn":"Turn right","lvl":0,"img":"turn"},{"ar":"سِيدَا","tr":"siida","en":"straight ahead (Gulf)","ctxAr":"امْشِ سِيدَا","ctxEn":"Go straight ahead","lvl":0,"img":"straight"},{"ar":"طَرِيق","tr":"tariiq","en":"road / route","ctxAr":"عَلَى الطَّرِيق","ctxEn":"On the road","lvl":0,"img":"road highway open"},{"ar":"بَيْت","tr":"bayt","en":"house / home","ctxAr":"فِي البَيْت","ctxEn":"At home","lvl":0,"img":"house home cozy"},{"ar":"مَطَار","tr":"mataar","en":"airport","ctxAr":"فِي المَطَار","ctxEn":"At the airport","lvl":0,"img":"airport terminal plane"},{"ar":"مَطْعَم","tr":"mat'am","en":"restaurant","ctxAr":"مَطْعَم شَعْبِيّ","ctxEn":"A popular restaurant","lvl":0,"img":"restaurant dining food"},{"ar":"مَكْتَب","tr":"maktab","en":"office","ctxAr":"مَكْتَبُنَا هُنَا","ctxEn":"Our office is here","lvl":0,"img":"office desk work"},{"ar":"فُنْدُق","tr":"funduq","en":"hotel","ctxAr":"فُنْدُق خَمْس نُجُوم","ctxEn":"Five-star hotel","lvl":0,"img":"hotel lobby luxury"},{"ar":"غُرْفَة","tr":"ghurfa","en":"room","ctxAr":"غُرْفَة نَوْم","ctxEn":"Bedroom","lvl":0,"img":"hotel room bedroom"},{"ar":"شَارِع","tr":"shaari'","en":"street","ctxAr":"الشَّارِع الرَّئِيسِيّ","ctxEn":"The main street","lvl":0,"img":"city street urban"},{"ar":"سُوق","tr":"suuq","en":"market","ctxAr":"فِي السُّوق","ctxEn":"In the market","lvl":0,"img":"market bazaar souk"},{"ar":"شَقَّة","tr":"shaqqa","en":"apartment","ctxAr":"أَسْكُن فِي شَقَّة","ctxEn":"I live in an apartment","lvl":0,"img":"apartment building city"},{"ar":"دَوَّار","tr":"dawwaar","en":"roundabout","ctxAr":"عِنْدَ الدَّوَّار","ctxEn":"At the roundabout","lvl":0,"img":"roundabout traffic circle"},{"ar":"وَرْشَة","tr":"warsha","en":"workshop / repair shop","ctxAr":"وَرْشَة سَيَّارَات","ctxEn":"Car repair shop","lvl":0,"img":"mechanic repair workshop"},{"ar":"سَفَر","tr":"safar","en":"travel","ctxAr":"رِحْلَة سَفَر","ctxEn":"Travel trip","lvl":0,"img":"travel adventure suitcase"},{"ar":"قِسْم","tr":"qism","en":"section / department","ctxAr":"قِسْم القُنْصُلِيّ","ctxEn":"The consular section","lvl":0,"img":"office department sign"},{"ar":"شَنْطَة","tr":"shanta","en":"bag / luggage","ctxAr":"شَنْطَة السَّفَر","ctxEn":"Travel bag","lvl":0,"img":"travel bag luggage"},{"ar":"صُورَة","tr":"suura","en":"photo / picture","ctxAr":"صُورَة جَوَاز السَّفَر","ctxEn":"Passport photo","lvl":0,"img":"photo camera photography"},{"ar":"صُعُود","tr":"su'uud","en":"boarding","ctxAr":"بِطَاقَة الصُّعُود","ctxEn":"Boarding pass","lvl":0,"img":"boarding pass airplane"},{"ar":"سَرِير","tr":"sariir","en":"bed","ctxAr":"سَرِير مُزْدَوَج","ctxEn":"Double bed","lvl":0,"img":"bed"},{"ar":"شَخْص","tr":"shakhs","en":"person","ctxAr":"شَخْص وَاحِد","ctxEn":"One person","lvl":0,"img":"person portrait"},{"ar":"رُخْصَة","tr":"rukhsa","en":"driving licence","ctxAr":"رُخْصَة القِيَادَة","ctxEn":"Driving licence","lvl":0,"img":"driving license card"},{"ar":"كَحُول","tr":"kahuul","en":"alcohol","ctxAr":"كَحُول مَمْنُوع","ctxEn":"Alcohol is prohibited","lvl":0,"img":"alcohol"},{"ar":"سَبَب","tr":"sabab","en":"reason","ctxAr":"مَا السَّبَب؟","ctxEn":"What is the reason?","lvl":0,"img":"question why reason"},{"ar":"وَجْهَة","tr":"wajha","en":"destination","ctxAr":"وَجْهَة السَّفَر","ctxEn":"Travel destination","lvl":0,"img":"destination travel map pin"},{"ar":"نَوْع","tr":"naw'","en":"type / kind","ctxAr":"أَيُّ نَوْع؟","ctxEn":"Which type?","lvl":0,"img":"choice selection type"},{"ar":"شَامِل","tr":"shaamil","en":"including / inclusive","ctxAr":"شَامِل الفُطُور","ctxEn":"Including breakfast","lvl":0,"img":"inclusive all checklist"},{"ar":"هُوِيَّة","tr":"huwiyya","en":"ID / identity","ctxAr":"بِطَاقَة هُوِيَّة","ctxEn":"ID card","lvl":0,"img":"id card identity"},{"ar":"أَكْل","tr":"akl","en":"food / eating","ctxAr":"وَقْت الأَكْل","ctxEn":"Mealtime","lvl":0,"img":"food delicious meal"},{"ar":"قَهْوَة","tr":"qahwa","en":"coffee","ctxAr":"فِنْجَان قَهْوَة","ctxEn":"A cup of coffee","lvl":0,"img":"arabic coffee cup"},{"ar":"فُطُور","tr":"futur","en":"breakfast","ctxAr":"وَجْبَة الفُطُور","ctxEn":"Breakfast meal","lvl":0,"img":"breakfast table food"},{"ar":"سِعْر","tr":"si'r","en":"price","ctxAr":"كَمِ السِّعْر؟","ctxEn":"What is the price?","lvl":0,"img":"price tag shopping"},{"ar":"سَلَطَة","tr":"salata","en":"salad","ctxAr":"سَلَطَة طَازِجَة","ctxEn":"Fresh salad","lvl":0,"img":"fresh salad green"},{"ar":"كِيس","tr":"kiis","en":"bag (shopping)","ctxAr":"كِيس بَقَالَة","ctxEn":"Shopping bag","lvl":0,"img":"bag"},{"ar":"فُلُوس","tr":"fuluus","en":"money (Gulf)","ctxAr":"مَا عِنْدِي فُلُوس","ctxEn":"I have no money","lvl":0,"img":"money cash bills"},{"ar":"فِكَّة","tr":"fikka","en":"small change","ctxAr":"عِنْدَك فِكَّة؟","ctxEn":"Do you have change?","lvl":0,"img":"coins change money"},{"ar":"رِيَال","tr":"riyaal","en":"Saudi Riyal","ctxAr":"خَمْسَة رِيَالَات","ctxEn":"Five Riyals","lvl":0,"img":"money currency riyal"},{"ar":"شَطَّة","tr":"shatta","en":"hot chili sauce","ctxAr":"بِدُون شَطَّة","ctxEn":"Without chili sauce","lvl":0,"img":"chili sauce spicy red"},{"ar":"نَقْد","tr":"naqd","en":"cash","ctxAr":"أَدْفَع بِالنَّقْد","ctxEn":"I pay in cash","lvl":0,"img":"cash money wallet"},{"ar":"لَحْم","tr":"lahm","en":"meat","ctxAr":"لَحْم طَازِج","ctxEn":"Fresh meat","lvl":0,"img":"grilled meat food"},{"ar":"حَجْم","tr":"hajm","en":"size","ctxAr":"أَيُّ حَجْم؟","ctxEn":"Which size?","lvl":0,"img":"size"},{"ar":"هِلَّة","tr":"hilla","en":"cent / halala","ctxAr":"خَمْسُون هِلَّة","ctxEn":"Fifty cents","lvl":0,"img":"coins small change"},{"ar":"رُبْع","tr":"rub'","en":"quarter","ctxAr":"رُبْع سَاعَة","ctxEn":"A quarter of an hour","lvl":0,"img":"quarter coin money"},{"ar":"وَقْت","tr":"waqt","en":"time","ctxAr":"مَا عِنْدِي وَقْت","ctxEn":"I don't have time","lvl":0,"img":"clock time"},{"ar":"سَنَة","tr":"sana","en":"year","ctxAr":"كَمْ سَنَة؟","ctxEn":"How many years?","lvl":0,"img":"calendar year"},{"ar":"شَهْر","tr":"shahr","en":"month","ctxAr":"شَهْر كَامِل","ctxEn":"A full month","lvl":0,"img":"calendar month"},{"ar":"صَيْف","tr":"sayf","en":"summer","ctxAr":"فِي الصَّيْف","ctxEn":"In the summer","lvl":0,"img":"summer beach sunshine"},{"ar":"شِتَاء","tr":"shitaa'","en":"winter","ctxAr":"فِي الشِّتَاء","ctxEn":"In the winter","lvl":0,"img":"winter snow cold"},{"ar":"ظُهْر","tr":"zuhr","en":"noon / midday","ctxAr":"بَعْدَ الظُّهْر","ctxEn":"After noon","lvl":0,"img":"sun noon midday"},{"ar":"أَمْس","tr":"ams","en":"yesterday","ctxAr":"أَمْس ذَهَبْت","ctxEn":"I went yesterday","lvl":0,"img":"calendar yesterday"},{"ar":"مَوْعِد","tr":"maw'id","en":"appointment","ctxAr":"عِنْدِي مَوْعِد","ctxEn":"I have an appointment","lvl":0,"img":"calendar appointment schedule"},{"ar":"دَوَام","tr":"dawaam","en":"work shift / hours","ctxAr":"وَقْت الدَّوَام","ctxEn":"Work hours","lvl":0,"img":"office work hours"},{"ar":"نَصّ","tr":"nuss","en":"half (Gulf)","ctxAr":"نَصّ سَاعَة","ctxEn":"Half an hour","lvl":0,"img":"half circle split"},{"ar":"جُمْعَة","tr":"jum'a","en":"Friday","ctxAr":"يَوْم الجُمْعَة","ctxEn":"Friday","lvl":0,"img":"mosque friday prayer"},{"ar":"خَمِيس","tr":"khamiis","en":"Thursday","ctxAr":"يَوْم الخَمِيس","ctxEn":"Thursday","lvl":0,"img":"calendar thursday"},{"ar":"بَحْر","tr":"bahr","en":"sea","ctxAr":"شَاطِئ البَحْر","ctxEn":"The seashore","lvl":0,"img":"sea ocean waves"},{"ar":"نَهْر","tr":"nahr","en":"river","ctxAr":"نَهْر النِّيل","ctxEn":"The Nile River","lvl":0,"img":"river flowing nature"},{"ar":"جَوّ","tr":"jaww","en":"weather / atmosphere","ctxAr":"الجَوّ حَار","ctxEn":"The weather is hot","lvl":0,"img":"weather sky clouds"},{"ar":"بَلَد","tr":"balad","en":"country","ctxAr":"مِنْ أَيِّ بَلَد؟","ctxEn":"From which country?","lvl":0,"img":"world globe map"},{"ar":"صِفْر","tr":"sifr","en":"zero","ctxAr":"صِفْر دَرَجَات","ctxEn":"Zero degrees","lvl":0,"img":"zero number empty"},{"ar":"وَاحِد","tr":"waahid","en":"one","ctxAr":"وَاحِد فَقَط","ctxEn":"Just one","lvl":0,"img":"single one number"},{"ar":"ثَلَاثَة","tr":"thalaatha","en":"three","ctxAr":"ثَلَاثَة أَيَّام","ctxEn":"Three days","lvl":0,"img":"three number"},{"ar":"أَرْبَعَة","tr":"arba'a","en":"four","ctxAr":"أَرْبَعَة أَشْخَاص","ctxEn":"Four people","lvl":0,"img":"four number"},{"ar":"خَمْسَة","tr":"khamsa","en":"five","ctxAr":"خَمْسَة رِيَالَات","ctxEn":"Five Riyals","lvl":0,"img":"five fingers hand"},{"ar":"سِتَّة","tr":"sitta","en":"six","ctxAr":"سِتَّة أَشْهُر","ctxEn":"Six months","lvl":0,"img":"six number"},{"ar":"سَبْعَة","tr":"sab'a","en":"seven","ctxAr":"سَبْعَة أَيَّام","ctxEn":"Seven days","lvl":0,"img":"seven days week"},{"ar":"تِسْعَة","tr":"tis'a","en":"nine","ctxAr":"تِسْعَة صَبَاحاً","ctxEn":"Nine in the morning","lvl":0,"img":"nine number"},{"ar":"عَشْرَة","tr":"ashra","en":"ten","ctxAr":"عَشْرَة دَقَائِق","ctxEn":"Ten minutes","lvl":0,"img":"ten fingers"},{"ar":"مِئَة","tr":"mi'a","en":"hundred","ctxAr":"مِئَة رِيَال","ctxEn":"One hundred Riyals","lvl":0,"img":"hundred money bills"},{"ar":"أَلْف","tr":"alf","en":"thousand","ctxAr":"أَلْف رِيَال","ctxEn":"One thousand Riyals","lvl":0,"img":"thousand money stack"},{"ar":"سِتِّين","tr":"sittiin","en":"sixty","ctxAr":"سِتِّين دَقِيقَة","ctxEn":"Sixty minutes","lvl":0,"img":"clock sixty"},{"ar":"رَجَع","tr":"raja'","en":"returned / went back","ctxAr":"رَجَع إِلَى البَيْت","ctxEn":"He returned home","lvl":0,"img":"return arrow back"},{"ar":"وَصَل","tr":"wasal","en":"arrived / receipt","ctxAr":"وَصَل أَمْس","ctxEn":"He arrived yesterday","lvl":0,"img":"arrival destination star"},{"ar":"أَطْلُب","tr":"atlub","en":"I order / I request","ctxAr":"أَطْلُب سَيَّارَة","ctxEn":"I order a car","lvl":0,"img":"ordering menu finger"},{"ar":"أَقْدَر","tr":"aqdar","en":"I can / I am able","ctxAr":"أَقْدَر أَسَاعِدَك","ctxEn":"I can help you","lvl":0,"img":"strength capable fist"},{"ar":"أَرْسَل","tr":"arsil","en":"send","ctxAr":"أَرْسِل رِسَالَة","ctxEn":"Send a message","lvl":0,"img":"send message email phone"},{"ar":"انْزِل","tr":"inzil","en":"go down / get out","ctxAr":"انْزِل هُنَا","ctxEn":"Get off here","lvl":0,"img":"exit door stairs"},{"ar":"امْشِ","tr":"imshi","en":"go / walk","ctxAr":"امْشِ سِيدَا","ctxEn":"Walk straight","lvl":0,"img":"walking person path"},{"ar":"تَجِي","tr":"tiji","en":"you come (Gulf)","ctxAr":"مَتَى تَجِي؟","ctxEn":"When do you come?","lvl":0,"img":"come welcome gesture"},{"ar":"أَضِيف","tr":"udiif","en":"I add","ctxAr":"أَضِيف شَطَّة؟","ctxEn":"Shall I add chili?","lvl":0,"img":"add plus ingredient"},{"ar":"أَحُطّ","tr":"ahut","en":"I put / I place","ctxAr":"أَحُطّ هُنَا","ctxEn":"I put it here","lvl":0,"img":"placing hands object"},{"ar":"تَغَيَّر","tr":"taghayyar","en":"has changed","ctxAr":"تَغَيَّر الجَدْوَل","ctxEn":"The schedule has changed","lvl":0,"img":"change transform butterfly"},{"ar":"أَتَّجِه","tr":"attajjah","en":"I am heading","ctxAr":"أَتَّجِه يَمِين","ctxEn":"I head right","lvl":0,"img":"direction walking map"},{"ar":"وَاقِف","tr":"waaqif","en":"standing","ctxAr":"وَاقِف هُنَا","ctxEn":"Standing here","lvl":0,"img":"person standing tall"},{"ar":"أَسْكُن","tr":"askun","en":"I live / I reside","ctxAr":"أَسْكُن هُنَا","ctxEn":"I live here","lvl":0,"img":"home living cozy"},{"ar":"ثَانِي","tr":"thaani","en":"second / another","ctxAr":"مَرَّة ثَانِيَة","ctxEn":"A second time","lvl":0,"img":"another choice two"},{"ar":"أَوَّل","tr":"awwal","en":"first","ctxAr":"أَوَّل مَرَّة","ctxEn":"First time","lvl":0,"img":"first place trophy"},{"ar":"كُلّ","tr":"kull","en":"every / all","ctxAr":"كُلّ يَوْم","ctxEn":"Every day","lvl":0,"img":"circle complete all"},{"ar":"مُمْكِن","tr":"mumkin","en":"maybe / possible","ctxAr":"مُمْكِن تُسَاعِدُنِي؟","ctxEn":"Can you help me?","lvl":0,"img":"question mark think"},{"ar":"مَعْظَم","tr":"ma'zam","en":"most / majority","ctxAr":"مَعْظَم الوَقْت","ctxEn":"Most of the time","lvl":0,"img":"crowd majority group"},{"ar":"هُنَاك","tr":"hunaak","en":"there / over there","ctxAr":"هُوَ هُنَاك","ctxEn":"He is over there","lvl":0,"img":"pointing finger direction"},{"ar":"هُنَا","tr":"huna","en":"here","ctxAr":"تَعَال هُنَا","ctxEn":"Come here","lvl":0,"img":"location pin map here"},{"ar":"زَحْمَة","tr":"zahma","en":"traffic / crowd","ctxAr":"فِيه زَحْمَة","ctxEn":"There's traffic","lvl":0,"img":"traffic jam cars"},{"ar":"حَادِث","tr":"haadith","en":"accident","ctxAr":"وَقَع حَادِث","ctxEn":"An accident happened","lvl":0,"img":"car accident road"},{"ar":"جَدْوَل","tr":"jadwal","en":"schedule / table","ctxAr":"جَدْوَل يَوْمِيّ","ctxEn":"Daily schedule","lvl":0,"img":"calendar planner schedule"},{"ar":"حَسَب","tr":"hasab","en":"depending on / according to","ctxAr":"حَسَب الطَّلَب","ctxEn":"According to the request","lvl":0,"img":"depending"},{"ar":"فَرْع","tr":"far'","en":"branch","ctxAr":"فَرْع آخَر","ctxEn":"Another branch","lvl":0,"img":"branch office building"},{"ar":"مُوَظَّف","tr":"muwazzaf","en":"employee / officer","ctxAr":"مُوَظَّف جَدِيد","ctxEn":"New employee","lvl":0,"img":"office professional worker"},{"ar":"سِيَاح","tr":"siyyaah","en":"tourists","ctxAr":"كَثِير مِنَ السِّيَاح","ctxEn":"Many tourists","lvl":0,"img":"tourist camera sightseeing"},{"ar":"زَمِيل","tr":"zamiil","en":"colleague","ctxAr":"زَمِيل فِي العَمَل","ctxEn":"Work colleague","lvl":0,"img":"coworkers office handshake"},{"ar":"بَنْزِين","tr":"banziin","en":"petrol / gasoline","ctxAr":"أَحْتَاج بَنْزِين","ctxEn":"I need petrol","lvl":0,"img":"gas station petrol"},{"ar":"مَمْنُوع","tr":"mamnu'","en":"prohibited / not allowed","ctxAr":"مَمْنُوع الدُّخُول","ctxEn":"Entry prohibited","lvl":0,"img":"no entry prohibited sign"},{"ar":"طَابِق","tr":"taabiq","en":"floor / storey","ctxAr":"الطَّابِق الثَّانِي","ctxEn":"The second floor","lvl":0,"img":"floor"},{"ar":"غَدَاء","tr":"ghadaa'","en":"lunch","ctxAr":"وَقْت الغَدَاء","ctxEn":"Lunchtime","lvl":0,"img":"lunch meal plate"},{"ar":"هَدِيَّة","tr":"hadiyya","en":"gift","ctxAr":"هَدِيَّة جَمِيلَة","ctxEn":"A beautiful gift","lvl":0,"img":"gift"},{"ar":"جَوَاز","tr":"jawaaz","en":"passport","ctxAr":"جَوَاز السَّفَر","ctxEn":"Travel passport","lvl":0,"img":"passport travel document"},{"ar":"بُدُون","tr":"biduun","en":"without","ctxAr":"بُدُون سُكَّر","ctxEn":"Without sugar","lvl":0,"img":"empty cup"},{"ar":"أَقَلّ","tr":"aqall","en":"less / fewer","ctxAr":"أَقَلّ مِن ذَلِك","ctxEn":"Less than that","lvl":0,"img":"less"},{"ar":"أَكْبَر","tr":"akbar","en":"bigger / largest","ctxAr":"الأَكْبَر سِنَّاً","ctxEn":"The oldest","lvl":0,"img":"bigger"},{"ar":"أَقْرَب","tr":"aqrab","en":"closer / nearest","ctxAr":"الأَقْرَب إِلَيْنَا","ctxEn":"The nearest to us","lvl":0,"img":"closer"},{"ar":"سَفَارَة","tr":"sifaara","en":"embassy","ctxAr":"أَعْمَل فِي السَّفَارَة","ctxEn":"I work at the embassy","lvl":1,"img":"embassy building flag"},{"ar":"سِيَاسِيّ","tr":"siyaasiyy","en":"political","ctxAr":"القِسْم السِّيَاسِيّ","ctxEn":"The political section","lvl":1,"img":"political flag government"},{"ar":"قُنْصُلِيّ","tr":"qunsuliyy","en":"consular","ctxAr":"القِسْم القُنْصُلِيّ","ctxEn":"The consular section","lvl":1,"img":"consulate building official"},{"ar":"مَبْسُوط","tr":"mabsuut","en":"happy / pleased","ctxAr":"أَنَا مَبْسُوط","ctxEn":"I am happy","lvl":1,"img":"happy person smile"},{"ar":"مَشْهُور","tr":"mashhuur","en":"famous","ctxAr":"مَطْعَم مَشْهُور","ctxEn":"A famous restaurant","lvl":1,"img":"famous landmark iconic"},{"ar":"مَحَامِي","tr":"muhaami","en":"lawyer / attorney","ctxAr":"هُوَ مَحَامِي","ctxEn":"He is a lawyer","lvl":1,"img":"lawyer suit briefcase"},{"ar":"وَالِدِي","tr":"waalidii","en":"my father (formal)","ctxAr":"وَالِدِي دِبْلُومَاسِيّ","ctxEn":"My father is a diplomat","lvl":1,"img":"father formal"},{"ar":"مُتَزَوِّج","tr":"mutazawwij","en":"married","ctxAr":"هُوَ مُتَزَوِّج","ctxEn":"He is married","lvl":1,"img":"wedding couple rings"},{"ar":"أَشْتَغِل","tr":"ashtaghil","en":"I work (Gulf)","ctxAr":"أَشْتَغِل فِي السَّفَارَة","ctxEn":"I work at the embassy","lvl":1,"img":"work office desk"},{"ar":"أَتَكَلَّم","tr":"atakallam","en":"I speak","ctxAr":"أَتَكَلَّم عَرَبِيّ","ctxEn":"I speak Arabic","lvl":1,"img":"speaking conversation talk"},{"ar":"جَوْعَان","tr":"jaw'aan","en":"hungry","ctxAr":"أَنَا جَوْعَان","ctxEn":"I am hungry","lvl":1,"img":"hungry empty plate food"},{"ar":"مُعَزَّوم","tr":"mu'azzoom","en":"invited (you are)","ctxAr":"أَنْتَ مُعَزَّوم","ctxEn":"You are invited","lvl":1,"img":"invited"},{"ar":"مَدِينَة","tr":"madiina","en":"city","ctxAr":"مَدِينَة كَبِيرَة","ctxEn":"A big city","lvl":1,"img":"city skyline urban"},{"ar":"عَاصِمَة","tr":"'aasima","en":"capital city","ctxAr":"الرِّيَاض عَاصِمَة","ctxEn":"Riyadh is the capital","lvl":1,"img":"capital city parliament"},{"ar":"وِلَايَة","tr":"wilaaya","en":"state / province","ctxAr":"وِلَايَة كَبِيرَة","ctxEn":"A big state","lvl":1,"img":"map state region"},{"ar":"مَنْطَقَة","tr":"mantaqa","en":"area / region","ctxAr":"هَذِهِ المَنْطَقَة","ctxEn":"This area","lvl":1,"img":"map region area"},{"ar":"جَامِعَة","tr":"jaami'a","en":"university","ctxAr":"طَالِب فِي الجَامِعَة","ctxEn":"A university student","lvl":1,"img":"university campus building"},{"ar":"زِيَارَة","tr":"ziyaara","en":"visit","ctxAr":"زِيَارَة رَسْمِيَّة","ctxEn":"An official visit","lvl":1,"img":"tourist visit camera"},{"ar":"سِوَاقَة","tr":"siwaaqа","en":"driving","ctxAr":"رُخْصَة السِّوَاقَة","ctxEn":"Driving licence","lvl":1,"img":"driving car road"},{"ar":"إِلْغَاء","tr":"ilghaa'","en":"cancellation","ctxAr":"إِلْغَاء الحَجْز","ctxEn":"Cancellation of booking","lvl":1,"img":"cancel cross red"},{"ar":"بَسِيطَة","tr":"basiita","en":"simple / easy","ctxAr":"قَاعِدَة بَسِيطَة","ctxEn":"A simple rule","lvl":1,"img":"simple easy path"},{"ar":"سَوَائِل","tr":"sawaa'il","en":"liquids","ctxAr":"مَمْنُوع السَّوَائِل","ctxEn":"Liquids are prohibited","lvl":1,"img":"liquids bottles water"},{"ar":"جِنْسِيَّة","tr":"jinsiyya","en":"nationality","ctxAr":"مَا جِنْسِيَّتَك؟","ctxEn":"What is your nationality?","lvl":1,"img":"flag passport nationality"},{"ar":"إِشَارَة","tr":"ishaara","en":"traffic light / signal","ctxAr":"عِنْدَ الإِشَارَة","ctxEn":"At the traffic light","lvl":1,"img":"traffic light red green"},{"ar":"تَقَاطُع","tr":"taqaatu'","en":"intersection","ctxAr":"عِنْدَ التَّقَاطُع","ctxEn":"At the intersection","lvl":1,"img":"intersection crossroads road"},{"ar":"تَطْبِيق","tr":"tatbiiq","en":"application / app","ctxAr":"اسْتَخْدِم التَّطْبِيق","ctxEn":"Use the app","lvl":1,"img":"smartphone app technology"},{"ar":"تَأْكِيد","tr":"ta'kiid","en":"confirmation","ctxAr":"رِسَالَة تَأْكِيد","ctxEn":"Confirmation message","lvl":1,"img":"confirmation email checkmark"},{"ar":"مَشْكَلَة","tr":"mushkila","en":"problem","ctxAr":"مَا فِيه مَشْكَلَة","ctxEn":"No problem","lvl":1,"img":"problem challenge think"},{"ar":"صِيَانَة","tr":"siyaana","en":"maintenance","ctxAr":"وَرْشَة صِيَانَة","ctxEn":"Maintenance workshop","lvl":1,"img":"maintenance tools wrench"},{"ar":"بِسُرْعَة","tr":"bisur'a","en":"quickly / fast","ctxAr":"رُوح بِسُرْعَة","ctxEn":"Go quickly","lvl":1,"img":"fast speed running"},{"ar":"اثْنَيْن","tr":"ithnayn","en":"two","ctxAr":"اثْنَيْن فَقَط","ctxEn":"Only two","lvl":1,"img":"two pair number"},{"ar":"عِشْرِين","tr":"ishriyn","en":"twenty","ctxAr":"عِشْرِين رِيَالاً","ctxEn":"Twenty Riyals","lvl":1,"img":"twenty number"},{"ar":"خَمْسِين","tr":"khamsiin","en":"fifty","ctxAr":"خَمْسُون رِيَالاً","ctxEn":"Fifty Riyals","lvl":1,"img":"fifty number"},{"ar":"أَرْبَعِين","tr":"arba'iin","en":"forty","ctxAr":"أَرْبَعُون دَقِيقَة","ctxEn":"Forty minutes","lvl":1,"img":"calendar forty"},{"ar":"أَطْفَال","tr":"atfaal","en":"children","ctxAr":"سِعْر الأَطْفَال","ctxEn":"Children's price","lvl":1,"img":"children playing"},{"ar":"أَجَانِب","tr":"ajaanib","en":"foreigners","ctxAr":"تَسْعِيرَة الأَجَانِب","ctxEn":"Foreigners' pricing","lvl":1,"img":"diverse people world"},{"ar":"أَسْعَار","tr":"as'aar","en":"prices","ctxAr":"الأَسْعَار مَعْقُولَة","ctxEn":"Prices are reasonable","lvl":1,"img":"price tags market"},{"ar":"فَوَاكِه","tr":"fawakih","en":"fruits","ctxAr":"أُحِبّ الفَوَاكِه","ctxEn":"I like fruits","lvl":1,"img":"fresh fruits colorful"},{"ar":"مَجَّانِيّ","tr":"majjaaniyy","en":"free of charge","ctxAr":"الدُّخُول مَجَّانِيّ","ctxEn":"Entry is free","lvl":1,"img":"free gift box"},{"ar":"تَذْكِرَة","tr":"tadhkira","en":"ticket","ctxAr":"تَذْكِرَة الطَّيَرَان","ctxEn":"Flight ticket","lvl":1,"img":"airplane ticket boarding"},{"ar":"شَوْرَبَة","tr":"shurba","en":"soup","ctxAr":"شَوْرَبَة سَاخِنَة","ctxEn":"Hot soup","lvl":1,"img":"soup bowl hot"},{"ar":"بَطَاطِس","tr":"bataatis","en":"French fries / potatoes","ctxAr":"بَطَاطِس مَقْلِيَّة","ctxEn":"Fried potatoes","lvl":1,"img":"french fries food"},{"ar":"بَيْضَاء","tr":"baydaa'","en":"white (fem.)","ctxAr":"جُبْنَة بَيْضَاء","ctxEn":"White cheese","lvl":1,"img":"white"},{"ar":"دَائِماً","tr":"daa'iman","en":"always","ctxAr":"دَائِماً فِي الوَقْت","ctxEn":"Always on time","lvl":1,"img":"always forever clock"},{"ar":"أَحْتَاج","tr":"ahtaaj","en":"I need","ctxAr":"أَحْتَاج مُسَاعَدَة","ctxEn":"I need help","lvl":1,"img":"need help assistance"},{"ar":"أَتَنَقَّى","tr":"atanaqqaa","en":"I choose / I pick","ctxAr":"أَتَنَقَّى مِنَ القَائِمَة","ctxEn":"I choose from the menu","lvl":1,"img":"choosing selection options"},{"ar":"أَلَاقِي","tr":"alaaqii","en":"I find (Gulf)","ctxAr":"أَلَاقِيه هُنَا","ctxEn":"I find it here","lvl":1,"img":"finding search looking"},{"ar":"مُنَاسِب","tr":"munaasib","en":"suitable / convenient","ctxAr":"هَذَا الوَقْت مُنَاسِب؟","ctxEn":"Is this time suitable?","lvl":1,"img":"perfect fit puzzle"},{"ar":"عُنْوَان","tr":"unwaan","en":"address","ctxAr":"مَا العُنْوَان؟","ctxEn":"What is the address?","lvl":1,"img":"address location house"},{"ar":"أَسْأَلَك","tr":"as'alak","en":"I ask you","ctxAr":"أَسْأَلَك سُؤَالاً","ctxEn":"I ask you a question","lvl":1,"img":"question ask conversation"},{"ar":"مَدَارِس","tr":"madaaris","en":"schools","ctxAr":"كَثِير مِنَ المَدَارِس","ctxEn":"Many schools","lvl":1,"img":"school building education"},{"ar":"مُمَتَّاز","tr":"mumtaaz","en":"excellent","ctxAr":"مُمَتَّاز جِدَّاً","ctxEn":"Excellent!","lvl":1,"img":"excellent trophy award"},{"ar":"تَسَوَّلَف","tr":"tasawwalf","en":"to chat casually (Gulf)","ctxAr":"تَعَال نَتْسَوْلَف","ctxEn":"Come let's chat","lvl":1,"img":"friends talking chatting"},{"ar":"أَوْلَاد","tr":"awlaad","en":"kids / children","ctxAr":"كَيْفَ الأَوْلَاد؟","ctxEn":"How are the kids?","lvl":1,"img":"kids playing fun"},{"ar":"سِنِّين","tr":"siniyn","en":"years (pl., Gulf)","ctxAr":"كَمْ سِنِّين؟","ctxEn":"How many years?","lvl":1,"img":"years calendar time"},{"ar":"مَتَاحِف","tr":"mataahif","en":"museums","ctxAr":"زُرْنَا المَتَاحِف","ctxEn":"We visited the museums","lvl":1,"img":"museum art building"},{"ar":"مَطَاعِم","tr":"mataa'im","en":"restaurants","ctxAr":"كَثِير مَطَاعِم","ctxEn":"Many restaurants","lvl":1,"img":"restaurants dining street"},{"ar":"مَوْقِع","tr":"mawqi'","en":"website / location","ctxAr":"عَلَى المَوْقِع","ctxEn":"On the website","lvl":1,"img":"website laptop internet"},{"ar":"مَرْحَبَا","tr":"marhaba","en":"hello / hi","ctxAr":"مَرْحَبَا بِكُم","ctxEn":"Welcome all","lvl":1,"img":"hello greeting wave"},{"ar":"عَشَانَك","tr":"ashaanak","en":"for you (masc., Gulf)","ctxAr":"هَذَا عَشَانَك","ctxEn":"This is for you","lvl":1,"img":"gift present you"},{"ar":"هَيَّا","tr":"hayya","en":"come on / let's go","ctxAr":"هَيَّا نَرُوح","ctxEn":"Come on, let's go","lvl":1,"img":"lets go running together"},{"ar":"دِبْلُومَاسِيّ","tr":"dibloomaasiyy","en":"diplomat","ctxAr":"هُوَ دِبْلُومَاسِيّ","ctxEn":"He is a diplomat","lvl":2,"img":"diplomat official handshake"},{"ar":"أَمْرِيكِيّ","tr":"amriikiyy","en":"American","ctxAr":"مُوَظَّف أَمْرِيكِيّ","ctxEn":"American employee","lvl":2,"img":"american flag usa"},{"ar":"اقْتِصَادِيّ","tr":"iqtisaadiyy","en":"economic","ctxAr":"القِسْم الاقْتِصَادِيّ","ctxEn":"The economic section","lvl":2,"img":"economy graph finance"},{"ar":"إِجْرَاءَات","tr":"ijraa'aat","en":"procedures / process","ctxAr":"إِجْرَاءَات المَطَار","ctxEn":"Airport procedures","lvl":2,"img":"procedures checklist document"},{"ar":"قَوَانِين","tr":"qawaaniin","en":"laws / rules","ctxAr":"قَوَانِين المُرُور","ctxEn":"Traffic laws","lvl":2,"img":"law book justice"},{"ar":"خَضْرَوَات","tr":"khadarawaat","en":"vegetables","ctxAr":"خَضْرَوَات طَازِجَة","ctxEn":"Fresh vegetables","lvl":2,"img":"fresh vegetables colorful"},{"ar":"أَسْتَأْجِر","tr":"asta'jir","en":"I rent","ctxAr":"أَسْتَأْجِر سَيَّارَة","ctxEn":"I rent a car","lvl":2,"img":"rent car keys"},{"ar":"مُسْتَعْجِل","tr":"musta'jil","en":"in a hurry","ctxAr":"أَنَا مُسْتَعْجِل","ctxEn":"I am in a hurry","lvl":2,"img":"rushing hurry clock"},{"ar":"أَسْتَخْدِم","tr":"astakhdim","en":"I use","ctxAr":"أَسْتَخْدِم التَّطْبِيق","ctxEn":"I use the app","lvl":2,"img":"using smartphone app"},{"ar":"صَيْدَلِيَّة","tr":"saydaliyya","en":"pharmacy","ctxAr":"أَقْرَب صَيْدَلِيَّة","ctxEn":"The nearest pharmacy","lvl":2,"img":"pharmacy store medicine"},{"ar":"لَيْلَتَيْن","tr":"laylatayni","en":"two nights","ctxAr":"إِقَامَة لَيْلَتَيْن","ctxEn":"Two-night stay","lvl":2,"img":"hotel night stay"},{"ar":"ثَمَانِيَة","tr":"thamaaniya","en":"eight","ctxAr":"ثَمَانِيَة أَشْخَاص","ctxEn":"Eight people","lvl":2,"img":"eight number"},{"ar":"ثَلَاثِين","tr":"thalaathiin","en":"thirty","ctxAr":"ثَلَاثُون دَقِيقَة","ctxEn":"Thirty minutes","lvl":2,"img":"calendar thirty"},{"ar":"مَنْظِّفَات","tr":"munazzifaat","en":"cleaning supplies / detergents","ctxAr":"قِسْم المُنَظِّفَات","ctxEn":"Cleaning supplies section","lvl":2,"img":"cleaning supplies products"},{"ar":"مَخْبُوزَات","tr":"makhbuuzaat","en":"baked goods","ctxAr":"طَازِجَة مَخْبُوزَات","ctxEn":"Fresh baked goods","lvl":2,"img":"bread bakery fresh"},{"ar":"سَفَارَات","tr":"sifaaraat","en":"embassies","ctxAr":"حَيّ السَّفَارَات","ctxEn":"The embassies district","lvl":2,"img":"embassies diplomatic flags"},{"ar":"سَيَّارَات","tr":"sayyaaraat","en":"cars","ctxAr":"مَوْقِف سَيَّارَات","ctxEn":"Car park","lvl":2,"img":"cars parking street"},{"ar":"اشْتَرَيْنَا","tr":"ishtarayna","en":"we bought","ctxAr":"اشْتَرَيْنَا هَدَايَا","ctxEn":"We bought gifts","lvl":2,"img":"shopping bags market"},{"ar":"يَسْبَحُون","tr":"yasbahoon","en":"they swim","ctxAr":"يَسْبَحُون فِي البَحْر","ctxEn":"They swim in the sea","lvl":2,"img":"swimming pool water"},{"ar":"يَزُورُون","tr":"yazuruun","en":"they visit","ctxAr":"يَزُورُون المَتَاحِف","ctxEn":"They visit the museums","lvl":2,"img":"tourist visiting landmark"},{"ar":"يَبِيعُون","tr":"yabiuun","en":"they sell","ctxAr":"يَبِيعُون كُلّ شَيْء","ctxEn":"They sell everything","lvl":2,"img":"market selling goods"},{"ar":"بَرْنَامَج","tr":"barnaamaj","en":"programme / schedule","ctxAr":"بَرْنَامَج الرِّحْلَة","ctxEn":"Trip programme","lvl":2,"img":"schedule programme calendar"},{"ar":"أَحْيَاناً","tr":"ahyaanan","en":"sometimes","ctxAr":"أَحْيَاناً أَذْهَب","ctxEn":"Sometimes I go","lvl":2,"img":"sometimes occasionally clock"},{"ar":"بِالنِّسْبَة","tr":"bilnisba","en":"regarding / as for","ctxAr":"بِالنِّسْبَة لِلسِّعْر","ctxEn":"Regarding the price","lvl":2,"img":"document note paper"},{"ar":"صَبَاح الخَيْر","tr":"sabaah al-khayr","en":"good morning","ctxAr":"صَبَاح الخَيْر يَا دُكْتُور","ctxEn":"Good morning, Doctor","lvl":3,"img":"morning sunrise coffee"},{"ar":"صَبَاح النُّور","tr":"sabaah al-nuur","en":"good morning (response)","ctxAr":"صَبَاح النُّور وَالسُّرُور","ctxEn":"Good morning and joy (response)","lvl":3,"img":"morning greeting smile"},{"ar":"مَسَاء الخَيْر","tr":"masaa' al-khayr","en":"good evening","ctxAr":"مَسَاء الخَيْر جَمِيعاً","ctxEn":"Good evening everyone","lvl":3,"img":"evening sunset city"},{"ar":"مَسَاء النُّور","tr":"masaa' al-nuur","en":"good evening (response)","ctxAr":"مَسَاء النُّور وَالأَفْرَاح","ctxEn":"Good evening (response)","lvl":3,"img":"evening stars relaxed"},{"ar":"مَعَ السَّلَامَة","tr":"maa al-salaama","en":"goodbye (go in peace)","ctxAr":"مَعَ السَّلَامَة وَإِلَى اللِّقَاء","ctxEn":"Goodbye and see you","lvl":3,"img":"goodbye wave farewell"},{"ar":"الحَمْد لِلَّه","tr":"alhamdu lillaah","en":"thank God / praise God","ctxAr":"الحَمْد لِلَّه كُلّ شَيْء زَيْن","ctxEn":"Thank God everything is fine","lvl":3,"img":"grateful hands prayer"},{"ar":"كَيْفَ حَالَك؟","tr":"kayfa haalak?","en":"how are you? (masc.)","ctxAr":"كَيْفَ حَالَك يَوْم؟","ctxEn":"How are you today?","lvl":3,"img":"greeting conversation smile"},{"ar":"مِنْ وَيْن؟","tr":"min wayn?","en":"from where? (Gulf)","ctxAr":"أَنْتَ مِنْ وَيْن أَصْلاً؟","ctxEn":"Where are you originally from?","lvl":3,"img":"world globe map"},{"ar":"قِسْم الأَمْن","tr":"qism al-amn","en":"security section","ctxAr":"رَاجِع قِسْم الأَمْن","ctxEn":"See the security section","lvl":3,"img":"security officer badge"},{"ar":"إِنْ شَاء اللَّه","tr":"in shaa' allaah","en":"God willing","ctxAr":"إِنْ شَاء اللَّه نَشُوفَك","ctxEn":"God willing we will see you","lvl":3,"img":"pray hands together"},{"ar":"أَوَّل مَرَّة","tr":"awwal marra","en":"first time","ctxAr":"هَذِهِ أَوَّل مَرَّة","ctxEn":"This is the first time","lvl":3,"img":"first beginning new start"},{"ar":"فُرْصَة سَعِيدَة","tr":"fursa sa'iida","en":"nice to meet you","ctxAr":"فُرْصَة سَعِيدَة بِمَعْرِفَتَك","ctxEn":"Nice to meet you","lvl":3,"img":"handshake meeting smile"},{"ar":"لَوْ سَمَحْت","tr":"law samaht","en":"please / excuse me","ctxAr":"لَوْ سَمَحْت، أَيْنَ المَكْتَب؟","ctxEn":"Please, where is the office?","lvl":3,"img":"please polite gesture"},{"ar":"وَثَائِق التَّطْعِيم","tr":"wathaa'iq al-tatt'iim","en":"vaccination documents","ctxAr":"هَلْ عِنْدَك وَثَائِق التَّطْعِيم؟","ctxEn":"Do you have vaccination documents?","lvl":3,"img":"vaccine certificate document"},{"ar":"مَوَاد مَحْظُورَة","tr":"mawaad mahzuura","en":"prohibited items","ctxAr":"مَمْنُوع حَمْل مَوَاد مَحْظُورَة","ctxEn":"Carrying prohibited items is banned","lvl":3,"img":"prohibited items sign"},{"ar":"اللَّه يُسَلِّمَك","tr":"allaah yusallimak","en":"may God keep you safe","ctxAr":"اللَّه يُسَلِّمَك عَلَى المَرُور","ctxEn":"Thank you for passing by","lvl":3,"img":"safe protection shield"},{"ar":"جَوَاز السَّفَر","tr":"jawaaz al-safar","en":"passport","ctxAr":"هَلْ مَعَك جَوَاز السَّفَر؟","ctxEn":"Do you have your passport with you?","lvl":3,"img":"passport travel document"},{"ar":"تَارِيخ المَغَادَرَة","tr":"taariikh al-mughaadara","en":"departure date","ctxAr":"مَا تَارِيخ المَغَادَرَة؟","ctxEn":"What is the departure date?","lvl":3,"img":"airplane departure board"},{"ar":"تَارِيخ المِيلَاد","tr":"taariikh al-milaad","en":"date of birth","ctxAr":"مَا تَارِيخ مِيلَادَك؟","ctxEn":"What is your date of birth?","lvl":3,"img":"birth certificate document"},{"ar":"حِزَام الأَمَان","tr":"hizaam al-amaan","en":"seat belt","ctxAr":"ارْبُط حِزَام الأَمَان","ctxEn":"Fasten your seat belt","lvl":3,"img":"seat belt car safety"},{"ar":"جِهَاز التَّفْتِيش","tr":"jihaaz al-taftiish","en":"security scanner","ctxAr":"مُرَّ مِنْ جِهَاز التَّفْتِيش","ctxEn":"Pass through the security scanner","lvl":3,"img":"airport security scanner"},{"ar":"مَوْقِف سَيَّارَات","tr":"mawqif sayyaaraat","en":"car park","ctxAr":"فِي مَوْقِف السَّيَّارَات","ctxEn":"In the car park","lvl":3,"img":"parking lot cars"},{"ar":"خِدْمَة تَوْصِيل","tr":"khidmat tawsiil","en":"delivery service","ctxAr":"يُوجَد خِدْمَة تَوْصِيل","ctxEn":"There is a delivery service","lvl":3,"img":"delivery box package"},{"ar":"إِنْشَاء حِسَاب","tr":"inshaa' hisaab","en":"creating an account","ctxAr":"ابْدَأ بِإِنْشَاء حِسَاب","ctxEn":"Start by creating an account","lvl":3,"img":"account signup computer"},{"ar":"البَرِيد الإِلِكْتُرُونِيّ","tr":"al-bariid al-ilikturuuniyy","en":"email","ctxAr":"أَدْخِل البَرِيد الإِلِكْتُرُونِيّ","ctxEn":"Enter your email","lvl":3,"img":"email laptop message"},{"ar":"كَلِمَة المُرُور","tr":"kalimat al-muruur","en":"password","ctxAr":"أَدْخِل كَلِمَة المُرُور","ctxEn":"Enter the password","lvl":3,"img":"password lock security"},{"ar":"يَوْم السَّبْت","tr":"yawm al-sabt","en":"Saturday","ctxAr":"نَجْتَمِع يَوْم السَّبْت","ctxEn":"We meet on Saturday","lvl":3,"img":"weekend calendar saturday"},{"ar":"رَقْم التِّلِفُون","tr":"raqm al-tilifuun","en":"phone number","ctxAr":"مَا رَقْم التِّلِفُون؟","ctxEn":"What is the phone number?","lvl":3,"img":"smartphone phone call"},{"ar":"أَغْرَاض البَيْت","tr":"aghraa'd al-bayt","en":"household groceries","ctxAr":"أَشْتَرِي أَغْرَاض البَيْت","ctxEn":"I buy household groceries","lvl":3,"img":"groceries shopping cart"},{"ar":"عَلَى فِكْرَة","tr":"ala fikra","en":"by the way","ctxAr":"عَلَى فِكْرَة، سَمِعْت؟","ctxEn":"By the way, did you hear?","lvl":3,"img":"conversation chat speech"},{"ar":"بِالضَّبْط","tr":"bil-dabt","en":"exactly / precisely","ctxAr":"نَعَم، بِالضَّبْط","ctxEn":"Yes, exactly","lvl":3,"img":"precise exact target"},{"ar":"البَحْر الأَحْمَر","tr":"al-bahr al-ahmar","en":"the Red Sea","ctxAr":"رَحَلْنَا إِلَى البَحْر الأَحْمَر","ctxEn":"We travelled to the Red Sea","lvl":3,"img":"red sea coral reef"},{"ar":"المُتْحَف الوَطَنِيّ","tr":"al-mathaf al-wataniyy","en":"the National Museum","ctxAr":"زُرْنَا المُتْحَف الوَطَنِيّ","ctxEn":"We visited the National Museum","lvl":3,"img":"national museum architecture"},{"ar":"عَلَى اليَمِين","tr":"ala al-yamiin","en":"to the right","ctxAr":"دُور عَلَى اليَمِين","ctxEn":"Turn to the right","lvl":3,"img":"the"},{"ar":"نُقْطَة الانْطِلَاق","tr":"nuqtat al-intilaaق","en":"starting point","ctxAr":"مَا نُقْطَة الانْطِلَاق؟","ctxEn":"What is the starting point?","lvl":3,"img":"start line beginning map"},{"ar":"تَفَاصِيل الرِّحْلَة","tr":"tafaasiil al-rihla","en":"trip details","ctxAr":"اعْرِض تَفَاصِيل الرِّحْلَة","ctxEn":"Show the trip details","lvl":3,"img":"travel itinerary map"},{"ar":"أَمَاكِن سِيَاحِيَّة","tr":"amaakln siyaahiyya","en":"tourist attractions","ctxAr":"كَثِير أَمَاكِن سِيَاحِيَّة","ctxEn":"Many tourist attractions","lvl":3,"img":"tourist landmark sightseeing"},{"ar":"اسْم العَائِلَة","tr":"ism al-'aa'ila","en":"family name / surname","ctxAr":"مَا اسْم العَائِلَة؟","ctxEn":"What is the family name?","lvl":3,"img":"family name document"},{"ar":"أَرْخَص مِن","tr":"arkhas min","en":"cheaper than","ctxAr":"هَذَا أَرْخَص مِن ذَاك","ctxEn":"This is cheaper than that","lvl":3,"img":"sale compare price"},{"ar":"أَكَثَر مِن","tr":"akthar min","en":"more than","ctxAr":"أَكْثَر مِن سَاعَة","ctxEn":"More than an hour","lvl":3,"img":"more stack pile"},{"ar":"عَايِشِين فِي","tr":"'aayishiin fi","en":"living in (Gulf pl.)","ctxAr":"عَايِشِين فِي الرِّيَاض","ctxEn":"Living in Riyadh","lvl":3,"img":"city living apartment"},{"ar":"صَحَّتَيْن","tr":"sahhtayn","en":"bon appétit","ctxAr":"صَحَّتَيْن وَهَنَاءً","ctxEn":"Bon appétit","lvl":3,"img":"feast food table"},{"ar":"الطَّرِيق السَّرِيع","tr":"al-tariiq al-sarii'","en":"highway / motorway","ctxAr":"عَلَى الطَّرِيق السَّرِيع","ctxEn":"On the highway","lvl":3,"img":"highway driving speed"},{"ar":"عَن طَرِيق","tr":"'an tariiq","en":"through / via","ctxAr":"عَن طَرِيق التَّطْبِيق","ctxEn":"Via the app","lvl":3,"img":"path route direction"},{"ar":"مَا فِيه مِنْيُو","tr":"ma fiih minyu","en":"there is no menu","ctxAr":"آسِف، مَا فِيه مِنْيُو","ctxEn":"Sorry, there is no menu","lvl":3,"img":"menu restaurant"},{"ar":"مِن زَمَان","tr":"min zamaan","en":"for a long time / long ago","ctxAr":"مَا شُفْتَك مِن زَمَان","ctxEn":"Haven't seen you in a long time","lvl":3,"img":"time clock hourglass"}];
+
+// ═══════════════════════════════════════════════════════════════════
+//  RUNTIME STATE
+// ═══════════════════════════════════════════════════════════════════
+let allWords = [...VOCAB_BASE];
+let currentUser = null;  // user data object
+let currentScreen = 'users';
+let quizState = null;    // active quiz session state
+let learnState = null;   // active learn session state
+let currentWordFilter = 'all';
+
+// ═══════════════════════════════════════════════════════════════════
+//  DATE UTILS
+// ═══════════════════════════════════════════════════════════════════
+function getToday() {
+  return new Date().toISOString().split('T')[0];
+}
+function daysBetween(d1, d2) {
+  if (!d1 || !d2) return 999;
+  return Math.round((new Date(d2) - new Date(d1)) / 86400000);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  STORAGE — localStorage (cache) + Firebase (cloud sync)
+// ═══════════════════════════════════════════════════════════════════
+const STORE_KEY = 'arabicVocabGame_v3';
+const FB_CFG_KEY = 'arabicVocabGame_fbConfig';
+const FB_SKIP_KEY = 'arabicVocabGame_fbSkip';
+let _fbDb = null;       // Firebase database reference (null = not configured)
+let _syncStatus = {};   // per-user sync status: 'synced'|'syncing'|'error'|'offline'
+
+// ── Local cache (synchronous, instant) ──────────────────────────────
+function loadStore() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); }
+  catch(e) { return {}; }
+}
+function saveStore(data) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+function loadUser(name) {
+  const store = loadStore();
+  return store[name] || null;
+}
+function saveUser(userData) {
+  // 1. Write to localStorage immediately (synchronous, instant UI)
+  const store = loadStore();
+  store[userData.name] = userData;
+  saveStore(store);
+  // 2. Push to Firebase async (background)
+  fbPushUser(userData);
+}
+
+// ── Firebase init ────────────────────────────────────────────────────
+function initFirebase() {
+  // Config hardcoded — no setup required
+  const cfg = {
+    apiKey: "AIzaSyDwxS52Fk8iEp1aU3LfnvmFsBME8vB84gE",
+    authDomain: "arabicvocab-6bd5b.firebaseapp.com",
+    databaseURL: "https://arabicvocab-6bd5b-default-rtdb.firebaseio.com",
+    projectId: "arabicvocab-6bd5b",
+    storageBucket: "arabicvocab-6bd5b.firebasestorage.app",
+    messagingSenderId: "580060066704",
+    appId: "1:580060066704:web:d8504cc4583e81b56db915"
+  };
+
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(cfg);
+    }
+    _fbDb = firebase.database();
+    // Pull all users + extra vocab from cloud on startup
+    fbPullAllUsers();
+    pullExtraVocabFromFirebase(cloudExtra => {
+      if (cloudExtra && cloudExtra.length) {
+        const n = applyExtraVocab(cloudExtra);
+        if (n > 0) {
+          const loc = loadExtraVocabFromStorage();
+          const locSet = new Set(loc.map(w => w.ar));
+          saveExtraVocabToStorage([...loc, ...cloudExtra.filter(w => !locSet.has(w.ar))]);
+          if (currentScreen === 'users') renderUsersScreen();
+        }
+      }
+      const localExtra = loadExtraVocabFromStorage();
+      if (localExtra.length) pushExtraVocabToFirebase(localExtra);
+    });
+  } catch(e) {
+    console.warn('Firebase init failed:', e.message);
+    _fbDb = null;
+  }
+}
+
+// ── Firebase push (local → cloud) ────────────────────────────────────
+// Firebase forbids these chars in keys: . # $ / [ ]
+// Encode them as unicode escapes before pushing, decode after pulling
+function sanitizeForFirebase(obj) {
+  if (typeof obj !== 'object' || obj === null) return obj;
+  if (Array.isArray(obj)) return obj.map(sanitizeForFirebase);
+  const result = {};
+  for (const key of Object.keys(obj)) {
+    const safeKey = key.replace(/[.#$\/\[\]]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+    result[safeKey] = sanitizeForFirebase(obj[key]);
+  }
+  return result;
+}
+
+function desanitizeFromFirebase(obj) {
+  if (typeof obj !== 'object' || obj === null) return obj;
+  if (Array.isArray(obj)) return obj.map(desanitizeFromFirebase);
+  const result = {};
+  for (const key of Object.keys(obj)) {
+    const origKey = key.replace(/%([0-9A-F]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+    result[origKey] = desanitizeFromFirebase(obj[key]);
+  }
+  return result;
+}
+
+function fbPushUser(userData) {
+  if (!_fbDb) return;
+  const name = userData.name;
+  _syncStatus[name] = 'syncing';
+  updateSyncDot(name);
+
+  _fbDb.ref('users/' + name).set(sanitizeForFirebase(userData))
+    .then(() => {
+      _syncStatus[name] = 'synced';
+      updateSyncDot(name);
+    })
+    .catch(err => {
+      console.warn('Firebase write error:', err);
+      _syncStatus[name] = 'error';
+      updateSyncDot(name);
+    });
+}
+
+// ── Firebase pull (cloud → local) ────────────────────────────────────
+function fbPullAllUsers() {
+  if (!_fbDb) return;
+  USERS.forEach(name => {
+    _syncStatus[name] = 'syncing';
+    _fbDb.ref('users/' + name).once('value')
+      .then(snapshot => {
+        const cloudData = desanitizeFromFirebase(snapshot.val());
+        if (cloudData) {
+          // Merge: cloud wins if it has more wordProgress entries (more progress)
+          const local = loadUser(name);
+          const merged = mergeUserData(local, cloudData);
+          const store = loadStore();
+          store[name] = merged;
+          saveStore(store);
+        }
+        _syncStatus[name] = 'synced';
+        updateSyncDot(name);
+        // Refresh users screen if visible
+        if (currentScreen === 'users') renderUsersScreen();
+      })
+      .catch(err => {
+        console.warn('Firebase read error for ' + name + ':', err);
+        _syncStatus[name] = 'error';
+        updateSyncDot(name);
+      });
+  });
+}
+
+// Pull a single user — NON-BLOCKING: callback fires immediately from localStorage,
+// Firebase syncs silently in background so a broken/slow Firebase never freezes the UI
+function fbPullUser(name, callback) {
+  callback(); // always proceed immediately with local data
+  if (!_fbDb) return;
+  let settled = false;
+  const timer = setTimeout(() => { settled = true; }, 5000);
+  _fbDb.ref('users/' + name).once('value')
+    .then(snapshot => {
+      if (settled) return;
+      clearTimeout(timer);
+      settled = true;
+      const cloudData = desanitizeFromFirebase(snapshot.val());
+      if (cloudData) {
+        const local = loadUser(name);
+        const merged = mergeUserData(local, cloudData);
+        const store = loadStore();
+        store[name] = merged;
+        saveStore(store);
+        if (currentUser && currentUser.name === name && currentScreen === 'dash') {
+          currentUser = merged;
+          renderDashboard();
+        }
+      }
+    })
+    .catch(() => { clearTimeout(timer); settled = true; });
+}
+
+// ── Merge strategy: take whichever has more progress ─────────────────
+function mergeUserData(local, cloud) {
+  if (!local) return cloud;
+  if (!cloud) return local;
+
+  // Merge wordProgress: union of both, keeping higher correct/attempts
+  const wp = Object.assign({}, local.wordProgress || {});
+  for (const [ar, cp] of Object.entries(cloud.wordProgress || {})) {
+    if (!wp[ar]) {
+      wp[ar] = cp;
+    } else {
+      // Keep the one with more attempts (more practice done)
+      if ((cp.attempts || 0) > (wp[ar].attempts || 0)) {
+        wp[ar] = cp;
+      }
+    }
+  }
+
+  // Merge sessions: union
+  const sessions = Object.assign({}, cloud.sessions || {}, local.sessions || {});
+
+  // Take whichever has higher streak
+  const streak = Math.max(local.dailyStreak || 0, cloud.dailyStreak || 0);
+  const nextIndex = Math.max(local.nextIndex || 0, cloud.nextIndex || 0);
+  const totalCorrect = Math.max(local.totalCorrect || 0, cloud.totalCorrect || 0);
+  const totalAttempts = Math.max(local.totalAttempts || 0, cloud.totalAttempts || 0);
+
+  // Use cloud's orderedVocab if local has none, else keep local
+  const orderedVocab = (local.orderedVocab && local.orderedVocab.length > 0)
+    ? local.orderedVocab
+    : (cloud.orderedVocab || []);
+
+  return {
+    ...cloud,
+    ...local,
+    wordProgress: wp,
+    sessions,
+    dailyStreak: streak,
+    nextIndex,
+    totalCorrect,
+    totalAttempts,
+    orderedVocab,
+  };
+}
+
+// ── Sync dot UI update ────────────────────────────────────────────────
+function updateSyncDot(name) {
+  const dot = document.getElementById('syncDot_' + name);
+  if (!dot) return;
+  const status = _syncStatus[name] || (_fbDb ? 'offline' : 'offline');
+  dot.className = 'sync-dot ' + status;
+  dot.title = {
+    synced: 'Synced to cloud',
+    syncing: 'Syncing...',
+    error: 'Sync error — check Firebase config',
+    offline: 'Offline mode'
+  }[status] || '';
+}
+
+// ── Firebase config modal handlers ────────────────────────────────────
+function saveFbConfig() {
+  const raw = document.getElementById('fbConfigInput').value.trim();
+  const errEl = document.getElementById('fbError');
+  errEl.style.display = 'none';
+
+  try {
+    // Accept both bare object and wrapped in firebaseConfig = {...}
+    const cleaned = raw.replace(/^.*?=\s*/, '').replace(/;?\s*$/, '');
+    const cfg = JSON.parse(cleaned);
+    if (!cfg.databaseURL) throw new Error('Missing databaseURL field');
+    if (!cfg.apiKey) throw new Error('Missing apiKey field');
+
+    localStorage.setItem(FB_CFG_KEY, JSON.stringify(cfg));
+    closeFbModal();
+    toast('Firebase connected! Syncing...');
+
+    // Init, pull users + sync extra vocab
+    const doSync = () => {
+      fbPullAllUsers();
+      pullExtraVocabFromFirebase(cloudExtra => {
+        if (cloudExtra && cloudExtra.length) {
+          const n = applyExtraVocab(cloudExtra);
+          if (n > 0) {
+            const loc = loadExtraVocabFromStorage();
+            const locSet = new Set(loc.map(w => w.ar));
+            saveExtraVocabToStorage([...loc, ...cloudExtra.filter(w => !locSet.has(w.ar))]);
+            if (currentScreen === 'users') renderUsersScreen();
+          }
+        }
+        const localExtra = loadExtraVocabFromStorage();
+        if (localExtra.length) pushExtraVocabToFirebase(localExtra);
+      });
+    };
+    if (firebase.apps.length) {
+      firebase.app().delete().then(() => {
+        firebase.initializeApp(cfg);
+        _fbDb = firebase.database();
+        doSync();
+      });
+    } else {
+      firebase.initializeApp(cfg);
+      _fbDb = firebase.database();
+      doSync();
+    }
+  } catch(e) {
+    errEl.textContent = 'Invalid config: ' + e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+function closeFbModal() {
+  document.getElementById('fbModal').classList.remove('show');
+}
+function skipFbForever() {
+  localStorage.setItem(FB_SKIP_KEY, '1');
+  closeFbModal();
+}
+
+// ── Reset Firebase config (for settings) ─────────────────────────────
+function resetFbConfig() {
+  localStorage.removeItem(FB_CFG_KEY);
+  localStorage.removeItem(FB_SKIP_KEY);
+  _fbDb = null;
+  toast('Firebase config cleared. Reload to reconfigure.');
+}
+function createUser(name) {
+  const avatars = {Arjun:'🧑‍💻', Sudha:'👩‍🎓', David:'👨‍💼', Guest:'🌐'};
+  return {
+    name,
+    avatar: avatars[name] || '🌐',
+    created: getToday(),
+    orderedVocab: shuffle(allWords.map(w => w.ar)),
+    nextIndex: 0,
+    wordProgress: {},
+    sessions: {},
+    dailyStreak: 0,
+    lastActiveDate: null,
+    totalCorrect: 0,
+    totalAttempts: 0
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SHUFFLE
+// ═══════════════════════════════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SESSION GENERATION
+// ═══════════════════════════════════════════════════════════════════
+function ensureOrderedVocabComplete(userData) {
+  const known = new Set(userData.orderedVocab);
+  const missing = allWords.map(w => w.ar).filter(ar => !known.has(ar));
+  if (missing.length > 0) {
+    userData.orderedVocab.push(...shuffle(missing));
+  }
+}
+
+function getOrCreateTodaySession(userData) {
+  const today = getToday();
+
+  // Update streak
+  if (userData.lastActiveDate !== today) {
+    const diff = daysBetween(userData.lastActiveDate, today);
+    if (diff === 1) {
+      userData.dailyStreak = (userData.dailyStreak || 0) + 1;
+    } else if (diff > 1) {
+      userData.dailyStreak = 1;
+    }
+    userData.lastActiveDate = today;
+  }
+
+  if (userData.sessions[today]) return userData.sessions[today];
+
+  ensureOrderedVocabComplete(userData);
+
+  // Pick 20 new words from orderedVocab starting at nextIndex
+  const seenSet = new Set(Object.keys(userData.wordProgress));
+  const newWords = [];
+  let i = userData.nextIndex;
+  while (newWords.length < 20 && i < userData.orderedVocab.length) {
+    const ar = userData.orderedVocab[i];
+    if (!seenSet.has(ar) && allWords.find(w => w.ar === ar)) {
+      newWords.push(ar);
+    }
+    i++;
+  }
+  userData.nextIndex = i;
+
+  // Pick up to 20 review words from already-seen words
+  // Prefer words with lower accuracy (need more practice)
+  const seenWords = Object.entries(userData.wordProgress)
+    .filter(([ar]) => allWords.find(w => w.ar === ar))
+    .map(([ar, p]) => ({
+      ar,
+      acc: p.attempts > 0 ? p.correct / p.attempts : 0.5,
+      attempts: p.attempts || 0
+    }))
+    .sort((a, b) => a.acc - b.acc); // lowest accuracy first
+
+  // Take lower-accuracy words + some random from the rest
+  const lowAcc = seenWords.filter(w => w.acc < 0.7).map(w => w.ar);
+  const rest = shuffle(seenWords.filter(w => w.acc >= 0.7).map(w => w.ar));
+  const reviewPool = [...lowAcc, ...rest];
+  const reviewWords = reviewPool.slice(0, 20);
+
+  userData.sessions[today] = {
+    date: today,
+    newWords,
+    reviewWords,
+    newLearnDone: false,
+    newQuizDone: false,
+    reviewQuizDone: false,
+    newQuizScore: 0,
+    newQuizTotal: 0,
+    reviewQuizScore: 0,
+    reviewQuizTotal: 0,
+    learnKnownSet: []
+  };
+
+  saveUser(userData);
+  return userData.sessions[today];
+}
+
+function getWordObj(ar) {
+  return allWords.find(w => w.ar === ar) || null;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TTS
+// ═══════════════════════════════════════════════════════════════════
+let arVoice = null;
+function initVoices() {
+  const load = () => {
+    const voices = window.speechSynthesis.getVoices();
+    arVoice = voices.find(v => v.lang && v.lang.startsWith('ar')) || null;
+  };
+  if (window.speechSynthesis) {
+    load();
+    window.speechSynthesis.onvoiceschanged = load;
+  }
+}
+function speak(text) {
+  if (!window.speechSynthesis || !text) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ar-SA';
+  u.rate = 0.75;
+  u.pitch = 1;
+  if (arVoice) u.voice = arVoice;
+  window.speechSynthesis.speak(u);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  IMAGE LOADING
+// ═══════════════════════════════════════════════════════════════════
+function loadWordImage(imgEl, phEl, word) {
+  imgEl.style.display = 'none';
+  phEl.style.display = 'flex';
+  if (!word || !word.img) return;
+  const kw = encodeURIComponent(word.img);
+  const seed = Math.floor(Math.random() * 9000) + 1000;
+  imgEl.src = `https://loremflickr.com/720/360/${kw}?lock=${seed}`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════════════
+let _toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════════════
+const SCREENS = ['users','dash','learn','quiz','progress'];
+function showScreen(name) {
+  SCREENS.forEach(id => {
+    const el = document.getElementById('screen-' + id);
+    if (el) el.classList.toggle('active', id === name);
+  });
+  currentScreen = name;
+  if (name === 'users') renderUsersScreen();
+  if (name === 'dash') renderDashboard();
+  if (name === 'progress') renderProgressScreen();
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCREEN 1: USERS
+// ═══════════════════════════════════════════════════════════════════
+const USERS = ['Arjun','Sudha','David','Guest'];
+const AVATARS = {Arjun:'🧑‍💻', Sudha:'👩‍🎓', David:'👨‍💼', Guest:'🌐'};
+
+function renderUsersScreen() {
+  const grid = document.getElementById('usersGrid');
+  grid.innerHTML = '';
+  USERS.forEach(name => {
+    let userData = loadUser(name);
+    const total = allWords.length;
+    const learned = userData ? Object.keys(userData.wordProgress).length : 0;
+    const pct = total > 0 ? Math.round(learned / total * 100) : 0;
+    const streak = userData ? (userData.dailyStreak || 0) : 0;
+    const card = document.createElement('div');
+    card.className = 'user-card';
+    const syncStatus = _syncStatus[name] || (_fbDb ? 'syncing' : 'offline');
+    card.innerHTML = `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="avatar">${AVATARS[name] || '🌐'}</div>
+        <span class="sync-dot ${syncStatus}" id="syncDot_${name}" title="${syncStatus}"></span>
+      </div>
+      <div class="uname">${name}</div>
+      <div class="ustats">${learned} / ${total} words · 🔥 ${streak}</div>
+      <div class="uprogress"><div class="uprogress-fill" style="width:${pct}%"></div></div>
+    `;
+    card.onclick = () => selectUser(name);
+    grid.appendChild(card);
+  });
+}
+
+function selectUser(name) {
+  // Pull fresh data from Firebase, then proceed (callback pattern)
+  fbPullUser(name, () => {
+    let userData = loadUser(name);
+    if (!userData) {
+      userData = createUser(name);
+      saveUser(userData);
+    }
+    currentUser = userData;
+    getOrCreateTodaySession(currentUser);
+    showScreen('dash');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCREEN 2: DASHBOARD
+// ═══════════════════════════════════════════════════════════════════
+function renderDashboard() {
+  if (!currentUser) return;
+
+  // Refresh from storage
+  const freshUser = loadUser(currentUser.name);
+  currentUser = freshUser || currentUser; // fallback to in-memory if localStorage failed
+  try {
+  const today = getToday();
+  const session = getOrCreateTodaySession(currentUser);
+  saveUser(currentUser);
+
+  const total = allWords.length;
+  const seen = Object.keys(currentUser.wordProgress).length;
+  const mastered = Object.values(currentUser.wordProgress)
+    .filter(p => p.attempts >= 3 && p.correct / p.attempts >= 0.8).length;
+  const streak = currentUser.dailyStreak || 0;
+
+  // User bar
+  document.getElementById('dashUserBar').innerHTML = `
+    <div style="font-size:36px">${AVATARS[currentUser.name] || '🌐'}</div>
+    <div class="dash-user-info">
+      <div class="name">${currentUser.name}</div>
+      <div class="level">Level ${getLevelLabel(seen)} · ${seen} words seen</div>
+    </div>
+    <div class="dash-streak">
+      <div class="num">🔥${streak}</div>
+      <div class="lbl">Day Streak</div>
+    </div>
+  `;
+
+  // Stats
+  document.getElementById('dashStats').innerHTML = `
+    <div class="stat-box">
+      <div class="num">${seen}</div>
+      <div class="lbl">Words Seen</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">${mastered}</div>
+      <div class="lbl">Mastered</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">${total - seen}</div>
+      <div class="lbl">Remaining</div>
+    </div>
+  `;
+
+  // Today's cards
+  const newCount = session.newWords.length;
+  const revCount = session.reviewWords.length;
+
+  let learnStatus = session.newLearnDone
+    ? `<span class="tc-score good">✓ Completed — ${session.learnKnownSet.length}/${newCount} known</span>`
+    : `<span class="tc-score">Preview ${newCount} new words</span>`;
+
+  let newQuizStatus = session.newQuizDone
+    ? `<span class="tc-score ${scoreClass(session.newQuizScore, session.newQuizTotal)}">Score: ${session.newQuizScore}/${session.newQuizTotal}</span>`
+    : '';
+
+  let revQuizStatus = session.reviewQuizDone
+    ? `<span class="tc-score ${scoreClass(session.reviewQuizScore, session.reviewQuizTotal)}">Score: ${session.reviewQuizScore}/${session.reviewQuizTotal}</span>`
+    : '';
+
+  const newQuizLocked = false; // Quiz always available
+
+  document.getElementById('dashTodayCards').innerHTML = `
+    <div class="today-card ${session.newLearnDone ? 'completed' : ''}">
+      <div class="tc-icon">📖</div>
+      <div class="tc-info">
+        <div class="tc-title">Learn New Words</div>
+        <div class="tc-desc">${newCount} new words — flashcard preview</div>
+        ${learnStatus}
+      </div>
+      <div class="tc-btn">
+        <button class="btn ${session.newLearnDone ? 'btn-ghost' : ''}" onclick="startLearnMode()">
+          ${session.newLearnDone ? 'Review again' : 'Start →'}
+        </button>
+      </div>
+    </div>
+    <div class="today-card ${session.newQuizDone ? 'completed' : ''}">
+      <div class="tc-icon">🧠</div>
+      <div class="tc-info">
+        <div class="tc-title">Quiz: New Words</div>
+        <div class="tc-desc">${newCount} multiple choice questions</div>
+        ${newQuizStatus}
+      </div>
+      <div class="tc-btn">
+        <button class="btn ${session.newQuizDone ? 'btn-ghost' : ''}" onclick="startQuizMode('new')">
+          ${session.newQuizDone ? 'Retry' : 'Start →'}
+        </button>
+      </div>
+    </div>
+    <div class="today-card ${session.reviewQuizDone ? 'completed' : ''} ${revCount === 0 ? 'locked' : ''}">
+      <div class="tc-icon">🔄</div>
+      <div class="tc-info">
+        <div class="tc-title">Review Known Words</div>
+        <div class="tc-desc">${revCount > 0 ? revCount + ` words already seen` : `Nothing to review yet — keep learning!`}</div>
+        ${revQuizStatus}
+      </div>
+      <div class="tc-btn">
+        <button class="btn ${session.reviewQuizDone ? 'btn-ghost' : ''}" ${revCount === 0 ? 'disabled' : ''} onclick="startQuizMode('review')">
+          ${revCount === 0 ? '—' : session.reviewQuizDone ? 'Retry' : 'Start →'}
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Progress bars
+  const l0 = allWords.filter(w=>w.lvl===0).length;
+  const l1 = allWords.filter(w=>w.lvl===1).length;
+  const l2 = allWords.filter(w=>w.lvl===2).length;
+  const l3 = allWords.filter(w=>w.lvl===3).length;
+  const seenByLevel = (lvl) => allWords.filter(w=>w.lvl===lvl)
+    .filter(w => currentUser.wordProgress[w.ar]).length;
+  const s0=seenByLevel(0), s1=seenByLevel(1), s2=seenByLevel(2), s3=seenByLevel(3);
+
+  // Update sync indicator
+  if (_fbDb && currentUser) {
+    const st = _syncStatus[currentUser.name] || 'syncing';
+    const dot = document.getElementById('dashSyncDot');
+    const lbl = document.getElementById('dashSyncLabel');
+    if (dot) dot.className = 'sync-dot ' + st;
+    if (lbl) lbl.textContent = {synced:'cloud synced',syncing:'syncing…',error:'sync error',offline:'offline'}[st] || st;
+  }
+
+  document.getElementById('dashProgressBars').innerHTML = `
+    <div class="prog-bar-row">
+      <div class="prog-bar-label"><span>Overall (${seen}/${total})</span><span>${Math.round(seen/total*100)}%</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill fill-gold" style="width:${seen/total*100}%"></div></div>
+    </div>
+    <div class="prog-bar-row">
+      <div class="prog-bar-label"><span>🟢 Level 0 · Beginner (${s0}/${l0})</span><span>${l0>0?Math.round(s0/l0*100):0}%</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill fill-teal" style="width:${l0>0?s0/l0*100:0}%"></div></div>
+    </div>
+    <div class="prog-bar-row">
+      <div class="prog-bar-label"><span>🔵 Level 1 · Elementary (${s1}/${l1})</span><span>${l1>0?Math.round(s1/l1*100):0}%</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill fill-gold" style="width:${l1>0?s1/l1*100:0}%"></div></div>
+    </div>
+    <div class="prog-bar-row">
+      <div class="prog-bar-label"><span>🟡 Level 2 · Intermediate (${s2}/${l2})</span><span>${l2>0?Math.round(s2/l2*100):0}%</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill fill-green" style="width:${l2>0?s2/l2*100:0}%"></div></div>
+    </div>
+    <div class="prog-bar-row">
+      <div class="prog-bar-label" style="margin-top:4px"><span>🔴 Level 3 · Advanced (${s3}/${l3})</span><span>${l3>0?Math.round(s3/l3*100):0}%</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill fill-red" style="width:${l3>0?s3/l3*100:0}%"></div></div>
+    </div>
+  `;
+  } catch(err) {
+    console.error('renderDashboard error:', err);
+    document.getElementById('dashTodayCards').innerHTML = '<p style="color:red;text-align:center;padding:20px">Dashboard error: <code>' + err.message + '</code></p>';
+  }
+}
+
+function getLevelLabel(wordsSeen) {
+  if (wordsSeen < 30) return 'Beginner';
+  if (wordsSeen < 80) return 'Elementary';
+  if (wordsSeen < 150) return 'Intermediate';
+  return 'Advanced';
+}
+
+function scoreClass(score, total) {
+  if (!total) return '';
+  const pct = score / total;
+  if (pct >= 0.8) return 'good';
+  if (pct >= 0.5) return 'ok';
+  return 'bad';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCREEN 3: LEARN (FLASHCARDS)
+// ═══════════════════════════════════════════════════════════════════
+function startLearnMode() {
+  if (!currentUser) return;
+  const freshUser = loadUser(currentUser.name);
+  currentUser = freshUser || currentUser;
+  const session = getOrCreateTodaySession(currentUser);
+
+  learnState = {
+    words: session.newWords.map(ar => getWordObj(ar)).filter(Boolean),
+    index: 0,
+    isFlipped: false,
+    knownSet: new Set(session.learnKnownSet || [])
+  };
+
+  document.getElementById('learnCompletePanel').style.display = 'none';
+  document.getElementById('flashcard').style.display = '';
+  document.getElementById('learnControls').style.display = '';
+  document.querySelector('.flashcard-scene').style.display = '';
+  document.querySelector('.tts-row').style.display = '';
+  document.querySelector('.learn-header').style.display = '';
+  const learnChipRow = document.getElementById('learnChipRow');
+  if (learnChipRow) learnChipRow.style.display = '';
+
+  showScreen('learn');
+  renderLearnCard();
+}
+
+function renderLearnCard() {
+  if (!learnState) return;
+  const { words, index } = learnState;
+
+  if (index >= words.length) {
+    showLearnComplete();
+    return;
+  }
+
+  const word = words[index];
+  const total = words.length;
+
+  // Unflip
+  learnState.isFlipped = false;
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+
+  // Progress
+  document.getElementById('learnProgFill').style.width = (index / total * 100) + '%';
+  document.getElementById('learnCounter').textContent = `${index + 1} / ${total}`;
+
+  // Front
+  document.getElementById('fcArabic').textContent = word.ar;
+  document.getElementById('fcTr').textContent = word.tr;
+
+  // Back
+  document.getElementById('fcArabicMini').textContent = word.ar;
+  document.getElementById('fcTrMini').textContent = word.tr;
+  document.getElementById('fcEnglish').textContent = word.en;
+  document.getElementById('fcCtxAr').textContent = word.ctxAr || '';
+  document.getElementById('fcCtxEn').textContent = word.ctxEn || '';
+
+  const lvlLabels = ['Beginner','Elementary','Intermediate','Advanced'];
+  document.getElementById('fcLvl').innerHTML =
+    `<span class="chip chip-gold" style="font-size:9px">Level ${word.lvl} · ${lvlLabels[word.lvl]||''}</span>`;
+
+  // Image
+  loadWordImage(
+    document.getElementById('fcImg'),
+    document.getElementById('fcImgPh'),
+    word
+  );
+
+  // Know/skip buttons state
+  document.getElementById('btnLearnKnow').textContent = learnState.knownSet.has(word.ar) ? '✓ Marked known' : 'Got it! ✓';
+
+  // Auto-play TTS
+  setTimeout(() => speak(word.ar), 500);
+}
+
+function flipCardIfFront() {
+  if (!learnState) return;
+  if (!learnState.isFlipped) {
+    learnState.isFlipped = true;
+    document.getElementById('flashcard').classList.add('flipped');
+  }
+}
+
+function speakCurrent() {
+  if (!learnState) return;
+  const word = learnState.words[learnState.index];
+  if (word) speak(word.ar);
+}
+
+function learnMarkAndNext(known) {
+  if (!learnState) return;
+  const word = learnState.words[learnState.index];
+  if (word) {
+    if (known) learnState.knownSet.add(word.ar);
+    else learnState.knownSet.delete(word.ar);
+  }
+  learnState.index++;
+  learnState.isFlipped = false;
+  renderLearnCard();
+}
+
+function showLearnComplete() {
+  // Mark words as first-seen in wordProgress
+  if (currentUser && learnState) {
+    const today = getToday();
+    const session = currentUser.sessions[today];
+    learnState.words.forEach(word => {
+      if (!currentUser.wordProgress[word.ar]) {
+        currentUser.wordProgress[word.ar] = {
+          firstSeen: today,
+          lastSeen: today,
+          correct: 0,
+          attempts: 0
+        };
+      }
+    });
+    session.newLearnDone = true;
+    session.learnKnownSet = [...learnState.knownSet];
+    saveUser(currentUser);
+  }
+
+  const known = learnState.knownSet.size;
+  const total = learnState.words.length;
+
+  // Hide flashcard, show complete panel
+  document.getElementById('flashcard').closest('.flashcard-scene').style.display = 'none';
+  document.getElementById('learnControls').style.display = 'none';
+  document.querySelector('.tts-row').style.display = 'none';
+
+  document.getElementById('learnCompleteMsg').textContent =
+    `You marked ${known} out of ${total} words as known. Now take the quiz to test yourself!`;
+  document.getElementById('learnCompletePanel').style.display = 'block';
+  document.getElementById('learnProgFill').style.width = '100%';
+  document.getElementById('learnCounter').textContent = `${total} / ${total}`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCREEN 4: QUIZ
+// ═══════════════════════════════════════════════════════════════════
+function startQuizMode(type) {
+  // type = 'new' | 'review'
+  if (!currentUser) return;
+  const freshUser = loadUser(currentUser.name);
+  currentUser = freshUser || currentUser;
+  const session = getOrCreateTodaySession(currentUser);
+
+  const arKeys = type === 'new' ? session.newWords : session.reviewWords;
+  const words = arKeys.map(ar => getWordObj(ar)).filter(Boolean);
+
+  if (!words.length) { toast('No words available'); return; }
+
+  quizState = {
+    type,
+    words: shuffle(words),
+    index: 0,
+    score: 0,
+    streak: 0,
+    locked: false,
+    wrongWords: []
+  };
+
+  const badge = document.getElementById('quizTypeBadge');
+  badge.innerHTML = type === 'new'
+    ? '<span class="chip chip-gold">🧠 NEW WORDS QUIZ</span>'
+    : '<span class="chip chip-teal">🔄 REVIEW QUIZ</span>';
+
+  document.getElementById('quizOverlay').classList.remove('show');
+  document.getElementById('qScore').textContent = '0';
+  document.getElementById('qStreak').textContent = '0';
+
+  showScreen('quiz');
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  try {
+  if (!quizState) return;
+  const { words, index } = quizState;
+
+  if (index >= words.length) {
+    showQuizComplete();
+    return;
+  }
+
+  quizState.locked = false;
+  const word = words[index];
+  quizState.currentWord = word;
+
+  // Progress
+  const pct = index / words.length * 100;
+  document.getElementById('quizProgFill').style.width = pct + '%';
+  document.getElementById('quizCounter').textContent = `${index + 1} / ${words.length}`;
+
+  // Show Arabic, ask for English (standard mode)
+  document.getElementById('qArabic').textContent = word.ar;
+  document.getElementById('qTr').textContent = word.tr;
+  document.getElementById('quizInstruction').textContent = 'What does this Arabic word mean?';
+
+  // Image
+  loadWordImage(
+    document.getElementById('qImg'),
+    document.getElementById('qImgPh'),
+    word
+  );
+
+  // Clear feedback
+  const fb = document.getElementById('feedbackBanner');
+  fb.className = 'feedback-banner';
+  document.getElementById('ctxReveal').classList.remove('show');
+
+  // Build choices
+  const pool = allWords.filter(w => w.ar !== word.ar);
+  const distractors = shuffle(pool).slice(0, 3);
+  const options = shuffle([word, ...distractors]);
+  const grid = document.getElementById('quizChoices');
+  grid.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = opt.en;
+    btn.onclick = () => handleQuizAnswer(opt, btn, word);
+    grid.appendChild(btn);
+  });
+
+  // Auto-play
+  setTimeout(() => speak(word.ar), 400);
+  } catch(err) {
+    console.error('renderQuizQuestion crashed:', err);
+    toast('Quiz error — check browser console (F12)');
+  }
+}
+
+function handleQuizAnswer(chosen, btn, correctWord) {
+  if (quizState.locked) return;
+  quizState.locked = true;
+
+  document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+  const isCorrect = chosen.ar === correctWord.ar;
+  const fb = document.getElementById('feedbackBanner');
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    quizState.score++;
+    quizState.streak++;
+    document.getElementById('qScore').textContent = quizState.score;
+    document.getElementById('qStreak').textContent = quizState.streak;
+    fb.className = 'feedback-banner correct-fb show';
+    fb.innerHTML = `✓ Correct! &nbsp;<strong>${correctWord.ar}</strong> = <em>${correctWord.en}</em>`;
+  } else {
+    btn.classList.add('wrong');
+    quizState.streak = 0;
+    document.getElementById('qStreak').textContent = 0;
+    document.querySelectorAll('.choice-btn').forEach(b => {
+      if (b.textContent === correctWord.en) b.classList.add('correct');
+    });
+    quizState.wrongWords.push(correctWord.ar);
+    fb.className = 'feedback-banner wrong-fb show';
+    fb.innerHTML = `✗ Correct answer: &nbsp;<strong>${correctWord.ar}</strong> = <em>${correctWord.en}</em>`;
+    setTimeout(() => speak(correctWord.ar), 300);
+  }
+
+  // Show context
+  const ctxEl = document.getElementById('ctxReveal');
+  document.getElementById('ctxRevealAr').textContent = correctWord.ctxAr || '';
+  document.getElementById('ctxRevealEn').textContent = correctWord.ctxEn || '';
+  ctxEl.classList.add('show');
+
+  // Update word progress
+  if (currentUser) {
+    const ar = correctWord.ar;
+    if (!currentUser.wordProgress[ar]) {
+      currentUser.wordProgress[ar] = { firstSeen: getToday(), lastSeen: getToday(), correct: 0, attempts: 0 };
+    }
+    const p = currentUser.wordProgress[ar];
+    p.lastSeen = getToday();
+    p.attempts++;
+    if (isCorrect) p.correct++;
+    currentUser.totalAttempts = (currentUser.totalAttempts || 0) + 1;
+    if (isCorrect) currentUser.totalCorrect = (currentUser.totalCorrect || 0) + 1;
+  }
+
+  quizState.index++;
+  setTimeout(renderQuizQuestion, 1300);
+}
+
+function speakQuizWord() {
+  if (!quizState || !quizState.currentWord) return;
+  speak(quizState.currentWord.ar);
+}
+
+function showQuizComplete() {
+  const { type, score, words } = quizState;
+  const total = words.length;
+  const pct = Math.round(score / total * 100);
+
+  // Save session result
+  if (currentUser) {
+    const session = currentUser.sessions[getToday()];
+    if (session) {
+      if (type === 'new') {
+        // Only update if score improves (allow retry)
+        if (!session.newQuizDone || score > session.newQuizScore) {
+          session.newQuizScore = score;
+          session.newQuizTotal = total;
+        }
+        session.newQuizDone = true;
+      } else {
+        if (!session.reviewQuizDone || score > session.reviewQuizScore) {
+          session.reviewQuizScore = score;
+          session.reviewQuizTotal = total;
+        }
+        session.reviewQuizDone = true;
+      }
+    }
+    saveUser(currentUser);
+  }
+
+  const emoji = pct >= 90 ? '🏆' : pct >= 70 ? '⭐' : pct >= 50 ? '💪' : '📚';
+  const msgs = [
+    pct >= 90 ? "Outstanding! You really know these words." : '',
+    pct >= 70 && pct < 90 ? "Great work — keep building your vocabulary!" : '',
+    pct >= 50 && pct < 70 ? "Good effort! A few more reviews and you'll have these." : '',
+    pct < 50 ? "Don't give up — repetition is the key to Arabic mastery." : ''
+  ].filter(Boolean)[0];
+
+  document.getElementById('qrEmoji').textContent = emoji;
+  document.getElementById('qrTitle').textContent = `${type === 'new' ? 'New Words' : 'Review'} Quiz Complete!`;
+  document.getElementById('qrMsg').innerHTML =
+    `You scored <strong style="color:var(--gold)">${score} / ${total}</strong> (${pct}%)<br><br>${msgs}`;
+  document.getElementById('quizProgFill').style.width = '100%';
+  document.getElementById('quizCounter').textContent = `${total} / ${total}`;
+  document.getElementById('quizOverlay').classList.add('show');
+}
+
+function retryQuiz() {
+  if (!quizState) return;
+  document.getElementById('quizOverlay').classList.remove('show');
+  startQuizMode(quizState.type);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCREEN 5: PROGRESS
+// ═══════════════════════════════════════════════════════════════════
+function renderProgressScreen() {
+  if (!currentUser) return;
+  const freshUser = loadUser(currentUser.name);
+  if (!freshUser) return;
+  currentUser = freshUser;
+
+  const total = allWords.length;
+  const wp = currentUser.wordProgress;
+  const seenKeys = Object.keys(wp);
+  const seen = seenKeys.length;
+  const mastered = seenKeys.filter(ar => {
+    const p = wp[ar]; return p.attempts >= 3 && p.correct / p.attempts >= 0.8;
+  }).length;
+  const accuracy = currentUser.totalAttempts > 0
+    ? Math.round(currentUser.totalCorrect / currentUser.totalAttempts * 100) : 0;
+
+  document.getElementById('progUserName').textContent = currentUser.name + ' · Progress';
+
+  document.getElementById('progSummary').innerHTML = `
+    <div class="stat-box">
+      <div class="num">${seen}</div>
+      <div class="lbl">Words Seen</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">${mastered}</div>
+      <div class="lbl">Mastered</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">${accuracy}%</div>
+      <div class="lbl">Accuracy</div>
+    </div>
+  `;
+
+  // By level
+  const lvlNames = ['Beginner','Elementary','Intermediate','Advanced'];
+  const lvlColors = ['fill-teal','fill-gold','fill-green','fill-red'];
+  let lvlHTML = '<h3>📊 Progress by Level</h3>';
+  [0,1,2,3].forEach(lvl => {
+    const inLevel = allWords.filter(w => w.lvl === lvl);
+    const seenInLevel = inLevel.filter(w => wp[w.ar]).length;
+    const pct = inLevel.length > 0 ? seenInLevel / inLevel.length * 100 : 0;
+    lvlHTML += `
+      <div class="level-row">
+        <div class="level-lbl">Lvl ${lvl} · ${lvlNames[lvl]}</div>
+        <div class="level-bar"><div class="level-bar-fill ${lvlColors[lvl]}" style="width:${pct}%"></div></div>
+        <div class="level-count">${seenInLevel} / ${inLevel.length}</div>
+      </div>`;
+  });
+  document.getElementById('progByLevel').innerHTML = lvlHTML;
+
+  renderWordList();
+}
+
+function filterWords(type, btn) {
+  currentWordFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWordList();
+}
+
+function renderWordList() {
+  if (!currentUser) return;
+  const wp = currentUser.wordProgress;
+  const filter = currentWordFilter;
+
+  let words = allWords;
+  if (filter === 'seen') words = allWords.filter(w => wp[w.ar]);
+  else if (filter === 'unseen') words = allWords.filter(w => !wp[w.ar]);
+  else if (filter === 'mastered') words = allWords.filter(w => {
+    const p = wp[w.ar];
+    return p && p.attempts >= 3 && p.correct / p.attempts >= 0.8;
+  });
+  else if (filter === 'learning') words = allWords.filter(w => {
+    const p = wp[w.ar];
+    return p && !(p.attempts >= 3 && p.correct / p.attempts >= 0.8);
+  });
+
+  document.getElementById('wordListCount').textContent = `(${words.length})`;
+
+  const list = document.getElementById('wordList');
+  if (!words.length) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text-d);padding:20px;font-size:13px">No words in this category yet</div>';
+    return;
+  }
+
+  list.innerHTML = words.map(w => {
+    const p = wp[w.ar];
+    let statusHtml = '<span class="chip chip-grey" style="font-size:9px">not seen</span>';
+    if (p) {
+      const isMastered = p.attempts >= 3 && p.correct / p.attempts >= 0.8;
+      if (isMastered) {
+        statusHtml = '<span class="chip chip-green" style="font-size:9px">mastered</span>';
+      } else {
+        statusHtml = '<span class="chip chip-teal" style="font-size:9px">learning</span>';
+      }
+    }
+    const acc = p && p.attempts > 0 ? Math.round(p.correct / p.attempts * 100) + '%' : '—';
+    return `
+      <div class="word-item">
+        <div class="word-ar">${w.ar}</div>
+        <div class="word-en">${w.en}</div>
+        <div class="word-tr">${w.tr}</div>
+        <div class="word-status">${statusHtml}</div>
+        <div class="word-acc">${acc}</div>
+      </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  JSON UPLOAD
+// ═══════════════════════════════════════════════════════════════════
+// ── Extra vocab helpers (persist across devices) ───────────────────
+const EXTRA_VOCAB_KEY = 'arabicVocabGame_extraVocab';
+
+function loadExtraVocabFromStorage() {
+  try { return JSON.parse(localStorage.getItem(EXTRA_VOCAB_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveExtraVocabToStorage(words) {
+  try { localStorage.setItem(EXTRA_VOCAB_KEY, JSON.stringify(words)); } catch(e) {}
+}
+function pushExtraVocabToFirebase(words) {
+  if (!_fbDb) return;
+  _fbDb.ref('extraVocab').set(words).catch(e => console.warn('FB vocab push error:', e));
+}
+function pullExtraVocabFromFirebase(callback) {
+  if (!_fbDb) { callback([]); return; }
+  _fbDb.ref('extraVocab').once('value')
+    .then(snap => callback(snap.val() || []))
+    .catch(() => callback([]));
+}
+function applyExtraVocab(extraWords) {
+  if (!extraWords || !extraWords.length) return 0;
+  const existingAr = new Set(allWords.map(w => w.ar));
+  let added = 0;
+  extraWords.forEach(w => {
+    if (w.ar && w.en && !existingAr.has(w.ar)) {
+      w.img = w.img || w.en.toLowerCase().split('/')[0].split('(')[0].trim();
+      allWords.push(w);
+      existingAr.add(w.ar);
+      added++;
+    }
+  });
+  return added;
+}
+
+function handleJsonUpload(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+
+  let processed = 0;
+  const allNewWords = [];
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!Array.isArray(data)) throw new Error('Expected JSON array');
+        const existingAr = new Set(allWords.map(w => w.ar));
+        data.forEach(w => {
+          if (w.ar && w.en && !existingAr.has(w.ar)) {
+            w.img = w.img || w.en.toLowerCase().split('/')[0].split('(')[0].trim();
+            allNewWords.push(w);
+            existingAr.add(w.ar);
+          }
+        });
+      } catch(err) { console.error('Upload error:', err); }
+      processed++;
+      if (processed === files.length) {
+        // Apply to in-memory allWords
+        const added = applyExtraVocab(allNewWords);
+        // Merge with any previously saved extra vocab
+        const prevExtra = loadExtraVocabFromStorage();
+        const prevArSet = new Set(prevExtra.map(w => w.ar));
+        const merged = [...prevExtra, ...allNewWords.filter(w => !prevArSet.has(w.ar))];
+        // Persist: localStorage (instant) + Firebase (all devices)
+        saveExtraVocabToStorage(merged);
+        pushExtraVocabToFirebase(merged);
+        const statusEl = document.getElementById('uploadStatus');
+        statusEl.textContent = added > 0
+          ? `✓ Added ${added} new words (total: ${allWords.length}) — synced to all devices`
+          : `No new words found (already in word bank)`;
+        statusEl.style.display = 'block';
+        if (added > 0) toast(`Added ${added} new words — synced!`);
+        renderUsersScreen();
+        event.target.value = '';
+      }
+    };
+    reader.readAsText(file);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════════
+function showFbSetup() {
+  if (_fbDb) {
+    toast('✓ Firebase connected — syncing automatically');
+  } else {
+    toast('Firebase connection failed — check console');
+  }
+}
+
+window.onload = function() {
+  initVoices();
+  // Load locally-saved extra vocab immediately (before network)
+  const localExtra = loadExtraVocabFromStorage();
+  if (localExtra.length) applyExtraVocab(localExtra);
+  // Connect Firebase (will also pull cloud extra vocab if newer/larger)
+  initFirebase();
+  renderUsersScreen();
+};
+</script>
+
+<!-- ════ FIREBASE CONFIG MODAL ════ -->
+<div id="fbModal" class="fb-modal-overlay">
+  <div class="fb-modal">
+    <h2>☁️ Connect Cloud Sync</h2>
+    <p>Sync progress across all devices (phone, laptop, tablet) using your free Firebase database. One-time setup — takes 2 minutes.</p>
+    <ol>
+      <li>Go to <strong>console.firebase.google.com</strong> → New project</li>
+      <li>Add a <strong>Web app</strong> (click &lt;/&gt; icon)</li>
+      <li>Go to <strong>Build → Realtime Database</strong> → Create database → Start in test mode</li>
+      <li>Go to <strong>Project Settings → Your apps</strong> → copy the <code>firebaseConfig</code> object</li>
+      <li>Paste the JSON below (just the values, no <code>const firebaseConfig =</code>)</li>
+    </ol>
+    <textarea class="fb-textarea" id="fbConfigInput" placeholder='{
+  "apiKey": "AIza...",
+  "authDomain": "your-app.firebaseapp.com",
+  "databaseURL": "https://your-app-default-rtdb.firebaseio.com",
+  "projectId": "your-app",
+  "storageBucket": "your-app.appspot.com",
+  "messagingSenderId": "...",
+  "appId": "..."
+}'></textarea>
+    <div id="fbError" class="fb-error"></div>
+    <div class="fb-btns">
+      <button class="btn" onclick="saveFbConfig()">Connect & Sync</button>
+      <button class="btn btn-ghost" onclick="closeFbModal()">Not now</button>
+      <button class="fb-skip-btn" onclick="skipFbForever()">Don't show again (offline only)</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK (compat mode for simplicity) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+</body>
+</html>
